@@ -4,8 +4,32 @@
 
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+    -webkit-appearance: none
 }
-ol{
+
+input {
+    outline: none;
+}
+
+ol {
     list-style-type: decimal;
+}
+
+:is(.cardsContainer, .cards) {
+    transform-style: preserve-3d;
+    perspective: 1500px;
+}
+
+:is(.cards, .back) {
+    backface-visibility: hidden;
+}
+
+
+.back {
+    outline: 1px solid white;
+    transform: rotateY(180deg) translateZ(-1px);
+}
+
+.popupContainer {
+    transform: translateZ(1px);
 }

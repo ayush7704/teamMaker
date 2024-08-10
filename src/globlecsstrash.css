@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none
+}
+
+ol {
+    list-style-type: decimal
+}
+
+form input::placeholder {
+    color: white;
+}
+
+.cardsContainer {
+    transform-style: preserve-3d;
+    perspective: 1500px
+}
+
+.cardsContainer>li {
+    transition: transform .5s ease-in-out, backgroundColor .5s ease-in-out;
+    transform-style: preserve-3d;
+    perspective: 1500px;
+    backface-visibility: hidden
+}
+
+.cardsContainer .back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, #0000ff73, #ff00008f, #ffff0047);
+    transform: rotateY(180deg) translateZ(-1px);
+    border-radius: inherit;
+    backface-visibility: hidden
+}
+
+.cardsContainer li.rotated {
+    transform: rotateY(180deg)
+}
+
+.popupContainer {
+    transform: translateZ(1px)
+}
+
+.top-div-child {
+    /* transform: rotateY(0) rotateX(0) perspective(5000px); */
+    transform-style: preserve-3d;
+    transition: transform 0.2s linear;
+    transform: none;
+}
+
+.top-div-child:before {
+    box-shadow: 0 0 10px 0px #0e0e0e;
+}
+
+.top-div-child:before,
+.top-div-child:after {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    background-color: #fff;
+    border-radius: inherit;
+    transform: translateZ(-20px);
+    transition: all 0.15s ease-in-out;
+}
+
+.top-div-child:after {
+    inset: 0;
+    background-color: #000;
+    transform: translateZ(-18px);
+    filter: blur(3px);
+    opacity: 1;
+}
+
+.abso-text h1 {
+    font-family: "Rubik Wet Paint", system-ui;
+    font-weight: 400;
+    font-style: normal;
+    /* overflow: hidden; */
+}
+
+.abso-text h1 span {
+    background-clip: text;
+    -webkit-text-stroke: white 2px;
+    color: transparent;
+    background-image: linear-gradient(45deg, #0000ff73, #ff00008f, #ffff0047);
+}
