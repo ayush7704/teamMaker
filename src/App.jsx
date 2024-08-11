@@ -18,6 +18,33 @@ const reducer = (oldobj, action) => {
   // for adding players 
   if (action.type === reducerTypes.addPlayer) {
     worker = { ...oldobj, players: [...oldobj.players, action.payload.playerName] }
+    if (worker.hasShuffled) {
+      try {
+        let flatArr = [];
+        worker.teams.forEach((element, elmInd) => {
+          let a = element.teamPlayers
+          flatArr = flatArr.concat(a)
+          // console.log(element.teamPlayers)
+        });
+        console.log(flatArr)
+        if (flatArr.length < worker.players.length) {
+          console.log(worker.players[worker.players.length - 1])
+          flatArr.push(worker.players[worker.players.length - 1])
+         console.log(flatArr)
+          worker.players.map( (element, elmInd) => {
+            let startIndex = Math.floor((elmInd % worker.players.length) / worker.teams.length)
+            worker.teams[(elmInd % worker.teams.length)].teamPlayers.splice(startIndex,1,flatArr[elmInd])
+            // worker.teams[(elmInd % worker.teams.length)].teamPlayers.splice(startIndex, 1, flatArr[elmInd])
+          });         
+          console.log(worker)
+          return { ...worker }
+        }
+        // worker.players = [...flatArr]
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    console.log('end.......')
     return { ...worker }
   }
 
@@ -242,7 +269,7 @@ function App() {
         let startIndex = Math.floor((index % allTypeplayersAndTeams.players.length) / allTypeplayersAndTeams.teams.length)
         console.log(allTypeplayersAndTeams.teams.length)
         console.log(index % allTypeplayersAndTeams.teams.length)
-        console.log({...worker.teams[(index % allTypeplayersAndTeams.teams.length)]})
+        console.log({ ...worker.teams[(index % allTypeplayersAndTeams.teams.length)] })
         console.log(worker.teams)
         console.log(worker.teams[(index % allTypeplayersAndTeams.teams.length)].teamPlayers)
         worker.teams[(index % allTypeplayersAndTeams.teams.length)].teamPlayers.splice(startIndex, 1, allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]])
