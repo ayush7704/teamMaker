@@ -7,11 +7,12 @@ const seeMoreActions = {
   focusSeeMore: 'focusSeeMore',
   blurSeeMore: 'blurSeeMore',
   openWithGenerator: 'openWithGenerator',
+  removeFromGenerator: 'removeFromGenerator',
   deleteSavedTeam: 'deleteSavedTeam'
 }
 
 function saved() {
-  const { savedTeam, setsavedTeam ,PageHeading} = useContext(mainContext)
+  const { savedTeam, setsavedTeam, PageHeading } = useContext(mainContext)
   const navigate = useNavigate()
   console.log(savedTeam)
   const [savedTeamsState, setsavedTeamsState] = useState({ saveTeams: [], openSavedTeam: null, deletedSavedTeam: null })
@@ -23,7 +24,7 @@ function saved() {
   }, [savedTeam])
 
 
-  function seemoreActionHandlerFunc({ actionType, time, index }) {
+  function seemoreActionHandlerFunc({ actionType, time, index ,openedInGenerator}) {
 
     console.log(actionType)
     switch (actionType) {
@@ -37,12 +38,22 @@ function saved() {
       }
       case seeMoreActions.deleteSavedTeam: {
         const afterDeletingArr = savedTeamsState.saveTeams.filter((currentTeam, teamIndex) => { return currentTeam.savingTime !== time })
+        console.log(openedInGenerator)
         console.log(afterDeletingArr)
+        console.log()
         setsavedTeamActionsState((prevState) => ({ ...prevState, seeMoreBtnClickBy: index }))
         setsavedTeamsState({ ...savedTeamsState, saveTeams: afterDeletingArr });
         setsavedTeam([...afterDeletingArr])
         break;
       }
+      case seeMoreActions.removeFromGenerator: {
+        // this local storage data will remove the current opening object from the generator
+        localStorage.setItem('savedTeamOpened', JSON.stringify(false))
+        localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
+        const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
+        setsavedTeam([...resetOld])
+      }
+        break;
       default: {
         setsavedTeamsState({ ...savedTeamsState })
         break
@@ -100,12 +111,20 @@ function saved() {
 
                       <ul className={`bg-[#0e0d0d] w-max shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-30px] right-full p-1 cursor-pointer rounded-sm border-[0.4px] ${savedTeamActionsState.seeMoreBtnClickBy === teamIndex ? '' : 'hidden'}`}>
                         <li onMouseDown={() => {
-                          seemoreActionHandlerFunc({ actionType: seeMoreActions.deleteSavedTeam, time: team.savingTime, index: null })
+                          seemoreActionHandlerFunc({ actionType: seeMoreActions.deleteSavedTeam, time: team.savingTime, openedInGenerator:team.openedInGenerator,index: null })
                         }} className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]'>delete</li>
                         <li className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]'>details</li>
-                        <li className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]' onMouseDown={(e) => { e.preventDefault(); openWithGeneratorFunc({ time: team.savingTime }) }}>
-                          open with generator
-                        </li>
+                        {
+                          // if already opened in generator then  removing li will be visible
+                          team.openedInGenerator ?
+                            <li className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]' onMouseDown={(e) => { seemoreActionHandlerFunc({ actionType: seeMoreActions.removeFromGenerator }) }}>
+                              remove from generator
+                            </li>
+                            :
+                            <li className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]' onMouseDown={(e) => { e.preventDefault(); openWithGeneratorFunc({ time: team.savingTime }) }}>
+                              open with generator
+                            </li>
+                        }
                       </ul>
                     </div>
 

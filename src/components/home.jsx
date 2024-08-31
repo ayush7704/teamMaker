@@ -361,10 +361,11 @@ function App() {
 
 
   useLayoutEffect(() => {
-    const localStogeObj = localStorage.getItem('allTeamAndPlayers')
+    const localStogeObj = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
+    console.log(localStogeObj)
     if (localStogeObj) {
-      const oldObj = JSON.parse(localStogeObj)
-      console.log(oldObj)
+      console.log(localStogeObj)
+      console.log(JSON.parse(localStorage.getItem('savedTeamOpened')))
       if (savedTeamOpened) {
         let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
         console.log(localSavedsaveTeam)
@@ -374,9 +375,8 @@ function App() {
           const areEqual = compareObjects(localSavedsaveTeam, JSON.parse(JSON.stringify(savedTeamOpened)));
           /*if there is new savedTeamOpened then areEqual  will be false means  allTeamAndPlayers will get values of savedTeamOpened 
           and or on while localSavedsaveTeam and savedTeamOpened are equal user can easily navigate to other pages without loosing current changes till manual */
-          if (areEqual) {
-            console.log(true)
-            setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: oldObj })
+          if (areEqual) {           
+              setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           } else {
             console.log(false)
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
@@ -387,7 +387,37 @@ function App() {
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
         }
       } else {
-          setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: oldObj })
+        let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
+        console.log(localSavedsaveTeam)
+        console.log(localStogeObj)
+        if (localSavedsaveTeam && localStogeObj) {
+
+          const areEqual = compareObjects(localStogeObj, localSavedsaveTeam);
+          console.log(areEqual)
+          console.log(savedTeam)
+          console.log(localSavedsaveTeam)
+          const localSavedsaveTeamExistOrnot = savedTeam.find((team) => { return team.openedInGenerator })
+          console.log(localSavedsaveTeamExistOrnot)
+          if (areEqual) {
+            if (localSavedsaveTeamExistOrnot) {
+
+            }
+            else {
+              console.log(savedTeamOpened)
+              setAllTypeplayersAndTeams({ type: reducerTypes.removeAll, savedOpenedTeam: savedTeamOpened })
+            }
+          }
+          else {
+            console.log(localStogeObj)            
+            if(localSavedsaveTeamExistOrnot){
+
+            }
+            setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
+          }
+        }
+        else {          
+          setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
+        }
       }
     }
   }, [])
@@ -507,7 +537,8 @@ function App() {
       if (!areEqual) {
         modal.current.classList.remove('hidden')
       } else {
-        localStorage.setItem('savedTeamOpened', JSON.stringify('nothing'))
+        localStorage.setItem('savedTeamOpened', JSON.stringify(false))
+        localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
         console.log(localStorage.getItem('savedTeamOpened'))
         setdifferentBtnStates({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
         setAllTypeplayersAndTeams({ type: reducerTypes.removeAll })
