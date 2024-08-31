@@ -577,7 +577,7 @@ function App() {
       <div className="wrapper sm:w-[75%] mx-auto p-3 pb-20">
 
         {/* details div starts  */}
-        <div className="details lg:max-w-[35%] sm:max-w-[75%] mx-auto p-2">
+        <div className="details lg:max-w-[45%] sm:max-w-[75%] mx-auto p-2">
 
           {/* current players div starts  */}
           <div className='flex justify-between p-2'>
@@ -604,7 +604,7 @@ function App() {
         {/* details div ends  */}
 
         {/* form start  */}
-        <form onSubmit={formSubmit} onReset={formReset} className='lg:max-w-[35%] sm:max-w-[75%] mx-auto px-2'>
+        <form onSubmit={formSubmit} onReset={formReset} className='lg:max-w-[45%] sm:max-w-[75%] mx-auto px-2'>
           <div className='flex p-2 items-center gap-2'>
             {/* main input btn starts  */}
             <div className='relative flex-1 backdrop-blur-[4px]'>
@@ -784,7 +784,7 @@ function App() {
             allTypeplayersAndTeams.hasShuffled ?
 
               // devided teams sections starts
-              <section className='flex flex-wrap gap-x-3 gap-y-5 py-5'>
+              <section className='flex flex-wrap gap-x-3 gap-y-7 py-5'>
                 {allTypeplayersAndTeams.teams.map((team, teamValIndex) => (
                   <div key={teamValIndex} className={`md:flex-[1_0_200px] sm:flex-[1_0_150px] flex-[1_0_130px]`}>
                     <h1 className='mb-4 text-center text-[1.08rem] font-medium'>Team {(teamValIndex + 1)}</h1>
