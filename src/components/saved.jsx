@@ -68,6 +68,7 @@ function saved() {
     const openingElm = resetOld.findIndex((elm) => { return elm.savingTime === time })
     resetOld[openingElm].openedInGenerator = true
     console.log(resetOld[openingElm])
+    localStorage.setItem('allTeamAndPlayers', JSON.stringify(resetOld[openingElm]))
     setsavedTeam([...resetOld])
     navigate('/')
   }

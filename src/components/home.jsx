@@ -376,6 +376,7 @@ function App() {
           /*if there is new savedTeamOpened then areEqual  will be false means  allTeamAndPlayers will get values of savedTeamOpened 
           and or on while localSavedsaveTeam and savedTeamOpened are equal user can easily navigate to other pages without loosing current changes till manual */
           if (areEqual) {           
+            console.log(true)
               setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           } else {
             console.log(false)
@@ -404,7 +405,7 @@ function App() {
             }
             else {
               console.log(savedTeamOpened)
-              setAllTypeplayersAndTeams({ type: reducerTypes.removeAll, savedOpenedTeam: savedTeamOpened })
+              setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localSavedsaveTeam })
             }
           }
           else {
