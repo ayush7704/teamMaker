@@ -24,7 +24,7 @@ function saved() {
   }, [savedTeam])
 
 
-  function seemoreActionHandlerFunc({ actionType, time, index ,openedInGenerator}) {
+  function seemoreActionHandlerFunc({ actionType, time, index, openedInGenerator }) {
 
     console.log(actionType)
     switch (actionType) {
@@ -37,10 +37,15 @@ function saved() {
         break;
       }
       case seeMoreActions.deleteSavedTeam: {
+        console.log(savedTeamsState)
         const afterDeletingArr = savedTeamsState.saveTeams.filter((currentTeam, teamIndex) => { return currentTeam.savingTime !== time })
         console.log(openedInGenerator)
         console.log(afterDeletingArr)
-        console.log()
+        // if team is opened in generator 
+        if (openedInGenerator) {
+          localStorage.setItem('savedTeamOpened', JSON.stringify(false))
+          localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
+        }
         setsavedTeamActionsState((prevState) => ({ ...prevState, seeMoreBtnClickBy: index }))
         setsavedTeamsState({ ...savedTeamsState, saveTeams: afterDeletingArr });
         setsavedTeam([...afterDeletingArr])
@@ -78,7 +83,7 @@ function saved() {
       <PageHeading heading={'saved'} />
       <div className='min-h-[80vh] p-3 pt-4 pb-24 sm:p-[30px] grid place-items-center'>
         {
-          savedTeamsState.saveTeams.length < 1 ? <h1 className='text-[#c4c4c4]'>sorry we are under development!</h1> :
+          savedTeamsState.saveTeams.length < 1 ? <h1 className='text-[#c4c4c4]'>No saved work available.</h1> :
             <section className='grid gap-3 w-full sm:max-w-[70%] mx-auto text-[0.9rem] sm:text-[1rem] bg-[#0a0a0acc] rounded-sm'>
               {
                 savedTeamsState.saveTeams.toReversed().map((team, teamIndex) => (
@@ -112,7 +117,7 @@ function saved() {
 
                       <ul className={`bg-[#0e0d0d] w-max shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-30px] right-full p-1 cursor-pointer rounded-sm border-[0.4px] ${savedTeamActionsState.seeMoreBtnClickBy === teamIndex ? '' : 'hidden'}`}>
                         <li onMouseDown={() => {
-                          seemoreActionHandlerFunc({ actionType: seeMoreActions.deleteSavedTeam, time: team.savingTime, openedInGenerator:team.openedInGenerator,index: null })
+                          seemoreActionHandlerFunc({ actionType: seeMoreActions.deleteSavedTeam, time: team.savingTime, openedInGenerator: team.openedInGenerator, index: null })
                         }} className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]'>delete</li>
                         <li className='capitalize p-2 transition-all duration-150 hover:bg-[#262626]'>details</li>
                         {

@@ -375,9 +375,9 @@ function App() {
           const areEqual = compareObjects(localSavedsaveTeam, JSON.parse(JSON.stringify(savedTeamOpened)));
           /*if there is new savedTeamOpened then areEqual  will be false means  allTeamAndPlayers will get values of savedTeamOpened 
           and or on while localSavedsaveTeam and savedTeamOpened are equal user can easily navigate to other pages without loosing current changes till manual */
-          if (areEqual) {           
+          if (areEqual) {
             console.log(true)
-              setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
+            setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           } else {
             console.log(false)
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
@@ -409,14 +409,14 @@ function App() {
             }
           }
           else {
-            console.log(localStogeObj)            
-            if(localSavedsaveTeamExistOrnot){
+            console.log(localStogeObj)
+            if (localSavedsaveTeamExistOrnot) {
 
             }
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           }
         }
-        else {          
+        else {
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
         }
       }
@@ -641,7 +641,7 @@ function App() {
             {/* main input btn starts  */}
             <div className='relative flex-1 backdrop-blur-[4px]'>
 
-              <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] pr-[40px]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required autoFocus />
+              <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] pr-[40px]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
 
               {/* submit button starts  */}
               <button type="submit" className='absolute p-2 right-0 h-full border-l border-lime-400'>
@@ -761,7 +761,10 @@ function App() {
                     <path d="M7.75804 7.75804L5.63672 5.63672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                   :
-                  <svg className='sm:w-[22px] w-[16px]  h-[16px] sm:h-[22px] fill-white' data-name="Layer 1" viewBox="0 0 91.5 122.88"> <path d="M62.42,0A29.08,29.08,0,1,1,33.34,29.08,29.08,29.08,0,0,1,62.42,0ZM3.18,19.65H24.73a38,38,0,0,0-1,6.36H6.35v86.75L37.11,86.12a3.19,3.19,0,0,1,4.18,0l31,26.69V66.68a39.26,39.26,0,0,0,6.35-2.27V119.7a3.17,3.17,0,0,1-5.42,2.24l-34-29.26-34,29.42a3.17,3.17,0,0,1-4.47-.33A3.11,3.11,0,0,1,0,119.7H0V22.83a3.18,3.18,0,0,1,3.18-3.18Zm55-2.79a4.1,4.1,0,0,1,.32-1.64l0-.06a4.33,4.33,0,0,1,3.9-2.59h0a4.23,4.23,0,0,1,1.63.32,4.3,4.3,0,0,1,1.39.93,4.15,4.15,0,0,1,.93,1.38l0,.07a4.23,4.23,0,0,1,.3,1.55v8.6h8.57a4.3,4.3,0,0,1,3,1.26,4.23,4.23,0,0,1,.92,1.38l0,.07a4.4,4.4,0,0,1,.31,1.49v.18a4.37,4.37,0,0,1-.32,1.55,4.45,4.45,0,0,1-.93,1.4,4.39,4.39,0,0,1-1.38.92l-.08,0a4.14,4.14,0,0,1-1.54.3H66.71v8.57a4.35,4.35,0,0,1-1.25,3l-.09.08a4.52,4.52,0,0,1-1.29.85l-.08,0a4.36,4.36,0,0,1-1.54.31h0a4.48,4.48,0,0,1-1.64-.32,4.3,4.3,0,0,1-1.39-.93,4.12,4.12,0,0,1-.92-1.38,4.3,4.3,0,0,1-.34-1.62V34H49.56a4.28,4.28,0,0,1-1.64-.32l-.07,0a4.32,4.32,0,0,1-2.25-2.28l0-.08a4.58,4.58,0,0,1-.3-1.54v0a4.39,4.39,0,0,1,.33-1.63,4.3,4.3,0,0,1,3.93-2.66h8.61V16.86Z" />
+                  <svg className='sm:w-[22px] w-[16px]  h-[16px] sm:h-[22px] text-white' viewBox="0 0 24 24" fill="none">
+                    <path d="M11 2C7.22876 2 5.34315 2 4.17157 3.12874C3 4.25748 3 6.07416 3 9.70753V17.9808C3 20.2867 3 21.4396 3.77285 21.8523C5.26947 22.6514 8.0768 19.9852 9.41 19.1824C10.1832 18.7168 10.5698 18.484 11 18.484C11.4302 18.484 11.8168 18.7168 12.59 19.1824C13.9232 19.9852 16.7305 22.6514 18.2272 21.8523C19 21.4396 19 20.2867 19 17.9808V12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M3.5 7.00005H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M17 10L17 2M13 6H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 }
               </button>

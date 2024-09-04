@@ -109,6 +109,20 @@ button:is([type='submit'], [type='reset']):hover svg {
         font-size: 0rem;
     }
 }
+@media (min-width:1400px) {
+
+    html,
+    body {
+        font-size: 16.5px;
+    }
+}
+@media (min-width:1600px) {
+
+    html,
+    body {
+        font-size: 18.5px;
+    }
+}
 
 
 .spinner {
