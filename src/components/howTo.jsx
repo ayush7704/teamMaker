@@ -17,8 +17,8 @@ function howTo() {
         {/*  How to Generate Random Team? starts */}
         <div className='mb-12'>
           <h2 className='text-[1.1rem] leading-[100%] capitalize'>2. How to Generate Random Team ?</h2>
-          <div className='grid gap-4 p-3'>
-            <HowToExamples title={`1. Insert participants' names. (min-2)`} element={(
+          <div className='grid gap-8 p-3'>
+            <HowToExamples title={`1. Insert participants' names. ( min-2 participants )`} element={(
               <div className='relative backdrop-blur-[4px] inline-block cursor-default'>
                 <input type="text" placeholder='Add player' className='w-full bg-transparent px-3 py-2 rounded-md outline outline-1 outline-[#ffffff41] pr-[40px]' readOnly />
 
@@ -30,13 +30,18 @@ function howTo() {
                   </svg>
                 </button>
                 {/* submit button ends  */}
-              </div>)
-            } />
-            <HowToExamples title={`2. Type total teams you want. by default(2).`} element={<div className='flex justify-between min-w-[222px]'>
+              </div>)}/>
+
+            <HowToExamples title={`2. Set Title ( optional ).`} element={<div className='max-w-[250px]'>
+              <p>Title</p>
+              <input type="text" placeholder='fifa team 2026' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] backdrop-blur-[4px]' readOnly />
+            </div>} />
+
+            <HowToExamples title={`3. Type total teams you want. by default( 2 ).`} element={<div className='flex justify-between min-w-[222px]'>
               <span className='capitalize'>total teams</span>
               <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={'2'} className='w-[40px] text-end bg-transparent focus:outline-none text-lg font-medium' readOnly />
             </div>} />
-            <HowToExamples title={`3. Click generate button to generate random teams.`} element={<button className={`flex gap-2 items-center bg-[#ffff0004] outline-lime-50 text-[0.95rem] font-medium  outline-1 outline px-3 py-2 rounded-sm bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)] cursor-default`} readOnly>
+            <HowToExamples title={`4. Click generate button to generate random teams.`} element={<button className={`flex gap-2 items-center bg-[#ffff0004] outline-lime-50 text-[0.95rem] font-medium  outline-1 outline px-3 py-2 rounded-sm bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)] cursor-default`} readOnly>
               <span>Generate</span>
               <span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" color="#a3e635" fill="none">
@@ -48,10 +53,6 @@ function howTo() {
               </span>
             </button>} />
 
-            <HowToExamples title={`4. Set Title.`} element={<div className='max-w-[250px]'>
-              <p>Title</p>
-              <input type="text" placeholder='fifa team 2026' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] backdrop-blur-[4px]' readOnly />
-            </div>} />
           </div>
         </div>
         {/*  How to Generate Random Team? ends */}
@@ -60,7 +61,7 @@ function howTo() {
         {/* save your work locally in the browser starts */}
         <div className='mb-12'>
           <h2 className='text-[1.1rem] leading-[100%] capitalize'>3. save your work locally in the browser.</h2>
-          <div className='grid gap-4 p-3'>
+          <div className='grid gap-8 p-3'>
             <HowToExamples title={`1. Click this save icon to save your work in your browser's storage. So, you can still access the same data the next time when you visit again at the same browser .`} element={<button className={` bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}>
               <svg className='sm:w-[22px] w-[16px]  h-[16px] sm:h-[22px] text-white' viewBox="0 0 24 24" fill="none">
                 <path d="M11 2C7.22876 2 5.34315 2 4.17157 3.12874C3 4.25748 3 6.07416 3 9.70753V17.9808C3 20.2867 3 21.4396 3.77285 21.8523C5.26947 22.6514 8.0768 19.9852 9.41 19.1824C10.1832 18.7168 10.5698 18.484 11 18.484C11.4302 18.484 11.8168 18.7168 12.59 19.1824C13.9232 19.9852 16.7305 22.6514 18.2272 21.8523C19 21.4396 19 20.2867 19 17.9808V12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

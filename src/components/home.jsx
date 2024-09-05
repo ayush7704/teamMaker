@@ -728,7 +728,7 @@ function App() {
             }
           </div>
           {/* change title starts  */}
-          <div className={`relative flex justify-between items-center bg-[rgb(29_29_29_/_48%)] p-3 mt-7 mb-4 ${savedTeamOpened ? 'outline outline-[0.3px] outline-[#a06800]' : ''}`}>
+          <div className={`relative flex justify-between items-center rounded-[4px] bg-[rgb(29_29_29_/_48%)] backdrop-blur-[3px] p-3 mt-7 mb-4 ${savedTeamOpened ? 'outline outline-[0.3px] outline-[#a06800]' : ''}`}>
 
             {/* make new team starts  */}
             <button onClick={() => { newTeam() }} className='flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] outline outline-1 outline-[#ffffff3d]'>
@@ -741,10 +741,12 @@ function App() {
             </button>
             {/* make new team ends  */}
 
-            <h1 className='flex-[0_1_65%] capitalize  rounded-sm sm:text-[1rem] text-[0.9rem]  backdrop-blur-[4px]'>
+            {/* edit title starts  */}
+            <h1 className='flex-[0_1_65%] capitalize  rounded-sm sm:text-[1rem] text-[0.9rem] '>
               {allTypeplayersAndTeams.title !== '' ? allTypeplayersAndTeams.title : 'untitled'}
               <sup onClick={() => titleInput.current.focus()} className='ml-4 text-[0.82em] text-[#c4c4c4] cursor-pointer whitespace-nowrap'>(edit Title)</sup>
             </h1>
+            {/* edit title ends  */}
 
             <div className='flex gap-3 items-center'>
               {/* save team button starts  */}
@@ -770,9 +772,9 @@ function App() {
               </button>
               {/* save team button ends  */}
 
-              {/* want to make visible on only saved team  */}
+              {/* will visible on only saved team  */}
               {savedTeamOpened &&
-                <button className='relative'>
+                <button className={`relative p-[5px] rounded-[50%] hover:bg-[#000000] ${savedTeamChanges.popup ? 'bg-[#000000]' : ''}`}>
                   <svg className='w-[20px] h-[20px] text-white rotate-90' viewBox="0 0 24 24" fill="none">
                     <path d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z" stroke="currentColor" strokeWidth="1.5" />
                     <path d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z" stroke="currentColor" strokeWidth="1.5" />
@@ -791,21 +793,21 @@ function App() {
                   {/*====  three dots ends  =====*/}
 
                   {/*==== actions starts  =====*/}
-                  <ul className={`bg-black w-max shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-30px] right-full p-1 cursor-pointer rounded-sm border-[0.4px] ${savedTeamChanges.popup ? '' : 'hidden'}`}>
+                  <ul className={`bg-black w-max shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-30px] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden ${savedTeamChanges.popup ? 'border-[0.4px] border-[#a06800]' : 'hidden'}`}>
 
                     {/*==== save changes li starts  ====*/}
-                    <li className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.saveChanges })}>
+                    <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.saveChanges })}>
                       <span>save changes</span>
                     </li>
                     {/*==== save changes li ends  ====*/}
 
                     {/*==== discard li starts  ====*/}
-                    <li className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.discardChanges })}>
+                    <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.discardChanges })}>
                       <span>discard changes</span>
                     </li>
                     {/*==== discard li ends  ====*/}
 
-                    <li className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`} onMouseDown={() => newTeam()}>
+                    <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => newTeam()}>
                       <span>remove from generator</span>
                     </li>
                   </ul>
@@ -898,7 +900,7 @@ function App() {
               </section>
               // devided teams sections ends
               :
-              <ol className='cardsContainer text-white list-inside flex flex-wrap justify-center gap-3 sm:py-5 py-4'>
+              <ol className='cardsContainer text-white list-inside flex flex-wrap justify-center gap-3 sm:py-5 mt-8 py-4'>
                 {allTypeplayersAndTeams.players.map((val, valIndex) => (
                   <li key={val + valIndex + 'players'} className={`cards md:flex-[0_0_200px] sm:flex-[0_0_150px] flex-[1_0_130px] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline-1 outline ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
                     <span>{val}</span>
@@ -976,7 +978,7 @@ function App() {
       <div ref={notifyFixed} className={`fixed hidden w-[80%] sm:max-w-[250px] capitalize text-[0.9rem] text-center top-4 left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `}>{alertMsgsState}</div>
       {/* notifcation div ends  */}
 
-      <div ref={modal} className="fixed inset-0 z-20 grid place-items-center hidden">
+      <div ref={modal} className="fixed inset-0 z-20 grid place-items-center hidden backdrop-blur-[2px]">
         <div className={`sm:max-w-[400px] max-w-[270px] text-[0.9rem] bg-black px-3 py-4 outline outline-1 outline-[#ffffff54] rounded-sm`}>
           <h3 className='text-center capitalize text-lg'>save changes ?</h3>
           <div className='p-[10px]'>
