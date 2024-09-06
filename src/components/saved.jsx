@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useLayoutEffect, useReducer, useState } from 'react'
 import { mainContext } from './context/context.js'
-import { NavLink, useNavigate } from 'react-router-dom'
+import {useNavigate } from 'react-router-dom'
 
 
 const seeMoreActions = {
@@ -14,19 +14,15 @@ const seeMoreActions = {
 function saved() {
   const { savedTeam, setsavedTeam, PageHeading } = useContext(mainContext)
   const navigate = useNavigate()
-  console.log(savedTeam)
   const [savedTeamsState, setsavedTeamsState] = useState({ saveTeams: [], openSavedTeam: null, deletedSavedTeam: null })
   const [savedTeamActionsState, setsavedTeamActionsState] = useState({ editBtnClickBy: null, seeMoreBtnClickBy: null })
 
   useLayoutEffect(() => {
-    console.log(savedTeam)
     setsavedTeamsState({ ...savedTeamsState, saveTeams: [...savedTeam] })
   }, [savedTeam])
 
 
   function seemoreActionHandlerFunc({ actionType, time, index, openedInGenerator }) {
-
-    console.log(actionType)
     switch (actionType) {
       case seeMoreActions.focusSeeMore: {
         setsavedTeamActionsState((prevState) => ({ ...prevState, seeMoreBtnClickBy: index }))
@@ -37,10 +33,7 @@ function saved() {
         break;
       }
       case seeMoreActions.deleteSavedTeam: {
-        console.log(savedTeamsState)
         const afterDeletingArr = savedTeamsState.saveTeams.filter((currentTeam, teamIndex) => { return currentTeam.savingTime !== time })
-        console.log(openedInGenerator)
-        console.log(afterDeletingArr)
         // if team is opened in generator 
         if (openedInGenerator) {
           localStorage.setItem('savedTeamOpened', JSON.stringify(false))
@@ -68,11 +61,11 @@ function saved() {
 
   function openWithGeneratorFunc({ time }) {
     const copyOfsavedTeam = [...savedTeam]
-    const resetOld = copyOfsavedTeam.map((team) => { return { ...team, openedInGenerator: false } })
-    console.log(resetOld)
+    const resetOld = copyOfsavedTeam.map((team) => { return { ...team, openedInGenerator: false } }) // reseted 
+
     const openingElm = resetOld.findIndex((elm) => { return elm.savingTime === time })
-    resetOld[openingElm].openedInGenerator = true
-    console.log(resetOld[openingElm])
+    resetOld[openingElm].openedInGenerator = true ; // opening elm value changed 
+
     localStorage.setItem('allTeamAndPlayers', JSON.stringify(resetOld[openingElm]))
     setsavedTeam([...resetOld])
     navigate('/')

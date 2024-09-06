@@ -2,8 +2,6 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap'
 import React, { useReducer, useState, useEffect, useRef, useLayoutEffect, useContext } from 'react'
 import { mainContext } from './context/context.js'
-// import { useNavigate } from 'react-router-dom'
-// import saved from './saved.jsx';
 
 const reducerTypes = {
   initial: 'initial',
@@ -16,7 +14,6 @@ const reducerTypes = {
   removeAll: 'removeAll',
   titleChange: 'titleChange',
   handleSaved: 'handleSaved',
-  openSaved: 'openSaved'
 }
 
 const alertMsgsWork = {
@@ -39,31 +36,26 @@ const reducer = (oldobj, action) => {
   let worker;
   // for adding players 
   if (action.type === reducerTypes.initial) {
-    // alert()
-    console.log({ ...action.oldobject })
     return ({ ...action.oldobject })
   }
   if (action.type === reducerTypes.addPlayer) {
     worker = { ...oldobj, players: [...oldobj.players, action.payload.playerName] }
+
+    // if teams has generated 
     if (worker.hasShuffled) {
       try {
         let flatArr = [];
         worker.teams.forEach((element, elmInd) => {
-          let a = element.teamPlayers
-          flatArr = flatArr.concat(a)
-          // console.log(element.teamPlayers)
+          let teamsArr = element.teamPlayers
+          flatArr = flatArr.concat(teamsArr)
+          // all teams teamPlayer values will be in flatArr 
         });
-        console.log(flatArr)
         if (flatArr.length < worker.players.length) {
-          console.log(worker.players[worker.players.length - 1])
           flatArr.push(worker.players[worker.players.length - 1])
-          console.log(flatArr)
           worker.players.map((element, elmInd) => {
             let startIndex = Math.floor((elmInd % worker.players.length) / worker.teams.length)
             worker.teams[(elmInd % worker.teams.length)].teamPlayers.splice(startIndex, 1, flatArr[elmInd])
-            // worker.teams[(elmInd % worker.teams.length)].teamPlayers.splice(startIndex, 1, flatArr[elmInd])
           });
-          console.log(worker)
           worker.players = [...flatArr]
           return { ...worker }
         }
@@ -71,7 +63,6 @@ const reducer = (oldobj, action) => {
         console.log(error)
       }
     }
-    console.log('end.......')
     return { ...worker }
   }
 
@@ -79,82 +70,65 @@ const reducer = (oldobj, action) => {
   else if (action.type === reducerTypes.deletePlayer) {
     worker = { ...oldobj }
     const split = action.payload.details.whichArray.split('.')
-    let [one, two] = split;
+    let [team, teamInd] = split;
+    // the teamIndex will be impty when teams has not divided and this functionality is done by hard-code
+    let playerInd = Number(action.payload.details.playerIndex)
 
-    // two='teamPlayers'
-    // console.log(one)
-    // console.log(two)
-    // console.log(split)
-    // console.log(worker?.[one][two].teamPlayers[Number(action.payload.details.playerIndex)])
-    // console.log(two ? worker?.[one][two].teamPlayers[Number(action.payload.details.playerIndex)] : worker?.[one][Number(action.payload.details.playerIndex)])
-    // console.log(action.payload.details.whichArray)
-    // console.log(Number(action.payload.details.playerIndex))
-    two ? worker?.[one][two].teamPlayers.splice(Number(action.payload.details.playerIndex), 1) : worker?.[one].splice(Number(action.payload.details.playerIndex), 1)
-    if (two) {
-      // for changing the  real players array
+    teamInd ? worker?.[team][teamInd].teamPlayers.splice(playerInd, 1) : worker?.[team].splice(playerInd, 1)
+
+    if (teamInd) {
+      // for changing the real players array
       try {
         let flatArr = [];
-        worker[one].forEach((element, elmInd) => {
+        worker[team].forEach((element, elmInd) => {
           let a = element.teamPlayers
           flatArr = flatArr.concat(a)
-          console.log(element.teamPlayers)
         });
-        console.log(flatArr)
         worker.players = [...flatArr]
       } catch (error) {
         console.log(error)
       }
     }
-    // console.log(oldobj?.[one][action.payload.details.playerIndex])
-    // console.log(oldobj?.[one]?.[two][action.payload.details.playerIndex])
-    // console.log(two ? oldobj?.[one]?.[two][action.payload.details.playerIndex] : oldobj?.[one][action.payload.details.playerIndex])
-
-    // worker.splice(action.payload.whichplayer, 1)
     return { ...worker }
-    // return { ...oldobj, players: [...worker] }
   }
 
   else if (action.type === reducerTypes.editPlayer) {
     worker = { ...oldobj }
     const split = action.payload.details.arrItemForEdit.split('.')
-    let [one, two] = split;
-    // console.log(action.payload.details)
-    if (two) {
-      worker[one][two].teamPlayers[Number(action.payload.details.editBtnClickBy)] = action.payload.details.playerName
+    let [team, teamInd] = split;
+    // the teamInd will be impty when teams has not divided 
+    let playerInd = Number(action.payload.details.editBtnClickBy)
+
+    if (teamInd) {
+      worker[team][teamInd].teamPlayers[playerInd] = action.payload.details.playerName
       // for changing the  real players array
       try {
         let flatArr = [];
-        worker[one].forEach((element, elmInd) => {
+        worker[team].forEach((element, elmInd) => {
           let a = element.teamPlayers
           flatArr = flatArr.concat(a)
-          console.log(element.teamPlayers)
         });
-        console.log(flatArr)
         worker.players = [...flatArr]
       } catch (error) {
         console.log(error)
       }
-    } else { worker[one][Number(action.payload.details.editBtnClickBy)] = action.payload.details.playerName }
-    // two ? worker?.[one][two].teamPlayers[Number(action.payload.details.playerIndex)] = action.payload.details.playerName : worker?.[one][Number(action.payload.details.playerIndex)]
-    // worker = [...oldobj.players]
-    // worker[action.payload.whichplayer] = action.payload.newplayer
+    } else { worker[team][playerInd] = action.payload.details.playerName }
+
     return { ...worker }
-    // return { ...oldobj, players: [...worker] }
   }
 
   // after changing total teams 
   else if (action.type === reducerTypes.addTeamBlur) {
     worker = { ...oldobj }
-    console.log(oldobj)
+    let newTotalTeams = Number(action.payload.newTotalTeams)
     // if input is '' or less than 2
-    if (Number(action.payload.newTotalTeams) <= 2) {
+    if (newTotalTeams <= 2) {
       worker.totalTeams = 2
       while (worker.teams.length !== 2) {
         if (worker.teams.length > worker.totalteams) {
           worker.teams.pop()
         } else {
           const name = `team${worker.teams.length + 1}`
-          console.log(name)
           worker.teams.push({ teamName: name, teamPlayers: [] })
         }
       }
@@ -164,31 +138,29 @@ const reducer = (oldobj, action) => {
     // if input is equal or greater 3
     else if (action.payload.newTotalTeams >= 3) {
       worker = { ...oldobj }
-      while (Number(worker.teams.length) !== Number(action.payload.newTotalTeams)) {
-        if (worker.teams.length > Number(action.payload.newTotalTeams)) {
+      while (Number(worker.teams.length) !== newTotalTeams) {
+        if (worker.teams.length > newTotalTeams) {
           worker.teams.pop()
         } else {
           const name = `team${worker.teams.length + 1}`
           worker.teams.push({ teamName: name, teamPlayers: [] })
         }
       }
-      return { ...worker, totalTeams: Number(action.payload.newTotalTeams), finalTotalTeams: Number(action.payload.newTotalTeams) }
+      return { ...worker, totalTeams: newTotalTeams, finalTotalTeams: newTotalTeams }
     }
 
   }
 
   else if (action.type === reducerTypes.addTeam) {
     worker = { ...oldobj }
-    console.log({ ...oldobj })
-    if (Number(action.payload.newTotalTeams) < 0) {
+    let newTotalTeams = Number(action.payload.newTotalTeams)
+    if (newTotalTeams < 0) {
       return { ...worker, finalTotalTeams: 2 }
     }
     else {
-      // alert('sfd')
-      console.log(worker)
       // while teams are not equal to the current totalteams this loop will run
-      while (Number(worker.teams.length) !== Number(action.payload.newTotalTeams)) {
-        if (worker.teams.length > Number(action.payload.newTotalTeams)) {
+      while (Number(worker.teams.length) !== newTotalTeams) {
+        if (worker.teams.length > newTotalTeams) {
           worker.teams.pop()
         } else {
           const name = `team${worker.teams.length + 1}`
@@ -198,39 +170,30 @@ const reducer = (oldobj, action) => {
       return { ...worker, totalTeams: action.payload.newTotalTeams, finalTotalTeams: 2 }
     }
   }
+
   else if (action.type === reducerTypes.teamShuffle) {
-    console.log([...action.payload.newTeams])
     return { ...oldobj, teams: [...action.payload.newTeams], hasShuffled: true }
   }
+
   else if (action.type === reducerTypes.removeAll) {
-    console.log(action.savedOpenedTeam)
     if (action.savedOpenedTeam) {
-      console.log(true)
-      const savedOpenedTeamObj = JSON.parse(JSON.stringify({ players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, title: 'Fifa team 2026', openedInGenerator: true, saved: true, savingTime: action.savedOpenedTeam.savingTime }))
-      console.log(savedOpenedTeamObj)
+      const savedOpenedTeamObj = JSON.parse(JSON.stringify({ players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, title: 'Fifa team 2026', openedInGenerator: true, saved: true, savingTime: action.savedOpenedTeam.savingTime }))      
       return savedOpenedTeamObj
     } else {
-      console.log(false)
       return { players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, title: 'Fifa team 2026' }
     }
   }
   else if (action.type === reducerTypes.titleChange) {
-    console.log('aagyi.....')
-    console.log({ ...oldobj })
     return { ...oldobj, title: action.newTitle }
   }
   else if (action.type === reducerTypes.handleSaved) {
     return { ...oldobj, saved: !oldobj.saved }
   }
-  else if (action.type === reducerTypes.openSaved) {
-    return { ...action.openSaveTeam }
-  }
   else { return { ...oldobj } }
-  // console.log(oldobj)
+
 }
 
-const savedTeamReducerActions =
-{
+const savedTeamReducerActions = {
   onblur: 'onblur',
   onfocus: 'onfocus',
   saveChanges: 'saveChanges',
@@ -238,10 +201,8 @@ const savedTeamReducerActions =
 }
 
 function App() {
-  const render = useRef(0)
   const mainInput = useRef(null)
   const titleInput = useRef(null)
-  const anim = useRef(null)
   const notifyFixed = useRef(null)
   const timeout = useRef(null);
   const modal = useRef(null)
@@ -256,35 +217,21 @@ function App() {
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({ playerName: '', arrItemForEdit: 'players', whichArray: 'players', playerIndex: null, editBtnClickBy: null, currentInputBtn: formSubmitBtnState.add })
 
   useEffect(() => {
-    render.current = render.current + 1
-    console.log('render  ' + render.current)
-    console.log(alertMsgsState)
-    console.log(differentBtnStates)
-    console.log(allTypeplayersAndTeams)
-    console.log(savedTeam)
-    console.log(PlayerInfoAndMore)
-  })
-
-  useEffect(() => {
-    console.log('checking       ' + allTypeplayersAndTeams.totalTeams)
-    // alert()
+    // while changing total team 
     if (allTypeplayersAndTeams.finalTotalTeams === allTypeplayersAndTeams.totalTeams && allTypeplayersAndTeams.hasShuffled) {
-      console.log('allTypeplayersAndTeams.finalTotalTeams, allTypeplayersAndTeams.totalTeams')
       setdifferentBtnStates({ ...differentBtnStates, needToGenerate: true })
-      // onClickGood()
     }
   }, [allTypeplayersAndTeams.finalTotalTeams, allTypeplayersAndTeams.totalTeams])
 
   function formSubmit(e) {
     e.preventDefault()
-    if (PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.edit) {
-      // while editing 
+    if (PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.edit) {// while editing       
       setAllTypeplayersAndTeams({ type: reducerTypes.editPlayer, payload: { details: { ...PlayerInfoAndMore } } });
-      // setAllTypeplayersAndTeams({ type: reducerTypes.editPlayer, payload: { whichplayer: PlayerInfoAndMore.editBtnClickBy, newplayer: PlayerInfoAndMore.playerName } });
     } else {
       setAllTypeplayersAndTeams({ type: reducerTypes.addPlayer, payload: { playerName: PlayerInfoAndMore.playerName } });
       mainInput.current.focus()
     }
+    // making to default
     setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', arrItemForEdit: null, editBtnClickBy: null, whichArray: null, whichplayer: null, currentInputBtn: formSubmitBtnState.add })
   }
 
@@ -293,13 +240,12 @@ function App() {
   }
 
   const { contextSafe } = useGSAP();
-  const onClickGood = contextSafe(async () => {
-    console.log({ ...allTypeplayersAndTeams })
+  const generateTeamFunc = contextSafe(async () => {
+
     let worker = { ...allTypeplayersAndTeams }
-    // worker.teams = [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }]
+
     let uniqueRandomsArr = new Set([])
 
-    console.log('running ......... start .......')
     await new Promise((resolve) => {
       gsap.fromTo('.cards', { rotateY: '0deg' }, { rotateY: '180deg', duration: 1, });
       setTimeout(() => {
@@ -307,17 +253,17 @@ function App() {
       }, 1000);
     })
 
-    // console.log(allTypeplayersAndTeams)
     await new Promise(async (resolve) => {
-      console.log('running .........' + new Date)
       const promises = allTypeplayersAndTeams.players.map(async (element, index) => {
+        // loop will run till player total length
         while (uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length) {
           let random = Math.floor(Math.random() * allTypeplayersAndTeams.players.length)
-          uniqueRandomsArr.add(random)
+          uniqueRandomsArr.add(random); // adding random value in  new set
         }
       });
       await Promise.all(promises);
 
+      // making teams array empty 
       const teamsArrEmpty = allTypeplayersAndTeams.teams.map(async (team, teamIndex) => {
         worker.teams[teamIndex].teamPlayers = []
         return undefined
@@ -325,86 +271,62 @@ function App() {
 
       await Promise.all(teamsArrEmpty)
 
-      console.log(worker.teams)
-      console.log(uniqueRandomsArr)
+
       const promises2 = allTypeplayersAndTeams.players.map(async (element, index) => {
-        let name = `team${index % allTypeplayersAndTeams.teams.length}`
+
         // this is dynamic start index calculator for splicing in all teams array 
         let startIndex = Math.floor((index % allTypeplayersAndTeams.players.length) / allTypeplayersAndTeams.teams.length)
-        console.log(allTypeplayersAndTeams.teams.length)
-        console.log(index % allTypeplayersAndTeams.teams.length)
-        console.log({ ...worker.teams[(index % allTypeplayersAndTeams.teams.length)] })
-        console.log(worker.teams)
-        console.log(worker.teams[(index % allTypeplayersAndTeams.teams.length)].teamPlayers)
-        worker.teams[(index % allTypeplayersAndTeams.teams.length)].teamPlayers.splice(startIndex, 1, allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]])
-        // worker.teams[(index % allTypeplayersAndTeams.teams.length)].teamPlayers.push(allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]])
+        let teamIndex = (index % allTypeplayersAndTeams.teams.length) // whichteam
+        let value = allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]] // name
+        worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value)
 
       });
 
       await Promise.all(promises2);
-      console.log('down .........' + new Date)
-      // console.log(worker)
+
+      // new object after shuffing 
       setAllTypeplayersAndTeams({ type: reducerTypes.teamShuffle, payload: { newTeams: [...worker.teams] } })
       resolve('done')
 
     })
-    // console.log('runningdfsfdfsfsf.......' + new Date)
-    // console.log(uniqueRandomsArr)
-    // console.log('done .........')
+
     gsap.fromTo('.cards', { rotateY: '180deg' }, { rotateY: '360deg', duration: 1, });
     setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false, GeneratingTeam: false, needToGenerate: false })
-    // return () => {
-    //   anim.current.removeEventListener('click', onClickGood);
-    // };
 
   });
 
 
   useLayoutEffect(() => {
     const localStogeObj = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
+    let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
     console.log(localStogeObj)
-    if (localStogeObj) {
-      console.log(localStogeObj)
-      console.log(JSON.parse(localStorage.getItem('savedTeamOpened')))
-      if (savedTeamOpened) {
-        let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
-        console.log(localSavedsaveTeam)
-        console.log(JSON.parse(JSON.stringify(savedTeamOpened)))
-        console.log(savedTeamOpened)
+    if (localStogeObj) { // if there is anything in the localhost of allTeamAndPlayers
+
+      if (savedTeamOpened) { // when there is saved team available 
         if (localSavedsaveTeam) {
           const areEqual = compareObjects(localSavedsaveTeam, JSON.parse(JSON.stringify(savedTeamOpened)));
-          /*if there is new savedTeamOpened then areEqual  will be false means  allTeamAndPlayers will get values of savedTeamOpened 
-          and or on while localSavedsaveTeam and savedTeamOpened are equal user can easily navigate to other pages without loosing current changes till manual */
-          if (areEqual) {
-            console.log(true)
+          /*if there is new savedTeamOpened then areEqual  will be false means  allTeamAndPlayers will get values of savedTeamOpened and or on while localSavedsaveTeam and savedTeamOpened are equal user can easily navigate to other pages without loosing current changes till manual */
+          if (areEqual) { // if the current object is same object in localStogeObj localhost then it will be applied  and user can freely navigate to other pages without loosing data
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           } else {
-            console.log(false)
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
           }
         }
-        else {
-          console.log(false)
+        else { // if localSavedsaveTeam has nothing then the savedTeamOpened values will be set 
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
         }
       } else {
-        let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
-        console.log(localSavedsaveTeam)
-        console.log(localStogeObj)
         if (localSavedsaveTeam && localStogeObj) {
-
-          const areEqual = compareObjects(localStogeObj, localSavedsaveTeam);
-          console.log(areEqual)
-          console.log(savedTeam)
           console.log(localSavedsaveTeam)
+          console.log(localStogeObj)
+          const areEqual = compareObjects(localStogeObj, localSavedsaveTeam);
+
           const localSavedsaveTeamExistOrnot = savedTeam.find((team) => { return team.openedInGenerator })
-          console.log(localSavedsaveTeamExistOrnot)
           if (areEqual) {
             if (localSavedsaveTeamExistOrnot) {
 
             }
             else {
-              console.log(savedTeamOpened)
               setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localSavedsaveTeam })
             }
           }
@@ -417,6 +339,7 @@ function App() {
           }
         }
         else {
+          console.log(localSavedsaveTeam)
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
         }
       }
@@ -445,27 +368,30 @@ function App() {
     console.log(msg)
 
     function popupAnim() {
-      clearTimeout(timeout.current)
-      gsap.fromTo(notifyFixed.current, { y: 30, opacity: 0.5, display: 'none' }, { y: 0, opacity: 1, display: 'block', ease: 'back', duration: 0.5 })
+      clearTimeout(timeout.current) // removing old timeout 
+      gsap.fromTo(notifyFixed.current, { bottom: 0, opacity: 0.5, display: 'none' }, { bottom: 100, opacity: 1, display: 'block', ease: 'back', duration: 0.5 })
       timeout.current = setTimeout(() => {
         gsap.to(notifyFixed.current, { opacity: 0, duration: 0.4, display: 'none' })
         setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: false, needToGenerate: false })
       }, 2000);
     }
+
+    // no changes to save
     if (msg === alertMsgs.savedTeamNoChanges) {
       setalertMsgsState(alertMsgs.savedTeamNoChanges); popupAnim()
     }
-
-    if (msg === alertMsgs.savedTeamChangesSaved) {
+    // changes saved successfully 
+    else if (msg === alertMsgs.savedTeamChangesSaved) {
       setalertMsgsState(alertMsgs.savedTeamChangesSaved); popupAnim()
     }
+
+    // changes removed successfully
     if (msg === alertMsgs.changesDiscard) {
-      const areEqual = compareObjects(allTypeplayersAndTeams, savedTeamOpened);
-      if (areEqual) {
-        setalertMsgsState(alertMsgs.nothingToDiscard); popupAnim()
-      } else {
-        setalertMsgsState(alertMsgs.changesDiscard); popupAnim()
-      }
+      setalertMsgsState(alertMsgs.changesDiscard); popupAnim()
+    }
+    // no changes to discard
+    else if (msg === alertMsgs.nothingToDiscard) {
+      setalertMsgsState(alertMsgs.nothingToDiscard); popupAnim()
     }
 
     if (allTypeplayersAndTeams.players.length < 2) {
@@ -473,7 +399,7 @@ function App() {
       if (msg === alertMsgsWork.saveTeamMsg) setalertMsgsState(alertMsgs.teamNotSaved);
       popupAnim()
     } else {
-      if (msg === alertMsgsWork.generateTeam) onClickGood();
+      if (msg === alertMsgsWork.generateTeam) generateTeamFunc();
       if (msg === alertMsgsWork.saveTeamMsg) {
         setalertMsgsState(alertMsgs.teamSaved);
         handleSaved();
@@ -483,7 +409,7 @@ function App() {
   })
 
   function handleSaved() {
-    if (differentBtnStates.savedProcessing) return;
+    if (differentBtnStates.savedProcessing) return; // for preventing the request if is under process 
     setdifferentBtnStates(prevStates => ({ ...prevStates, savedProcessing: true }));
 
     setTimeout(() => {
@@ -491,110 +417,119 @@ function App() {
     }, 1900);
 
     // after working on continuesly 3,4 on bug of changing savedTeam array objects unknowly i figured it out that the 
-    // [...] {...}  does not work that properly i thought i just make a copy of ground label i fails out when i comes to nesting 
-    // and complexiness  so i discover an alternatives of that where map and JSON methods also have some limitations but this structuredClone is better than other options . Aug/27/2024/2:19 pm 
+    // [...] {...}  does not work that properly i thought it just make a copy of ground label and fails out when i comes to nesting and complexiness  so i found an alternatives of that where map and JSON methods also have some limitations but this structuredClone is better than other options . Aug/27/2024/2:19 pm.
 
-    const newsaving = structuredClone(allTypeplayersAndTeams)
-    newsaving.openedInGenerator = false;
-    newsaving.saved = true;
-    newsaving.savingTime = new Date();
+    const newSavedWork = structuredClone(allTypeplayersAndTeams)
+    newSavedWork.openedInGenerator = false;
+    newSavedWork.saved = true;
+    newSavedWork.savingTime = new Date();
 
-    console.log({ ...allTypeplayersAndTeams })
-    const newsavedTeam = structuredClone(savedTeam)
-    console.log([...newsavedTeam])
-    newsavedTeam.push(newsaving)
-    console.log([...newsavedTeam])
-    setsavedTeam(newsavedTeam);
+    const updatedSavedTeam = structuredClone(savedTeam)
+
+    updatedSavedTeam.push(newSavedWork)
+
+    setsavedTeam(updatedSavedTeam);
   }
 
   function compareObjects(obj1, obj2) {
     const entries1 = Object.entries(obj1);
     const entries2 = Object.entries(obj2);
 
+    // if the lenth of entries is not equal 
     if (entries1.length !== entries2.length) {
       return false;
     }
 
-
-    // here  thanks to blackbox ai it hepls me to this.
+    // this for of loop code is not mine here thanks to blackbox ai it hepls me to this. 
+    // but comments are mine after understanding the working of this code .
     for (const [key, value] of entries1) {
       const value2 = obj2[key];
 
       if (typeof value === 'object' && typeof value2 === 'object') {
+        // if the values are not equal it will means objects are equal 
         if (!compareObjects(value, value2)) {
           return false;
         }
-      } else if (value !== value2) {
+      } else if (value !== value2) { // for primitive values 
         return false;
       }
     }
 
     return true;
   }
+
   function newTeam() {
-    if (savedTeamOpened) {
+    const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
+    if (savedTeamOpened) { // if there is savedTeamOpened 
       let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
       const areEqual = compareObjects(JSON.parse(JSON.stringify(allTypeplayersAndTeams)), localSavedsaveTeam);
+
+      // checking if the current and opened obj is not equal the modal will open with if() else a new team will open with else{}
       if (!areEqual) {
         modal.current.classList.remove('hidden')
       } else {
         localStorage.setItem('savedTeamOpened', JSON.stringify(false))
         localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
-        console.log(localStorage.getItem('savedTeamOpened'))
+
+        // setting states to default values
         setdifferentBtnStates({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
         setAllTypeplayersAndTeams({ type: reducerTypes.removeAll })
-        const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
+
+        // setting resetted obj 
         setsavedTeam([...resetOld])
       }
     }
     else {
+      // setting states to default values
       setdifferentBtnStates({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
       setAllTypeplayersAndTeams({ type: reducerTypes.removeAll })
-      const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
+
+      // setting resetted obj 
       setsavedTeam([...resetOld])
     }
   }
 
   const savedTeamFunc = ({ type }) => {
+    const areEqual = compareObjects(allTypeplayersAndTeams, savedTeamOpened);
     switch (type) {
       case savedTeamReducerActions.onfocus:
         {
-          setSavedTeamChanges((oldstate) => ({ ...oldstate, popup: true }))
+          setSavedTeamChanges((oldstate) => ({ ...oldstate, popup: true })) // popup visible 
         }
         break;
       case savedTeamReducerActions.onblur: {
-        setSavedTeamChanges((oldstate) => ({ ...oldstate, popup: false }))
+        setSavedTeamChanges((oldstate) => ({ ...oldstate, popup: false })) // popup hidden
       };
         break;
       case savedTeamReducerActions.saveChanges:
         {
-          const areEqual = compareObjects(allTypeplayersAndTeams, savedTeamOpened);
-          console.log(allTypeplayersAndTeams)
-          console.log(savedTeamOpened)
+          // const areEqual = compareObjects(allTypeplayersAndTeams, savedTeamOpened);
+
+          // no changes to save 
           if (areEqual) {
             checkingFunction(alertMsgs.savedTeamNoChanges)
           }
           else {
+            // structuredClone best way to copy nested arr , obj
             const currentTeam = structuredClone(allTypeplayersAndTeams)
-            console.log(currentTeam)
-            // const hasSavingTime = 'savingTime' in currentTeam
-            // console.log(hasSavingTime)
+            const copiedsavedTeam = structuredClone(savedTeam)
 
-            const newsavedTeam = structuredClone(savedTeam)
-            const ind = newsavedTeam.findIndex((savedteam) => { return savedteam.openedInGenerator })
-            // if (!hasSavingTime) {
-            //   console.log(!hasSavingTime)
-            //   currentTeam.savingTime = new Date()
-            // }
-            newsavedTeam[ind] = currentTeam
-            setsavedTeam(newsavedTeam)
-            checkingFunction(alertMsgs.savedTeamChangesSaved)
+            const openedArrIndex = copiedsavedTeam.findIndex(savedteam => savedteam.openedInGenerator); // finding opened array index 
+
+            copiedsavedTeam[openedArrIndex] = currentTeam // pushing current allTypeplayersAndTeams copy in copy of savedTeam 
+            setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
+            checkingFunction(alertMsgs.savedTeamChangesSaved) // popup msg for changes saved
           }
         }
         break;
       case savedTeamReducerActions.discardChanges:
         {
-          checkingFunction(alertMsgs.changesDiscard)
+          // if savedTeamOpened and current working obj is equal 
+          if (areEqual) {
+            checkingFunction(alertMsgs.nothingToDiscard);
+          } else {
+            checkingFunction(alertMsgs.changesDiscard);
+          }
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
         }
         break;
@@ -683,7 +618,7 @@ function App() {
           <div className='flex justify-center my-4 text-center gap-2'>
 
             {/* generate button starts */}
-            <button onClick={() => { setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: true }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.add, playerName: '', playerIndex: null, editBtnClickBy: null, whichArray: null }); checkingFunction(alertMsgsWork.generateTeam) }} ref={anim} className={`flex gap-2 items-center bg-[#ffff0004] outline-lime-50 text-[0.95rem] font-medium  outline-1 outline px-3 py-2 rounded-sm ${differentBtnStates.needToGenerate ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)]' : 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_111%)]'} ${differentBtnStates.GeneratingTeam ? 'btnLoadTime' : ''} `} disabled={differentBtnStates.GeneratingTeam}>
+            <button onClick={() => { setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: true }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.add, playerName: '', playerIndex: null, editBtnClickBy: null, whichArray: null }); checkingFunction(alertMsgsWork.generateTeam) }} className={`flex gap-2 items-center bg-[#ffff0004] outline-lime-50 text-[0.95rem] font-medium  outline-1 outline px-3 py-2 rounded-sm ${differentBtnStates.needToGenerate ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)]' : 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_111%)]'} ${differentBtnStates.GeneratingTeam ? 'btnLoadTime' : ''} `} disabled={differentBtnStates.GeneratingTeam}>
               <span>{!differentBtnStates.needToGenerate ? 'Generate' : 'Recalculate Teams'}</span>
               <span>
                 {differentBtnStates.GeneratingTeam ?
@@ -832,7 +767,7 @@ function App() {
                           <span>{val}</span>
 
                           {/*== backface of card starts  ==*/}
-                          <div className="back  absolute inset-0 rounded-[inherit]"></div>
+                          <div className="back absolute inset-0 rounded-[inherit]"></div>
 
                           {/*== backface of card ends  ==*/}
 
@@ -841,9 +776,7 @@ function App() {
                             <label className='inset-0 w-[100%] h-[100%] opacity-0 absolute' htmlFor={`${team.teamName}-${valIndex}`}>
                               <input onFocus={() => {
                                 setPlayerInfoAndMore({ ...PlayerInfoAndMore, whichArray: `teams.${teamValIndex}`, playerIndex: valIndex })
-                              }} onBlur={() => {
-                                setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerIndex: null })
-                              }} className='inset-0 w-[100%] h-[100%] cursor-pointer absolute' id={`${team.teamName}-${valIndex}`} type="text" readOnly />
+                              }} onBlur={() => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerIndex: null }) }} className='inset-0 w-[100%] h-[100%] cursor-pointer absolute' id={`${team.teamName}-${valIndex}`} type="text" readOnly />
                             </label>
                             <span>
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none">
@@ -972,10 +905,11 @@ function App() {
         </section>
       </div>
 
-      {/* notifcation div starts  */}
       {/* ${alertMsgsState === alertMsgs.teamSaved || alertMsgsState === alertMsgs.savedTeamChangesSaved || alertMsgs.changesDiscard ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)] text-[#a3e635] outline-[#a3e635]' : 'bg-[linear-gradient(to_bottom,_black_80%,rgb(255_40_2)_102%)] text-[red] outline-[red]'} */}
       {/* ${alertMsgsState === alertMsgs.nothingToDiscard || alertMsgs.savedTeamNoChanges || alertMsgs.teamNotSaved ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(255_40_2)_102%)] text-[red] outline-[red]':'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)] text-[#a3e635] outline-[#a3e635]'} */}
-      <div ref={notifyFixed} className={`fixed hidden w-[80%] sm:max-w-[250px] capitalize text-[0.9rem] text-center top-4 left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `}>{alertMsgsState}</div>
+
+      {/* notifcation div starts  */}
+      <div ref={notifyFixed} className={`fixed hidden max-w-[80%] px-3 sm:max-w-[250px] capitalize text-[0.9rem] text-center  left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `}>{alertMsgsState}</div>
       {/* notifcation div ends  */}
 
       <div ref={modal} className="fixed inset-0 z-20 grid place-items-center hidden backdrop-blur-[2px]">
