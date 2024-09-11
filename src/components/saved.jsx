@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useLayoutEffect, useReducer, useState } from 'react'
+import { useContext, useLayoutEffect, useState } from 'react'
 import { mainContext } from './context/context.js'
-import {useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 const seeMoreActions = {
@@ -12,7 +12,7 @@ const seeMoreActions = {
 }
 
 function saved() {
-  const { savedTeam, setsavedTeam, PageHeading } = useContext(mainContext)
+  const { savedTeam, setsavedTeam, PageHeading, compareObjects, modalOpen, setmodalOpen } = useContext(mainContext)
   const navigate = useNavigate()
   const [savedTeamsState, setsavedTeamsState] = useState({ saveTeams: [], openSavedTeam: null, deletedSavedTeam: null })
   const [savedTeamActionsState, setsavedTeamActionsState] = useState({ editBtnClickBy: null, seeMoreBtnClickBy: null })
@@ -45,11 +45,20 @@ function saved() {
         break;
       }
       case seeMoreActions.removeFromGenerator: {
-        // this local storage data will remove the current opening object from the generator
-        localStorage.setItem('savedTeamOpened', JSON.stringify(false))
-        localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
-        const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
-        setsavedTeam([...resetOld])
+
+        let changesSavedOrnot = compareObjects(JSON.parse(localStorage.getItem('savedTeamOpened')), JSON.parse(localStorage.getItem('allTeamAndPlayers')))
+        // checking unsaved changes 
+    
+        if (changesSavedOrnot) {
+          // this local storage data will remove the current opening object from the generator
+          localStorage.setItem('savedTeamOpened', JSON.stringify(false))
+          localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
+          const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
+          setsavedTeam([...resetOld])
+        }
+        else {
+          setmodalOpen(true)
+        }
       }
         break;
       default: {
@@ -60,15 +69,33 @@ function saved() {
   }
 
   function openWithGeneratorFunc({ time }) {
-    const copyOfsavedTeam = [...savedTeam]
-    const resetOld = copyOfsavedTeam.map((team) => { return { ...team, openedInGenerator: false } }) // reseted 
+    function open() {
+      const copyOfsavedTeam = [...savedTeam]
+      const resetOld = copyOfsavedTeam.map((team) => { return { ...team, openedInGenerator: false } }) // reseted 
 
-    const openingElm = resetOld.findIndex((elm) => { return elm.savingTime === time })
-    resetOld[openingElm].openedInGenerator = true ; // opening elm value changed 
+      const openingElm = resetOld.findIndex((elm) => { return elm.savingTime === time })
+      resetOld[openingElm].openedInGenerator = true; // opening elm value changed 
 
-    localStorage.setItem('allTeamAndPlayers', JSON.stringify(resetOld[openingElm]))
-    setsavedTeam([...resetOld])
-    navigate('/')
+      localStorage.setItem('allTeamAndPlayers', JSON.stringify(resetOld[openingElm]))
+      setsavedTeam([...resetOld])
+      navigate('/')
+    }
+    const localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
+    const localallTeamAndPlayers = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
+
+
+    if (localSavedsaveTeam) { // saved team opened or not 
+      let changesSavedOrnot = compareObjects(localSavedsaveTeam, localallTeamAndPlayers)
+     
+      // checking changes are saved or not
+      if (changesSavedOrnot) {
+        open()
+      } else {
+        setmodalOpen(true)
+      }
+    } else {
+      open()
+    }
   }
 
   return (
@@ -80,9 +107,9 @@ function saved() {
             <section className='grid gap-3 w-full sm:max-w-[70%] mx-auto text-[0.9rem] sm:text-[1rem] rounded-sm'>
               {
                 savedTeamsState.saveTeams.toReversed().map((team, teamIndex) => (
-                  <div key={team.title + team.savingTime} className='flex gap-3 items-center flex-[1_1_300px] justify-evenly p-[10px] outline outline-1 outline-[#303030] bg-[#000000cc] rounded-[100px]'>
+                  <div key={team.title + team.savingTime} className={`flex gap-3 items-center flex-[1_1_300px] justify-evenly p-[10px] bg-[#000000cc] rounded-[100px] outline outline-1 ${team.openedInGenerator === true ? 'outline-[#a06800]' : 'outline-[#303030]'} ${savedTeamActionsState.seeMoreBtnClickBy === teamIndex && !team.openedInGenerator ? 'outline-[#303030]' : ''} ${team.openedInGenerator && savedTeamActionsState.seeMoreBtnClickBy === teamIndex ? 'outline-[#a06800]' : 'outline-[#303030]'}`}>
                     {/* matching nav bg with this  */}
-                    <p className={`flex justify-center items-center rounded-[50%] bg-[#141414] flex-[0_0_50px] h-[50px]  ${ team.openedInGenerator === true ? 'outline outline-1 outline-[#a06800]' : ''} ${savedTeamActionsState.seeMoreBtnClickBy === teamIndex && !team.openedInGenerator ? 'outline outline-1 outline-[#ffffff]':''} ${ team.openedInGenerator && savedTeamActionsState.seeMoreBtnClickBy === teamIndex ? 'outline outline-1 outline-[#a06800]' : ''}`}>
+                    <p className={`flex justify-center items-center rounded-[50%] bg-[#141414] flex-[0_0_50px] h-[50px]  ${team.openedInGenerator === true ? 'outline outline-1 outline-[#a06800]' : ''} ${savedTeamActionsState.seeMoreBtnClickBy === teamIndex && !team.openedInGenerator ? 'outline outline-1 outline-[#ffffff]' : ''} ${team.openedInGenerator && savedTeamActionsState.seeMoreBtnClickBy === teamIndex ? 'outline outline-1 outline-[#a06800]' : ''}`}>
                       {(savedTeamsState.saveTeams.toReversed().length - teamIndex)}
                     </p>
                     <div>
@@ -110,7 +137,7 @@ function saved() {
 
                       {/* matching nav bg with this  */}
                       <ul className={`bg-[#141414] w-max shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-30px] right-full cursor-pointer rounded-[5px] border-[0.4px] overflow-hidden ${savedTeamActionsState.seeMoreBtnClickBy === teamIndex ? '' : 'hidden'}
-                      ${ team.openedInGenerator === true ? 'border-[0.4px] border-[#a06800]' : ''}`}>
+                      ${team.openedInGenerator === true ? 'border-[0.4px] border-[#a06800]' : ''}`}>
                         <li onMouseDown={() => {
                           seemoreActionHandlerFunc({ actionType: seeMoreActions.deleteSavedTeam, time: team.savingTime, openedInGenerator: team.openedInGenerator, index: null })
                         }} className='capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#000000cc]'>delete</li>
@@ -122,7 +149,7 @@ function saved() {
                               remove from generator
                             </li>
                             :
-                            <li className='capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#000000cc]' onMouseDown={(e) => { e.preventDefault(); openWithGeneratorFunc({ time: team.savingTime }) }}>
+                            <li className='capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#000000cc]' onMouseDown={(e) => { openWithGeneratorFunc({ time: team.savingTime }) }}>
                               open with generator
                             </li>
                         }

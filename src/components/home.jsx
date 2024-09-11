@@ -1,7 +1,7 @@
 import { useGSAP } from '@gsap/react';
-import gsap from 'gsap'
-import React, { useReducer, useState, useEffect, useRef, useLayoutEffect, useContext } from 'react'
-import { mainContext } from './context/context.js'
+import gsap from 'gsap';
+import { useReducer, useState, useEffect, useRef, useLayoutEffect, useContext } from 'react';
+import { mainContext } from './context/context.js';
 
 const reducerTypes = {
   initial: 'initial',
@@ -22,7 +22,7 @@ const alertMsgsWork = {
   savedTeamChangesWork: 'saved Team Changes Work'
 }
 
-const alertMsgs = {
+export const alertMsgs = {
   teamSaved: 'saved successfully',
   teamNotSaved: 'minimum 2 players required to save',
   notGenerated: 'minimum 2 players required',
@@ -193,7 +193,7 @@ const reducer = (oldobj, action) => {
 
 }
 
-const savedTeamReducerActions = {
+export const savedTeamReducerActions = {
   onblur: 'onblur',
   onfocus: 'onfocus',
   saveChanges: 'saveChanges',
@@ -203,12 +203,8 @@ const savedTeamReducerActions = {
 function App() {
   const mainInput = useRef(null)
   const titleInput = useRef(null)
-  const notifyFixed = useRef(null)
-  const timeout = useRef(null);
-  const modal = useRef(null)
-  const { savedTeam, setsavedTeam } = useContext(mainContext)
+  const { savedTeam, setsavedTeam ,compareObjects, setmodalOpen,setalertMsgsState,popupAnim} = useContext(mainContext)
   const savedTeamOpened = structuredClone(savedTeam.find((savedteam) => { return savedteam.openedInGenerator }))
-  const [alertMsgsState, setalertMsgsState] = useState('minimum 2 players required')
   const formSubmitBtnState = { add: 'add', edit: 'editing' }
   const [differentBtnStates, setdifferentBtnStates] = useState({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
   const [allTypeplayersAndTeams, setAllTypeplayersAndTeams] = useReducer(reducer, { players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, saved: false, title: 'Fifa team 2026' })
@@ -298,8 +294,7 @@ function App() {
 
   useLayoutEffect(() => {
     const localStogeObj = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
-    let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
-    console.log(localStogeObj)
+    let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))    
     if (localStogeObj) { // if there is anything in the localhost of allTeamAndPlayers
 
       if (savedTeamOpened) { // when there is saved team available 
@@ -316,9 +311,7 @@ function App() {
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
         }
       } else {
-        if (localSavedsaveTeam && localStogeObj) {
-          console.log(localSavedsaveTeam)
-          console.log(localStogeObj)
+        if (localSavedsaveTeam && localStogeObj) {                    
           const areEqual = compareObjects(localStogeObj, localSavedsaveTeam);
 
           const localSavedsaveTeamExistOrnot = savedTeam.find((team) => { return team.openedInGenerator })
@@ -330,16 +323,14 @@ function App() {
               setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localSavedsaveTeam })
             }
           }
-          else {
-            console.log(localStogeObj)
+          else {            
             if (localSavedsaveTeamExistOrnot) {
 
             }
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           }
         }
-        else {
-          console.log(localSavedsaveTeam)
+        else {          
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
         }
       }
@@ -349,32 +340,19 @@ function App() {
   useLayoutEffect(() => {
     // here i insure that savedTeamOpened is not undefined 
     if (savedTeamOpened) {
-      try {
-        console.log(JSON.parse(localStorage.getItem('savedTeamOpened')))
+      try {        
       } catch (e) { console.log(e) }
       localStorage.setItem('savedTeamOpened', JSON.stringify(savedTeamOpened))
-      try {
-        console.log(JSON.parse(localStorage.getItem('savedTeamOpened')))
+      try {        
       } catch (e) { console.log(e) }
     }
   }, [savedTeamOpened])
 
   useLayoutEffect(() => {
-    console.log(allTypeplayersAndTeams)
     localStorage.setItem('allTeamAndPlayers', JSON.stringify(allTypeplayersAndTeams))
   }, [allTypeplayersAndTeams])
 
   const checkingFunction = contextSafe((msg = 'default') => {
-    console.log(msg)
-
-    function popupAnim() {
-      clearTimeout(timeout.current) // removing old timeout 
-      gsap.fromTo(notifyFixed.current, { bottom: 0, opacity: 0.5, display: 'none' }, { bottom: 100, opacity: 1, display: 'block', ease: 'back', duration: 0.5 })
-      timeout.current = setTimeout(() => {
-        gsap.to(notifyFixed.current, { opacity: 0, duration: 0.4, display: 'none' })
-        setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: false, needToGenerate: false })
-      }, 2000);
-    }
 
     // no changes to save
     if (msg === alertMsgs.savedTeamNoChanges) {
@@ -431,32 +409,6 @@ function App() {
     setsavedTeam(updatedSavedTeam);
   }
 
-  function compareObjects(obj1, obj2) {
-    const entries1 = Object.entries(obj1);
-    const entries2 = Object.entries(obj2);
-
-    // if the lenth of entries is not equal 
-    if (entries1.length !== entries2.length) {
-      return false;
-    }
-
-    // this for of loop code is not mine here thanks to blackbox ai it hepls me to this. 
-    // but comments are mine after understanding the working of this code .
-    for (const [key, value] of entries1) {
-      const value2 = obj2[key];
-
-      if (typeof value === 'object' && typeof value2 === 'object') {
-        // if the values are not equal it will means objects are equal 
-        if (!compareObjects(value, value2)) {
-          return false;
-        }
-      } else if (value !== value2) { // for primitive values 
-        return false;
-      }
-    }
-
-    return true;
-  }
 
   function newTeam() {
     const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
@@ -466,7 +418,7 @@ function App() {
 
       // checking if the current and opened obj is not equal the modal will open with if() else a new team will open with else{}
       if (!areEqual) {
-        modal.current.classList.remove('hidden')
+        setmodalOpen(true)
       } else {
         localStorage.setItem('savedTeamOpened', JSON.stringify(false))
         localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
@@ -503,8 +455,6 @@ function App() {
         break;
       case savedTeamReducerActions.saveChanges:
         {
-          // const areEqual = compareObjects(allTypeplayersAndTeams, savedTeamOpened);
-
           // no changes to save 
           if (areEqual) {
             checkingFunction(alertMsgs.savedTeamNoChanges)
@@ -632,7 +582,6 @@ function App() {
                     <path d="M18.3635 18.3635L16.2422 16.2422" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M7.75804 7.75804L5.63672 5.63672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
-
                   :
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" color="#a3e635" fill="none">
                     <path d="M14 12.6483L16.3708 10.2775C16.6636 9.98469 16.81 9.83827 16.8883 9.68032C17.0372 9.3798 17.0372 9.02696 16.8883 8.72644C16.81 8.56849 16.6636 8.42207 16.3708 8.12923C16.0779 7.83638 15.9315 7.68996 15.7736 7.61169C15.473 7.46277 15.1202 7.46277 14.8197 7.61169C14.6617 7.68996 14.5153 7.83638 14.2225 8.12923L11.8517 10.5M14 12.6483L5.77754 20.8708C5.4847 21.1636 5.33827 21.31 5.18032 21.3883C4.8798 21.5372 4.52696 21.5372 4.22644 21.3883C4.06849 21.31 3.92207 21.1636 3.62923 20.8708C3.33639 20.5779 3.18996 20.4315 3.11169 20.2736C2.96277 19.973 2.96277 19.6202 3.11169 19.3197C3.18996 19.1617 3.33639 19.0153 3.62923 18.7225L11.8517 10.5M14 12.6483L11.8517 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -903,31 +852,7 @@ function App() {
               </ol>
           }
         </section>
-      </div>
-
-      {/* ${alertMsgsState === alertMsgs.teamSaved || alertMsgsState === alertMsgs.savedTeamChangesSaved || alertMsgs.changesDiscard ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)] text-[#a3e635] outline-[#a3e635]' : 'bg-[linear-gradient(to_bottom,_black_80%,rgb(255_40_2)_102%)] text-[red] outline-[red]'} */}
-      {/* ${alertMsgsState === alertMsgs.nothingToDiscard || alertMsgs.savedTeamNoChanges || alertMsgs.teamNotSaved ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(255_40_2)_102%)] text-[red] outline-[red]':'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)] text-[#a3e635] outline-[#a3e635]'} */}
-
-      {/* notifcation div starts  */}
-      <div ref={notifyFixed} className={`fixed hidden max-w-[80%] px-3 sm:max-w-[250px] capitalize text-[0.9rem] text-center  left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `}>{alertMsgsState}</div>
-      {/* notifcation div ends  */}
-
-      <div ref={modal} className="fixed inset-0 z-20 grid place-items-center hidden backdrop-blur-[2px]">
-        <div className={`sm:max-w-[400px] max-w-[270px] text-[0.9rem] bg-black px-3 py-4 outline outline-1 outline-[#ffffff54] rounded-sm`}>
-          <h3 className='text-center capitalize text-lg'>save changes ?</h3>
-          <div className='p-[10px]'>
-            <p className='text-[#d1d1d1]'>
-              would you like to save current changes in
-              <span className='whitespace-nowrap'> {savedTeamOpened?.title} ?</span>
-            </p>
-          </div>
-          <div className='text-end mt-1 text-[0.9em]'>
-            <button onClick={() => { savedTeamFunc({ type: savedTeamReducerActions.saveChanges }); modal.current.classList.add('hidden'); }} className='capitalize rounded-sm py-1 px-2 bg-[#1364ffde] '>save</button>
-            <button onClick={() => { savedTeamFunc({ type: savedTeamReducerActions.discardChanges }); modal.current.classList.add('hidden'); }} className='capitalize rounded-sm py-1 px-2 bg-[#e8252538]  ml-2'>discard</button>
-          </div>
-        </div>
-      </div>
-
+      </div>     
     </main>
   )
 }

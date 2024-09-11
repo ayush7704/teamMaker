@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { mainContext } from './context/context'
 function howTo() {
   const { PageHeading } = useContext(mainContext)
@@ -95,7 +95,7 @@ export default howTo
 
 function HowToExamples({ element, title }) {
   return (
-    <div className='grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center gap-2'>
+    <div className='grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center gap-5'>
       <div className='flex justify-start'>
         <p className='text-[0.9rem]'>{title}</p>
       </div>
