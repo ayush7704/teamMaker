@@ -27,7 +27,7 @@ function navbar() {
                                     {elm.svg}
                                 </span>
                             </p>
-                            <p className='capitalize text-nowrap'>{elm.name}</p>
+                            <p className='capitalize text-nowrap tracking-[0.6px]'>{elm.name}</p>
                         </NavLink>
                     ))
             }
@@ -61,7 +61,7 @@ function navbar() {
                                 {elm.svg}
                             </span>
                         </p>
-                        <p className='capitalize text-nowrap'>{elm.name}</p>
+                        <p className='capitalize text-nowrap tracking-[0.6px]'>{elm.name}</p>
                     </NavLink>
                 ))
 

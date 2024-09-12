@@ -30,6 +30,7 @@ export const alertMsgs = {
   savedTeamChangesSaved: 'changes saved successfully!',
   changesDiscard: 'changes removed successfully!',
   nothingToDiscard: 'nothing to discard',
+  teamDeleted: 'worked removed successfully!'
 }
 
 const reducer = (oldobj, action) => {
@@ -177,7 +178,7 @@ const reducer = (oldobj, action) => {
 
   else if (action.type === reducerTypes.removeAll) {
     if (action.savedOpenedTeam) {
-      const savedOpenedTeamObj = JSON.parse(JSON.stringify({ players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, title: 'Fifa team 2026', openedInGenerator: true, saved: true, savingTime: action.savedOpenedTeam.savingTime }))      
+      const savedOpenedTeamObj = JSON.parse(JSON.stringify({ players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, title: 'Fifa team 2026', openedInGenerator: true, saved: true, savingTime: action.savedOpenedTeam.savingTime }))
       return savedOpenedTeamObj
     } else {
       return { players: [], finalTotalTeams: 2, totalTeams: 2, teams: [{ teamName: 'team1', teamPlayers: [] }, { teamName: 'team2', teamPlayers: [] }], hasShuffled: false, title: 'Fifa team 2026' }
@@ -203,7 +204,7 @@ export const savedTeamReducerActions = {
 function App() {
   const mainInput = useRef(null)
   const titleInput = useRef(null)
-  const { savedTeam, setsavedTeam ,compareObjects, setmodalOpen,setalertMsgsState,popupAnim} = useContext(mainContext)
+  const { savedTeam, setsavedTeam, compareObjects, setmodalOpen, setalertMsgsState, popupAnim } = useContext(mainContext)
   const savedTeamOpened = structuredClone(savedTeam.find((savedteam) => { return savedteam.openedInGenerator }))
   const formSubmitBtnState = { add: 'add', edit: 'editing' }
   const [differentBtnStates, setdifferentBtnStates] = useState({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
@@ -211,6 +212,18 @@ function App() {
   const [savedTeamChanges, setSavedTeamChanges] = useState({ popup: false })
 
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({ playerName: '', arrItemForEdit: 'players', whichArray: 'players', playerIndex: null, editBtnClickBy: null, currentInputBtn: formSubmitBtnState.add })
+
+  useLayoutEffect(() => {
+    // temporary solution of 
+    //  main reducer object was not updating itself even after removing latest changes from saved work while we are on home page  
+    // it had to navigate on other pages for updating value
+    if (typeof JSON.parse(localStorage.getItem('savedTeamOpened')) === 'object') {
+      const areEqual = compareObjects(JSON.parse(localStorage.getItem('allTeamAndPlayers')), JSON.parse(localStorage.getItem('savedTeamOpened')))
+      if (areEqual) {
+        setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
+      }
+    }
+  }, [savedTeam])
 
   useEffect(() => {
     // while changing total team 
@@ -294,7 +307,7 @@ function App() {
 
   useLayoutEffect(() => {
     const localStogeObj = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
-    let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))    
+    let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
     if (localStogeObj) { // if there is anything in the localhost of allTeamAndPlayers
 
       if (savedTeamOpened) { // when there is saved team available 
@@ -311,7 +324,7 @@ function App() {
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
         }
       } else {
-        if (localSavedsaveTeam && localStogeObj) {                    
+        if (localSavedsaveTeam && localStogeObj) {
           const areEqual = compareObjects(localStogeObj, localSavedsaveTeam);
 
           const localSavedsaveTeamExistOrnot = savedTeam.find((team) => { return team.openedInGenerator })
@@ -323,27 +336,28 @@ function App() {
               setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localSavedsaveTeam })
             }
           }
-          else {            
+          else {
             if (localSavedsaveTeamExistOrnot) {
 
             }
             setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
           }
         }
-        else {          
+        else {
           setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: localStogeObj })
         }
       }
     }
   }, [])
 
+
   useLayoutEffect(() => {
     // here i insure that savedTeamOpened is not undefined 
     if (savedTeamOpened) {
-      try {        
+      try {
       } catch (e) { console.log(e) }
       localStorage.setItem('savedTeamOpened', JSON.stringify(savedTeamOpened))
-      try {        
+      try {
       } catch (e) { console.log(e) }
     }
   }, [savedTeamOpened])
@@ -353,7 +367,9 @@ function App() {
   }, [allTypeplayersAndTeams])
 
   const checkingFunction = contextSafe((msg = 'default') => {
-
+    setTimeout(() => {
+      setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: false, needToGenerate: false })
+    }, 2000);
     // no changes to save
     if (msg === alertMsgs.savedTeamNoChanges) {
       setalertMsgsState(alertMsgs.savedTeamNoChanges); popupAnim()
@@ -513,7 +529,7 @@ function App() {
           {/* add title div starts  */}
           <div className='p-2'>
             <label htmlFor="titleForGenerationTeam" className='cursor-pointer block'>Title</label>
-            <input ref={titleInput} value={allTypeplayersAndTeams.title} onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.titleChange, newTitle: e.target.value })} type="text" name="titleForGenerationTeam" id='titleForGenerationTeam' placeholder='Title' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] backdrop-blur-[4px]' />
+            <input ref={titleInput} value={allTypeplayersAndTeams.title} onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.titleChange, newTitle: e.target.value })} type="text" name="titleForGenerationTeam" id='titleForGenerationTeam' placeholder='Title' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] backdrop-blur-[12px]' />
           </div>
           {/* add title div ends  */}
 
@@ -524,7 +540,7 @@ function App() {
         <form onSubmit={formSubmit} onReset={formReset} className='lg:max-w-[45%] sm:max-w-[75%] mx-auto px-2'>
           <div className='flex p-2 items-center gap-2'>
             {/* main input btn starts  */}
-            <div className='relative flex-1 backdrop-blur-[4px]'>
+            <div className='relative flex-1 backdrop-blur-[12px]'>
 
               <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] pr-[40px]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
 
@@ -565,6 +581,8 @@ function App() {
         {/* form ends  */}
 
         <section className='py-[25px]'>
+
+          {/* generate & clear starts  */}
           <div className='flex justify-center my-4 text-center gap-2'>
 
             {/* generate button starts */}
@@ -611,6 +629,8 @@ function App() {
               // clear all button ends 
             }
           </div>
+          {/* generate & clear ends  */}
+
           {/* change title starts  */}
           <div className={`relative flex justify-between items-center rounded-[4px] bg-[rgb(29_29_29_/_48%)] backdrop-blur-[3px] p-3 mt-7 mb-4 ${savedTeamOpened ? 'outline outline-[0.3px] outline-[#a06800]' : ''}`}>
 
@@ -705,11 +725,11 @@ function App() {
             allTypeplayersAndTeams.hasShuffled ?
 
               // devided teams sections starts
-              <section className='flex flex-wrap gap-x-3 gap-y-7 py-5'>
+              <section className='flex flex-wrap gap-x-3 gap-y-7 py-5 text-[1.08rem]'>
                 {allTypeplayersAndTeams.teams.map((team, teamValIndex) => (
                   <div key={teamValIndex} className={`md:flex-[1_0_200px] sm:flex-[1_0_150px] flex-[1_0_130px]`}>
-                    <h1 className='mb-4 text-center text-[1.08rem] font-medium'>Team {(teamValIndex + 1)}</h1>
-                    <ol className='cardsContainer flex flex-wrap justify-center gap-3 list-inside relative '>
+                    <h1 className='mb-4 text-center text-[1em] font-medium'>Team {(teamValIndex + 1)}</h1>
+                    <ol className='cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.9em]'>
                       {team.teamPlayers.map((val, valIndex) => (
 
                         <li key={`${team.teamName}-${valIndex}`} className={`cards md:flex-[0_0_200px] sm:flex-[0_0_150px] flex-[1_0_130px] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline outline-1   ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
@@ -738,7 +758,7 @@ function App() {
                           {/*====  three dots ends  =====*/}
 
                           {/*==== actions starts  =====*/}
-                          <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[30px] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'} `}>
+                          <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_15px_-1px_#000000b8] text-[0.8em] absolute z-[1] top-[30px] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'} `}>
 
                             {/*==== editing li starts  ====*/}
                             <li onMouseDown={() => {
@@ -852,7 +872,7 @@ function App() {
               </ol>
           }
         </section>
-      </div>     
+      </div>
     </main>
   )
 }

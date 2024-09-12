@@ -18,8 +18,7 @@ function ContextProvider({ children }) {
         clearTimeout(timeout.current) // removing old timeout 
         gsap.fromTo('.fixedmsg', { bottom: 0, opacity: 0.5, display: 'none' }, { bottom: 100, opacity: 1, display: 'block', ease: 'back', duration: 0.5 })
         timeout.current = setTimeout(() => {
-            gsap.to('.fixedmsg', { opacity: 0, duration: 0.4, display: 'none' })
-            // setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: false, needToGenerate: false })
+            gsap.to('.fixedmsg', { opacity: 0, duration: 0.4, display: 'none' })            
         }, 2000);
     })
 
@@ -98,7 +97,7 @@ const Modal = () => {
             case savedTeamReducerActions.saveChanges:
                 {
                     copiedsavedTeam[openedArrIndex] = currentTeam // pushing current allTypeplayersAndTeams copy in copy of savedTeam 
-                    localStorage.setItem('savedTeamOpened', JSON.stringify(currentTeam))
+                    localStorage.setItem('savedTeamOpened', JSON.stringify(currentTeam)) //updating with latest changes
                     setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
                     setalertMsgsState(alertMsgs.savedTeamChangesSaved) // popup msg for changes saved
                     popupAnim()
@@ -108,6 +107,11 @@ const Modal = () => {
                 {
                     localStorage.setItem('allTeamAndPlayers', JSON.stringify(savedTeamOpened))
                     setalertMsgsState(alertMsgs.changesDiscard)
+                    copiedsavedTeam[openedArrIndex] = savedTeamOpened
+                    console.log(copiedsavedTeam)
+                    console.log(openedArrIndex)
+                    console.log(savedTeamOpened)
+                    setsavedTeam(copiedsavedTeam)
                     popupAnim()
                 }
                 break;
@@ -141,7 +145,7 @@ const Notification = () => {
     return (
         <>
             {/* notifcation div starts  */}
-            < div className={`fixedmsg fixed hidden w-max px-3 sm:max-w-[250px] capitalize text-[0.9rem] text-center  left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `
+            < div className={`fixedmsg fixed hidden w-max px-3 sm:max-w-[270px] capitalize text-[0.9rem] text-center  left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `
             }> {alertMsgsState}</div >
             {/* notifcation div ends  */}
         </>

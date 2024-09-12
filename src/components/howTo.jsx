@@ -83,7 +83,7 @@ function howTo() {
         </div>
         {/* save your work locally in the browser ends */}
 
-        <h2 className='text-center text-[#c4c4c4] text-[0.9rem] mb-5'>These are just the basic steps to use the random team generator. There are still other great features, for example, customization in participants names, customization in saved work, customization in saved work with generator, and others we will describe in the following few sections.</h2>
+        <h2 className='text-center text-[#c4c4c4] text-[0.9rem] mb-5'>These are just the basic steps to use the random team generator. There are still other great features, for example, customization in participants names, customization in saved work, customization in saved work with generator.</h2>
       </div >
     </>
   )
