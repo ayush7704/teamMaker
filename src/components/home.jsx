@@ -214,10 +214,13 @@ function App() {
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({ playerName: '', arrItemForEdit: 'players', whichArray: 'players', playerIndex: null, editBtnClickBy: null, currentInputBtn: formSubmitBtnState.add })
 
   useLayoutEffect(() => {
+    const savedallTeamAndPlayers = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
+    const  savedsavedTeamOpened = JSON.parse(localStorage.getItem('savedTeamOpened'))
     // temporary solution of 
     //  main reducer object was not updating itself even after removing latest changes from saved work while we are on home page  
     // it had to navigate on other pages for updating value
-    if (typeof JSON.parse(localStorage.getItem('savedTeamOpened')) === 'object') {
+    console.log(savedsavedTeamOpened)
+    if (Boolean(savedsavedTeamOpened)) {
       const areEqual = compareObjects(JSON.parse(localStorage.getItem('allTeamAndPlayers')), JSON.parse(localStorage.getItem('savedTeamOpened')))
       if (areEqual) {
         setAllTypeplayersAndTeams({ type: reducerTypes.initial, oldobject: savedTeamOpened })
@@ -256,7 +259,7 @@ function App() {
     let uniqueRandomsArr = new Set([])
 
     await new Promise((resolve) => {
-      gsap.fromTo('.cards', { rotateY: '0deg' }, { rotateY: '180deg', duration: 1, });
+      gsap.fromTo('.cards', { rotateY: '0deg' }, { rotateY: '180deg',duration:1,ease:'back'});
       setTimeout(() => {
         resolve('dfd')
       }, 1000);
@@ -299,9 +302,8 @@ function App() {
 
     })
 
-    gsap.fromTo('.cards', { rotateY: '180deg' }, { rotateY: '360deg', duration: 1, });
-    setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false, GeneratingTeam: false, needToGenerate: false })
-
+    gsap.fromTo('.cards', { rotateY: '180deg' }, { rotateY: '360deg',duration:1,ease:'back' });  
+    setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false, GeneratingTeam: false, needToGenerate: false })  
   });
 
 
@@ -367,8 +369,9 @@ function App() {
   }, [allTypeplayersAndTeams])
 
   const checkingFunction = contextSafe((msg = 'default') => {
-    setTimeout(() => {
-      setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: false, needToGenerate: false })
+    setTimeout(() => {    
+      // change for debugging of savedbutton 
+      setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false,GeneratingTeam: false, needToGenerate: false, })
     }, 2000);
     // no changes to save
     if (msg === alertMsgs.savedTeamNoChanges) {
@@ -522,7 +525,7 @@ function App() {
           {/* total teams label starts  */}
           <label htmlFor='totalTeamsInput' className='flex justify-between p-2 cursor-pointer'>
             <span className='capitalize'>total teams</span>
-            <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={allTypeplayersAndTeams.totalTeams} className='w-[40px] text-end bg-transparent focus:outline-none text-lg font-medium' onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.addTeam, payload: { newTotalTeams: e.target.value } })} onBlur={(e) => { setAllTypeplayersAndTeams({ type: reducerTypes.addTeamBlur, payload: { newTotalTeams: e.target.value } }); }} />
+            <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={allTypeplayersAndTeams.totalTeams} className='w-[2.5rem] text-end bg-transparent focus:outline-none text-lg font-medium' onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.addTeam, payload: { newTotalTeams: e.target.value } })} onBlur={(e) => { setAllTypeplayersAndTeams({ type: reducerTypes.addTeamBlur, payload: { newTotalTeams: e.target.value } }); }} />
           </label>
           {/* total teams label ends  */}
 
@@ -542,18 +545,18 @@ function App() {
             {/* main input btn starts  */}
             <div className='relative flex-1 backdrop-blur-[12px]'>
 
-              <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] pr-[40px]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
+              <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] pr-[2.5rem]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
 
               {/* submit button starts  */}
               <button type="submit" className='absolute p-2 right-0 h-full border-l border-lime-400'>
                 {
                   PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.add ?
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" color="#a3e635" fill="none">
+                    <svg className='w-[1.375rem] h-[1.375rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
                       <path d="M12 8V16M16 12L8 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="2" />
                     </svg>
                     :
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="21" height="21" color="#a3e635" fill="none">
+                    <svg className='w-[1.3125rem] h-[1.3125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
                       <path d="M3 13.3333C3 13.3333 4.5 14 6.5 17C6.5 17 6.78485 16.5192 7.32133 15.7526M17 6C14.7085 7.14577 12.3119 9.55181 10.3879 11.8223" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M8 13.3333C8 13.3333 9.5 14 11.5 17C11.5 17 17 8.5 22 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -569,7 +572,7 @@ function App() {
               // only  visible while editing name 
               PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.edit &&
               <button type="reset" value={'cancle'} className='p-2 border-[#414141] border border-1 rounded-[50%]'>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" color="#e50f0f" fill="none">
+                <svg className='w-[1.375rem] h-[1.375rem]' viewBox="0 0 24 24" color="#e50f0f" fill="none">
                   <path d="M14.9994 15L9 9M9.00064 15L15 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="2" />
                 </svg>
@@ -580,7 +583,7 @@ function App() {
         </form>
         {/* form ends  */}
 
-        <section className='py-[25px]'>
+        <section className='py-[1.5625rem]'>
 
           {/* generate & clear starts  */}
           <div className='flex justify-center my-4 text-center gap-2'>
@@ -590,7 +593,7 @@ function App() {
               <span>{!differentBtnStates.needToGenerate ? 'Generate' : 'Recalculate Teams'}</span>
               <span>
                 {differentBtnStates.GeneratingTeam ?
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" color="#a3e635" fill="none">
+                  <svg className='w-[1.125rem] h-[1.125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
                     <path d="M12 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M12 18V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M21 12L18 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -601,7 +604,7 @@ function App() {
                     <path d="M7.75804 7.75804L5.63672 5.63672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                   :
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" color="#a3e635" fill="none">
+                  <svg className='w-[1.125rem] h-[1.125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
                     <path d="M14 12.6483L16.3708 10.2775C16.6636 9.98469 16.81 9.83827 16.8883 9.68032C17.0372 9.3798 17.0372 9.02696 16.8883 8.72644C16.81 8.56849 16.6636 8.42207 16.3708 8.12923C16.0779 7.83638 15.9315 7.68996 15.7736 7.61169C15.473 7.46277 15.1202 7.46277 14.8197 7.61169C14.6617 7.68996 14.5153 7.83638 14.2225 8.12923L11.8517 10.5M14 12.6483L5.77754 20.8708C5.4847 21.1636 5.33827 21.31 5.18032 21.3883C4.8798 21.5372 4.52696 21.5372 4.22644 21.3883C4.06849 21.31 3.92207 21.1636 3.62923 20.8708C3.33639 20.5779 3.18996 20.4315 3.11169 20.2736C2.96277 19.973 2.96277 19.6202 3.11169 19.3197C3.18996 19.1617 3.33639 19.0153 3.62923 18.7225L11.8517 10.5M14 12.6483L11.8517 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M19.5 2.5L19.3895 2.79873C19.2445 3.19044 19.172 3.38629 19.0292 3.52917C18.8863 3.67204 18.6904 3.74452 18.2987 3.88946L18 4L18.2987 4.11054C18.6904 4.25548 18.8863 4.32796 19.0292 4.47083C19.172 4.61371 19.2445 4.80956 19.3895 5.20127L19.5 5.5L19.6105 5.20127C19.7555 4.80956 19.828 4.61371 19.9708 4.47083C20.1137 4.32796 20.3096 4.25548 20.7013 4.11054L21 4L20.7013 3.88946C20.3096 3.74452 20.1137 3.67204 19.9708 3.52917C19.828 3.38629 19.7555 3.19044 19.6105 2.79873L19.5 2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
                     <path d="M19.5 12.5L19.3895 12.7987C19.2445 13.1904 19.172 13.3863 19.0292 13.5292C18.8863 13.672 18.6904 13.7445 18.2987 13.8895L18 14L18.2987 14.1105C18.6904 14.2555 18.8863 14.328 19.0292 14.4708C19.172 14.6137 19.2445 14.8096 19.3895 15.2013L19.5 15.5L19.6105 15.2013C19.7555 14.8096 19.828 14.6137 19.9708 14.4708C20.1137 14.328 20.3096 14.2555 20.7013 14.1105L21 14L20.7013 13.8895C20.3096 13.7445 20.1137 13.672 19.9708 13.5292C19.828 13.3863 19.7555 13.1904 19.6105 12.7987L19.5 12.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -618,7 +621,7 @@ function App() {
               <button onClick={() => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', arrItemForEdit: null, editBtnClickBy: null, whichArray: null, whichplayer: null, currentInputBtn: formSubmitBtnState.add }); setAllTypeplayersAndTeams({ type: reducerTypes.removeAll, savedOpenedTeam: savedTeamOpened }) }} className='flex gap-2 items-center bg-[linear-gradient(to_bottom,_black_80%,#a53a274f_95%)] outline-1 outline-lime-50 text-[0.95rem] font-medium outline px-3 py-2 rounded-sm'>
                 <span>Clear all</span>
                 <span>
-                  <svg viewBox="0 0 24 24" width="16" height="16" color="#e00000" fill="none">
+                  <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#e00000" fill="none">
                     <path d="M19.5 5.5L18.8803 15.5251C18.7219 18.0864 18.6428 19.3671 18.0008 20.2879C17.6833 20.7431 17.2747 21.1273 16.8007 21.416C15.8421 22 14.559 22 11.9927 22C9.42312 22 8.1383 22 7.17905 21.4149C6.7048 21.1257 6.296 20.7408 5.97868 20.2848C5.33688 19.3626 5.25945 18.0801 5.10461 15.5152L4.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M3 5.5H21M16.0557 5.5L15.3731 4.09173C14.9196 3.15626 14.6928 2.68852 14.3017 2.39681C14.215 2.3321 14.1231 2.27454 14.027 2.2247C13.5939 2 13.0741 2 12.0345 2C10.9688 2 10.436 2 9.99568 2.23412C9.8981 2.28601 9.80498 2.3459 9.71729 2.41317C9.32164 2.7167 9.10063 3.20155 8.65861 4.17126L8.05292 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M9.5 16.5L9.5 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -656,7 +659,7 @@ function App() {
               {/* save team button starts  */}
               <button onClick={() => { checkingFunction(alertMsgsWork.saveTeamMsg); }} className={`bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center} ${differentBtnStates.savedProcessing ? 'btnLoadTime' : ''}`} disabled={differentBtnStates.savedProcessing}>
                 {differentBtnStates.savedProcessing ?
-                  <svg className='sm:w-[22px] w-[16px]  h-[16px] sm:h-[22px]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  <svg className='sm:w-[1.375rem] w-[1rem]  h-[1rem] sm:h-[1.375rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
                     <path d="M12 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M12 18V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M21 12L18 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -667,7 +670,7 @@ function App() {
                     <path d="M7.75804 7.75804L5.63672 5.63672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                   :
-                  <svg className='sm:w-[22px] w-[16px]  h-[16px] sm:h-[22px] text-white' viewBox="0 0 24 24" fill="none">
+                  <svg className='sm:w-[1.375rem] w-[1rem]  h-[1rem] sm:h-[1.375rem] text-white' viewBox="0 0 24 24" fill="none">
                     <path d="M11 2C7.22876 2 5.34315 2 4.17157 3.12874C3 4.25748 3 6.07416 3 9.70753V17.9808C3 20.2867 3 21.4396 3.77285 21.8523C5.26947 22.6514 8.0768 19.9852 9.41 19.1824C10.1832 18.7168 10.5698 18.484 11 18.484C11.4302 18.484 11.8168 18.7168 12.59 19.1824C13.9232 19.9852 16.7305 22.6514 18.2272 21.8523C19 21.4396 19 20.2867 19 17.9808V12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M3.5 7.00005H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     <path d="M17 10L17 2M13 6H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -679,7 +682,7 @@ function App() {
               {/* will visible on only saved team  */}
               {savedTeamOpened &&
                 <button className={`relative p-[5px] rounded-[50%] hover:bg-[#000000] ${savedTeamChanges.popup ? 'bg-[#000000]' : ''}`}>
-                  <svg className='w-[20px] h-[20px] text-white rotate-90' viewBox="0 0 24 24" fill="none">
+                  <svg className='w-[1.25rem] h-[1.25rem] text-white rotate-90' viewBox="0 0 24 24" fill="none">
                     <path d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z" stroke="currentColor" strokeWidth="1.5" />
                     <path d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z" stroke="currentColor" strokeWidth="1.5" />
                     <path d="M6 12C6 11.1716 5.32843 10.5 4.5 10.5C3.67157 10.5 3 11.1716 3 12C3 12.8284 3.67157 13.5 4.5 13.5C5.32843 13.5 6 12.8284 6 12Z" stroke="currentColor" strokeWidth="1.5" />
@@ -697,7 +700,7 @@ function App() {
                   {/*====  three dots ends  =====*/}
 
                   {/*==== actions starts  =====*/}
-                  <ul className={`bg-black w-max shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-30px] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden ${savedTeamChanges.popup ? 'border-[0.4px] border-[#a06800]' : 'hidden'}`}>
+                  <ul className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-1.875rem] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden ${savedTeamChanges.popup ? 'border-[0.4px] border-[#a06800]' : 'hidden'}`}>
 
                     {/*==== save changes li starts  ====*/}
                     <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.saveChanges })}>
@@ -727,12 +730,12 @@ function App() {
               // devided teams sections starts
               <section className='flex flex-wrap gap-x-3 gap-y-7 py-5 text-[1.08rem]'>
                 {allTypeplayersAndTeams.teams.map((team, teamValIndex) => (
-                  <div key={teamValIndex} className={`md:flex-[1_0_200px] sm:flex-[1_0_150px] flex-[1_0_130px]`}>
+                  <div key={teamValIndex} className={`md:flex-[1_0_12.5rem] sm:flex-[1_0_9.375rem] flex-[1_0_8.125rem]`}>
                     <h1 className='mb-4 text-center text-[1em] font-medium'>Team {(teamValIndex + 1)}</h1>
                     <ol className='cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.9em]'>
                       {team.teamPlayers.map((val, valIndex) => (
 
-                        <li key={`${team.teamName}-${valIndex}`} className={`cards md:flex-[0_0_200px] sm:flex-[0_0_150px] flex-[1_0_130px] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline outline-1   ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
+                        <li key={`${team.teamName}-${valIndex}`} className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline outline-1   ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
                           <span>{val}</span>
 
                           {/*== backface of card starts  ==*/}
@@ -748,7 +751,7 @@ function App() {
                               }} onBlur={() => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerIndex: null }) }} className='inset-0 w-[100%] h-[100%] cursor-pointer absolute' id={`${team.teamName}-${valIndex}`} type="text" readOnly />
                             </label>
                             <span>
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none">
+                              <svg className='w-[1.25rem] h-[1.25rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
                                 <path d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 <path d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 <path d="M6 12C6 11.1716 5.32843 10.5 4.5 10.5C3.67157 10.5 3 11.1716 3 12C3 12.8284 3.67157 13.5 4.5 13.5C5.32843 13.5 6 12.8284 6 12Z" stroke="currentColor" strokeWidth="1.5" />
@@ -758,7 +761,7 @@ function App() {
                           {/*====  three dots ends  =====*/}
 
                           {/*==== actions starts  =====*/}
-                          <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_15px_-1px_#000000b8] text-[0.8em] absolute z-[1] top-[30px] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'} `}>
+                          <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8em] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'} `}>
 
                             {/*==== editing li starts  ====*/}
                             <li onMouseDown={() => {
@@ -767,7 +770,7 @@ function App() {
                             }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626] `}>
                               <span>edit...</span>
                               <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#ffffff" fill="none">
+                                <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
                                   <path d="M10.5 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C8.12805 13.9629 11.2057 13.6118 14 14.4281" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                   <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
                                   <path d="M18.4332 13.8485C18.7685 13.4851 18.9362 13.3035 19.1143 13.1975C19.5442 12.9418 20.0736 12.9339 20.5107 13.1765C20.6918 13.2771 20.8646 13.4537 21.2103 13.8067C21.5559 14.1598 21.7287 14.3364 21.8272 14.5214C22.0647 14.9679 22.0569 15.5087 21.8066 15.9478C21.7029 16.1298 21.5251 16.3011 21.1694 16.6437L16.9378 20.7194C16.2638 21.3686 15.9268 21.6932 15.5056 21.8577C15.0845 22.0222 14.6214 22.0101 13.6954 21.9859L13.5694 21.9826C13.2875 21.9752 13.1466 21.9715 13.0646 21.8785C12.9827 21.7855 12.9939 21.6419 13.0162 21.3548L13.0284 21.1988C13.0914 20.3906 13.1228 19.9865 13.2807 19.6232C13.4385 19.2599 13.7107 18.965 14.2552 18.375L18.4332 13.8485Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -782,7 +785,7 @@ function App() {
                             }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`}>
                               <span>delete</span>
                               <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#ffffff" fill="none">
+                                <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
                                   <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                   <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
                                   <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -804,7 +807,7 @@ function App() {
               :
               <ol className='cardsContainer text-white list-inside flex flex-wrap justify-center gap-3 sm:py-5 mt-8 py-4'>
                 {allTypeplayersAndTeams.players.map((val, valIndex) => (
-                  <li key={val + valIndex + 'players'} className={`cards md:flex-[0_0_200px] sm:flex-[0_0_150px] flex-[1_0_130px] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline-1 outline ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
+                  <li key={val + valIndex + 'players'} className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline-1 outline ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
                     <span>{val}</span>
 
                     {/*== backface of card starts  ==*/}
@@ -821,7 +824,7 @@ function App() {
                         }} className='inset-0 w-[100%] h-[100%] cursor-pointer absolute' id={'Players' + valIndex} type="text" readOnly />
                       </label>
                       <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none">
+                        <svg className='w-[1.25rem] h-[1.25rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
                           <path d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z" stroke="currentColor" strokeWidth="1.5" />
                           <path d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z" stroke="currentColor" strokeWidth="1.5" />
                           <path d="M6 12C6 11.1716 5.32843 10.5 4.5 10.5C3.67157 10.5 3 11.1716 3 12C3 12.8284 3.67157 13.5 4.5 13.5C5.32843 13.5 6 12.8284 6 12Z" stroke="currentColor" strokeWidth="1.5" />
@@ -831,7 +834,7 @@ function App() {
                     {/*====  three dots ends  =====*/}
 
                     {/*==== actions starts  =====*/}
-                    <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_15px_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[30px] right-0 p-1 cursor-pointer rounded-sm border-[0.4px]  ${PlayerInfoAndMore.whichArray === `players` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'}`}>
+                    <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px]  ${PlayerInfoAndMore.whichArray === `players` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'}`}>
 
                       {/*==== editing li starts  ====*/}
                       <li onMouseDown={() => {
@@ -840,7 +843,7 @@ function App() {
                       }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626] `}>
                         <span>edit...</span>
                         <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#ffffff" fill="none">
+                          <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
                             <path d="M10.5 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C8.12805 13.9629 11.2057 13.6118 14 14.4281" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
                             <path d="M18.4332 13.8485C18.7685 13.4851 18.9362 13.3035 19.1143 13.1975C19.5442 12.9418 20.0736 12.9339 20.5107 13.1765C20.6918 13.2771 20.8646 13.4537 21.2103 13.8067C21.5559 14.1598 21.7287 14.3364 21.8272 14.5214C22.0647 14.9679 22.0569 15.5087 21.8066 15.9478C21.7029 16.1298 21.5251 16.3011 21.1694 16.6437L16.9378 20.7194C16.2638 21.3686 15.9268 21.6932 15.5056 21.8577C15.0845 22.0222 14.6214 22.0101 13.6954 21.9859L13.5694 21.9826C13.2875 21.9752 13.1466 21.9715 13.0646 21.8785C12.9827 21.7855 12.9939 21.6419 13.0162 21.3548L13.0284 21.1988C13.0914 20.3906 13.1228 19.9865 13.2807 19.6232C13.4385 19.2599 13.7107 18.965 14.2552 18.375L18.4332 13.8485Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -855,7 +858,7 @@ function App() {
                       }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`}>
                         <span>delete</span>
                         <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#ffffff" fill="none">
+                          <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
                             <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
                             <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

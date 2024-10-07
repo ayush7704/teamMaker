@@ -8,12 +8,12 @@ function navbar() {
             {
                 [
                     {
-                        name: 'home', svg: (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-[1.19rem] h-[1.19rem]' color="inherit" fill="none">
+                        name: 'home', svg: (<svg viewBox="0 0 24 24" className='w-[1.19rem] h-[1.19rem]' color="inherit" fill="none">
                             <path d="M3.16405 11.3497L4 11.5587L4.45686 16.1005C4.715 18.6668 4.84407 19.9499 5.701 20.7249C6.55793 21.5 7.84753 21.5 10.4267 21.5H13.5733C16.1525 21.5 17.4421 21.5 18.299 20.7249C19.1559 19.9499 19.285 18.6668 19.5431 16.1005L20 11.5587L20.836 11.3497C21.5201 11.1787 22 10.564 22 9.85882C22 9.35735 21.7553 8.88742 21.3445 8.59985L13.1469 2.86154C12.4583 2.37949 11.5417 2.37949 10.8531 2.86154L2.65549 8.59985C2.24467 8.88742 2 9.35735 2 9.85882C2 10.564 2.47993 11.1787 3.16405 11.3497Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             <circle cx="12" cy="14.5" r="2.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>)
                     }, {
-                        name: 'how-to', svg: (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-[1.19rem] h-[1.19rem]' color="inherit" fill="none">
+                        name: 'how-to', svg: (<svg viewBox="0 0 24 24" className='w-[1.19rem] h-[1.19rem]' color="inherit" fill="none">
                             <path d="M14.1706 20.8905C18.3536 20.6125 21.6856 17.2332 21.9598 12.9909C22.0134 12.1607 22.0134 11.3009 21.9598 10.4707C21.6856 6.22838 18.3536 2.84913 14.1706 2.57107C12.7435 2.47621 11.2536 2.47641 9.8294 2.57107C5.64639 2.84913 2.31441 6.22838 2.04024 10.4707C1.98659 11.3009 1.98659 12.1607 2.04024 12.9909C2.1401 14.536 2.82343 15.9666 3.62791 17.1746C4.09501 18.0203 3.78674 19.0758 3.30021 19.9978C2.94941 20.6626 2.77401 20.995 2.91484 21.2351C3.05568 21.4752 3.37026 21.4829 3.99943 21.4982C5.24367 21.5285 6.08268 21.1757 6.74868 20.6846C7.1264 20.4061 7.31527 20.2668 7.44544 20.2508C7.5756 20.2348 7.83177 20.3403 8.34401 20.5513C8.8044 20.7409 9.33896 20.8579 9.8294 20.8905C11.2536 20.9852 12.7435 20.9854 14.1706 20.8905Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
                             <path d="M10.5 9.53846C10.5 8.68879 11.1716 8 12 8C12.8284 8 13.5 8.68879 13.5 9.53846C13.5 9.84473 13.4127 10.1301 13.2623 10.3698C12.8141 11.0844 12 11.7657 12 12.6154V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                             <path d="M12 15H12.009" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -32,7 +32,7 @@ function navbar() {
                     ))
             }
             {/* translate-y-[-30%] */}
-            < div className='w-[50px] h-[50px] grid items-center justify-center'>
+            < div className='w-[3.125rem] h-[3.125rem] grid items-center justify-center'>
                 <div className="spinner">
                     <div></div>
                     <div></div>
@@ -45,7 +45,7 @@ function navbar() {
             {
                 [
                     {
-                        name: 'saved', svg: (<span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-[1.19rem] h-[1.19rem]' color="inherit" fill="none">
+                        name: 'saved', svg: (<span><svg viewBox="0 0 24 24" className='w-[1.19rem] h-[1.19rem]' color="inherit" fill="none">
                             <path d="M3 17.9808V12.7075C3 9.07416 3 7.25748 4.09835 6.12874C5.1967 5 6.96447 5 10.5 5C14.0355 5 15.8033 5 16.9017 6.12874C18 7.25748 18 9.07416 18 12.7075V17.9808C18 20.2867 18 21.4396 17.2755 21.8523C15.8724 22.6514 13.2405 19.9852 11.9906 19.1824C11.2657 18.7168 10.9033 18.484 10.5 18.484C10.0967 18.484 9.73425 18.7168 9.00938 19.1824C7.7595 19.9852 5.12763 22.6514 3.72454 21.8523C3 21.4396 3 20.2867 3 17.9808Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M9 2H11C15.714 2 18.0711 2 19.5355 3.46447C21 4.92893 21 7.28595 21 12V18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg></span>)

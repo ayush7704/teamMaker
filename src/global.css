@@ -14,14 +14,10 @@ body {
         linear-gradient(45deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%, #1c1c1c 0 67%, #0000 0 83%, #1c1c1c 0 92%, #0000 0),
         #000000;
     background-size: 100vw 100vh; */
-    /* background:
-        conic-gradient(from 116.56deg at calc(100%/3) 0, #0000 90deg, #000000 0),
-        conic-gradient(from -63.44deg at calc(200%/3) 100%, #0000 90deg, #000000 0) #080808; */
-    /* conic-gradient(from 116.56deg at calc(100% / 3) 0, #0000 90deg, #000 0), conic-gradient(from -63.44deg at calc(200% / 3) 100%, #0000 90deg, #000 0) #080808 */
     background:
         conic-gradient(from 116.56deg at calc(100%/3) 0, #0000 90deg, #000000 0),
         conic-gradient(from -63.44deg at calc(200%/3) 100%, #0000 90deg, #000000 0) #0a0a0a;
-    background-size: 56px 56px;
+    background-size: 3.5rem 3.5rem;
     user-select: none;
 
 }
@@ -39,7 +35,7 @@ ol {
     list-style-type: decimal;
 }
 
-:is(.cardsContainer, .cards) {
+:is(.cardsContainer, .cards, .example-elm) {
     transform-style: preserve-3d;
     perspective: 1500px;
     will-change: transform;
@@ -93,8 +89,12 @@ button:is([type='submit'], [type='reset']):hover svg {
 }
 
 @media (max-width:350px) {
+    nav{
+        padding: 0 0.5rem
+    }
     nav a.pageLinks {
         font-size: 0.7rem;
+        padding-inline: 0.5rem;
     }
 }
 
@@ -109,6 +109,7 @@ button:is([type='submit'], [type='reset']):hover svg {
         font-size: 0rem;
     }
 }
+
 @media (min-width:1400px) {
 
     html,
@@ -116,6 +117,7 @@ button:is([type='submit'], [type='reset']):hover svg {
         font-size: 16.5px;
     }
 }
+
 @media (min-width:1600px) {
 
     html,
@@ -126,9 +128,9 @@ button:is([type='submit'], [type='reset']):hover svg {
 
 
 .spinner {
-    width: 28px;
-    height: 28px;
-    animation: spinner-y0fdc1 4.4s infinite ease;
+    width: 1.75rem;
+    height: 1.75rem;
+    animation: spinner 4.4s infinite ease;
     transform-style: preserve-3d;
 }
 
@@ -138,10 +140,13 @@ button:is([type='submit'], [type='reset']):hover svg {
     position: absolute;
     width: 100%;
     border: 1px solid #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 0.125rem 0px white inset;
+    box-shadow: 0 0 0px 0.4px #ffa600 inset;
 }
 
 .spinner div:nth-of-type(1) {
-    transform: translateZ(-14px) rotateY(180deg);
+    transform: translateZ(-0.875rem) rotateY(180deg);
 }
 
 .spinner div:nth-of-type(2) {
@@ -165,10 +170,10 @@ button:is([type='submit'], [type='reset']):hover svg {
 }
 
 .spinner div:nth-of-type(6) {
-    transform: translateZ(14px);
+    transform: translateZ(0.875rem);
 }
 
-@keyframes spinner-y0fdc1 {
+@keyframes spinner {
     0% {
         transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
     }
