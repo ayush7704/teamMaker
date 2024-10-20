@@ -21,7 +21,7 @@ function navbar() {
 
                     }].map((elm, ind) => (
 
-                        <NavLink key={elm + ind} to={elm.name === 'home' ? '/' : elm.name} className={`${elm.name === 'home' && location.pathname === '/' ? 'text-[#ffa600]' : ''} ${elm.name === (location.pathname).replace(/%20/g, ' ').slice(1) ? 'text-[#ffa600]' : ''} hover:text-[#ffa600] pageLinks text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal  transition-all duration-[200ms] capitalize px-4 text-nowrap py-2`}>
+                        <NavLink key={elm.name + ind} to={elm.name === 'home' ? '/' : elm.name} className={`${elm.name === 'home' && location.pathname === '/' ? 'text-[#ffa600]' : ''} ${elm.name === (location.pathname).replace(/%20/g, ' ').slice(1) ? 'text-[#ffa600]' : ''} hover:text-[#ffa600] pageLinks text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal  transition-all duration-[200ms] capitalize px-4 text-nowrap py-2`}>
                             <p className='text-center grid justify-center'>
                                 <span>
                                     {elm.svg}
@@ -55,7 +55,7 @@ function navbar() {
                     }
                 ].map((elm, ind) => (
 
-                    <NavLink key={elm + ind} to={elm.name === 'home' ? '/' : elm.name} className={`${elm.name === 'home' && location.pathname === '/' ? 'text-[#ffa600]' : ''} ${elm.name === (location.pathname).replace(/%20/g, ' ').slice(1) ? 'text-[#ffa600]' : ''} hover:text-[#ffa600] pageLinks text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal  transition-all duration-[200ms] capitalize px-4 text-nowrap py-2`}>
+                    <NavLink key={elm.name + ind} to={elm.name === 'home' ? '/' : elm.name} className={`${elm.name === 'home' && location.pathname === '/' ? 'text-[#ffa600]' : ''} ${elm.name === (location.pathname).replace(/%20/g, ' ').slice(1) ? 'text-[#ffa600]' : ''} hover:text-[#ffa600] pageLinks text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal  transition-all duration-[200ms] capitalize px-4 text-nowrap py-2`}>
                         <p className='text-center grid justify-center'>
                             <span>
                                 {elm.svg}

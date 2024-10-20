@@ -23,20 +23,32 @@ const alertMsgsWork = {
 }
 
 export const alertMsgs = {
-  teamSaved: 'saved successfully',
-  teamNotSaved: 'minimum 2 players required to save',
-  notGenerated: 'minimum 2 players required',
-  savedTeamNoChanges: 'no changes to save',
-  savedTeamChangesSaved: 'changes saved successfully!',
-  changesDiscard: 'changes removed successfully!',
-  nothingToDiscard: 'nothing to discard',
-  teamDeleted: 'worked removed successfully!'
+  teamSaved: 'Your project was saved successfully!',
+  teamNotSaved: 'You need at least 2 players to save a project.',
+  notGenerated: 'You need at least 2 players to generate a team. ',
+  savedTeamNoChanges: 'There are no changes to save.',
+  savedTeamChangesSaved: 'Your changes were saved successfully!',
+  changesDiscard: 'Your changes were removed successfully!',
+  nothingToDiscard: 'There’s nothing to discard.',
+  teamDeleted: 'Your project was removed successfully!'
 }
+
+export const alertMsgsTime = new Map([
+  [alertMsgs.teamSaved,3000],
+  [alertMsgs.teamNotSaved,4000],
+  [alertMsgs.notGenerated,4000],
+  [alertMsgs.savedTeamNoChanges,3000],
+  [alertMsgs.savedTeamChangesSaved,2500],
+  [alertMsgs.changesDiscard,3500],
+  [alertMsgs.nothingToDiscard,2500],
+  [alertMsgs.teamDeleted,3000],
+])
 
 const reducer = (oldobj, action) => {
   let worker;
   // for adding players 
   if (action.type === reducerTypes.initial) {
+    console.log({ ...action.oldobj })
     return ({ ...action.oldobject })
   }
   if (action.type === reducerTypes.addPlayer) {
@@ -215,7 +227,7 @@ function App() {
 
   useLayoutEffect(() => {
     const savedallTeamAndPlayers = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
-    const  savedsavedTeamOpened = JSON.parse(localStorage.getItem('savedTeamOpened'))
+    const savedsavedTeamOpened = JSON.parse(localStorage.getItem('savedTeamOpened'))
     // temporary solution of 
     //  main reducer object was not updating itself even after removing latest changes from saved work while we are on home page  
     // it had to navigate on other pages for updating value
@@ -259,7 +271,7 @@ function App() {
     let uniqueRandomsArr = new Set([])
 
     await new Promise((resolve) => {
-      gsap.fromTo('.cards', { rotateY: '0deg' }, { rotateY: '180deg',duration:1,ease:'back'});
+      gsap.fromTo('.cards', { rotateY: '0deg' }, { rotateY: '180deg', duration: 1, ease: 'back' });
       setTimeout(() => {
         resolve('dfd')
       }, 1000);
@@ -302,8 +314,8 @@ function App() {
 
     })
 
-    gsap.fromTo('.cards', { rotateY: '180deg' }, { rotateY: '360deg',duration:1,ease:'back' });  
-    setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false, GeneratingTeam: false, needToGenerate: false })  
+    gsap.fromTo('.cards', { rotateY: '180deg' }, { rotateY: '360deg', duration: 1, ease: 'back' });
+    setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false, GeneratingTeam: false, needToGenerate: false })
   });
 
 
@@ -369,38 +381,38 @@ function App() {
   }, [allTypeplayersAndTeams])
 
   const checkingFunction = contextSafe((msg = 'default') => {
-    setTimeout(() => {    
+    setTimeout(() => {
       // change for debugging of savedbutton 
-      setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false,GeneratingTeam: false, needToGenerate: false, })
+      setdifferentBtnStates({ ...differentBtnStates, savedProcessing: false, GeneratingTeam: false, needToGenerate: false, })
     }, 2000);
     // no changes to save
     if (msg === alertMsgs.savedTeamNoChanges) {
-      setalertMsgsState(alertMsgs.savedTeamNoChanges); popupAnim()
+      setalertMsgsState(alertMsgs.savedTeamNoChanges); popupAnim(alertMsgsTime.get(alertMsgs.savedTeamNoChanges))
     }
     // changes saved successfully 
     else if (msg === alertMsgs.savedTeamChangesSaved) {
-      setalertMsgsState(alertMsgs.savedTeamChangesSaved); popupAnim()
+      setalertMsgsState(alertMsgs.savedTeamChangesSaved); popupAnim(alertMsgsTime.get(alertMsgs.savedTeamChangesSaved))
     }
 
     // changes removed successfully
     if (msg === alertMsgs.changesDiscard) {
-      setalertMsgsState(alertMsgs.changesDiscard); popupAnim()
+      setalertMsgsState(alertMsgs.changesDiscard); popupAnim(alertMsgsTime.get(alertMsgs.changesDiscard))
     }
     // no changes to discard
     else if (msg === alertMsgs.nothingToDiscard) {
-      setalertMsgsState(alertMsgs.nothingToDiscard); popupAnim()
+      setalertMsgsState(alertMsgs.nothingToDiscard); popupAnim(alertMsgsTime.get(alertMsgs.nothingToDiscard))
     }
 
     if (allTypeplayersAndTeams.players.length < 2) {
       if (msg === alertMsgsWork.generateTeam) setalertMsgsState(alertMsgs.notGenerated);
       if (msg === alertMsgsWork.saveTeamMsg) setalertMsgsState(alertMsgs.teamNotSaved);
-      popupAnim()
+      popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved))
     } else {
       if (msg === alertMsgsWork.generateTeam) generateTeamFunc();
       if (msg === alertMsgsWork.saveTeamMsg) {
         setalertMsgsState(alertMsgs.teamSaved);
         handleSaved();
-        popupAnim()
+        popupAnim(alertMsgsTime.get(alertMsgs.teamSaved))
       }
     }
   })
@@ -531,8 +543,8 @@ function App() {
 
           {/* add title div starts  */}
           <div className='p-2'>
-            <label htmlFor="titleForGenerationTeam" className='cursor-pointer block'>Title</label>
-            <input ref={titleInput} value={allTypeplayersAndTeams.title} onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.titleChange, newTitle: e.target.value })} type="text" name="titleForGenerationTeam" id='titleForGenerationTeam' placeholder='Title' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] backdrop-blur-[12px]' />
+            <label htmlFor="titleForGenerationTeam" className='cursor-pointer block'>Project Title</label>
+            <input ref={titleInput} value={allTypeplayersAndTeams.title} onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.titleChange, newTitle: e.target.value })} type="text" name="titleForGenerationTeam" id='titleForGenerationTeam' placeholder='Title' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#a06800] backdrop-blur-[12px]' />
           </div>
           {/* add title div ends  */}
 
@@ -543,9 +555,9 @@ function App() {
         <form onSubmit={formSubmit} onReset={formReset} className='lg:max-w-[45%] sm:max-w-[75%] mx-auto px-2'>
           <div className='flex p-2 items-center gap-2'>
             {/* main input btn starts  */}
-            <div className='relative flex-1 backdrop-blur-[12px]'>
+            <label htmlFor='formInput' className='relative flex-1 backdrop-blur-[12px]'>
 
-              <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#4d4aff] pr-[2.5rem]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
+              <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#a06800] pr-[2.5rem]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
 
               {/* submit button starts  */}
               <button type="submit" className='absolute p-2 right-0 h-full border-l border-lime-400'>
@@ -564,7 +576,7 @@ function App() {
               </button>
               {/* submit button ends  */}
 
-            </div>
+            </label>
             {/* main input btn ends  */}
 
             {/* reset button starts  */}
@@ -635,7 +647,7 @@ function App() {
           {/* generate & clear ends  */}
 
           {/* change title starts  */}
-          <div className={`relative flex justify-between items-center rounded-[4px] bg-[rgb(29_29_29_/_48%)] backdrop-blur-[3px] p-3 mt-7 mb-4 ${savedTeamOpened ? 'outline outline-[0.3px] outline-[#a06800]' : ''}`}>
+          <div className={`relative flex justify-between items-center bg-transparent backdrop-blur-[12px] rounded-[4px]  p-3 mt-7 mb-4 ${savedTeamOpened ? 'outline outline-[0.3px] outline-[#a06800]' : 'outline outline-[0.3px] outline-[#ffffff41]'}`}>
 
             {/* make new team starts  */}
             <button onClick={() => { newTeam() }} className='flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] outline outline-1 outline-[#ffffff3d]'>
@@ -649,10 +661,10 @@ function App() {
             {/* make new team ends  */}
 
             {/* edit title starts  */}
-            <h1 className='flex-[0_1_65%] capitalize  rounded-sm sm:text-[1rem] text-[0.9rem] '>
+            <h3 className='flex-[0_1_65%] capitalize  rounded-sm sm:text-[1rem] text-[0.9rem] '>
               {allTypeplayersAndTeams.title !== '' ? allTypeplayersAndTeams.title : 'untitled'}
               <sup onClick={() => titleInput.current.focus()} className='ml-4 text-[0.82em] text-[#c4c4c4] cursor-pointer whitespace-nowrap'>(edit Title)</sup>
-            </h1>
+            </h3>
             {/* edit title ends  */}
 
             <div className='flex gap-3 items-center'>
@@ -700,24 +712,26 @@ function App() {
                   {/*====  three dots ends  =====*/}
 
                   {/*==== actions starts  =====*/}
-                  <ul className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-1.875rem] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden ${savedTeamChanges.popup ? 'border-[0.4px] border-[#a06800]' : 'hidden'}`}>
+                  {savedTeamChanges.popup &&
+                    <ul className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-1.875rem] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[#a06800]`}>
 
-                    {/*==== save changes li starts  ====*/}
-                    <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.saveChanges })}>
-                      <span>save changes</span>
-                    </li>
-                    {/*==== save changes li ends  ====*/}
+                      {/*==== save changes li starts  ====*/}
+                      <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.saveChanges })}>
+                        <span>save changes</span>
+                      </li>
+                      {/*==== save changes li ends  ====*/}
 
-                    {/*==== discard li starts  ====*/}
-                    <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.discardChanges })}>
-                      <span>discard changes</span>
-                    </li>
-                    {/*==== discard li ends  ====*/}
+                      {/*==== discard li starts  ====*/}
+                      <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => savedTeamFunc({ type: savedTeamReducerActions.discardChanges })}>
+                        <span>discard changes</span>
+                      </li>
+                      {/*==== discard li ends  ====*/}
 
-                    <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => newTeam()}>
-                      <span>remove from generator</span>
-                    </li>
-                  </ul>
+                      <li className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`} onMouseDown={() => newTeam()}>
+                        <span>remove from generator</span>
+                      </li>
+                    </ul>
+                  }
                   {/*====  actions ends   =====*/}
                 </button>
               }
@@ -735,7 +749,7 @@ function App() {
                     <ol className='cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.9em]'>
                       {team.teamPlayers.map((val, valIndex) => (
 
-                        <li key={`${team.teamName}-${valIndex}`} className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline outline-1   ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
+                        <li key={`${team.teamName}-${valIndex}`} className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline outline-1   ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#a06800] outline-offset-2' : 'outline-[#303030]'}`}>
                           <span>{val}</span>
 
                           {/*== backface of card starts  ==*/}
@@ -761,40 +775,42 @@ function App() {
                           {/*====  three dots ends  =====*/}
 
                           {/*==== actions starts  =====*/}
-                          <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8em] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'} `}>
+                          {PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex &&
+                            <ul className={`popupContainer bg-[#0a0a0a] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8em] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' border-[#a06800]' : ''} `}>
 
-                            {/*==== editing li starts  ====*/}
-                            <li onMouseDown={() => {
-                              setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.edit, whichArray: `teams.${teamValIndex}`, arrItemForEdit: `teams.${teamValIndex}`, playerName: val, editBtnClickBy: valIndex });
-                              setTimeout(() => mainInput.current.focus(), 100);
-                            }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626] `}>
-                              <span>edit...</span>
-                              <span>
-                                <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
-                                  <path d="M10.5 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C8.12805 13.9629 11.2057 13.6118 14 14.4281" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                  <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
-                                  <path d="M18.4332 13.8485C18.7685 13.4851 18.9362 13.3035 19.1143 13.1975C19.5442 12.9418 20.0736 12.9339 20.5107 13.1765C20.6918 13.2771 20.8646 13.4537 21.2103 13.8067C21.5559 14.1598 21.7287 14.3364 21.8272 14.5214C22.0647 14.9679 22.0569 15.5087 21.8066 15.9478C21.7029 16.1298 21.5251 16.3011 21.1694 16.6437L16.9378 20.7194C16.2638 21.3686 15.9268 21.6932 15.5056 21.8577C15.0845 22.0222 14.6214 22.0101 13.6954 21.9859L13.5694 21.9826C13.2875 21.9752 13.1466 21.9715 13.0646 21.8785C12.9827 21.7855 12.9939 21.6419 13.0162 21.3548L13.0284 21.1988C13.0914 20.3906 13.1228 19.9865 13.2807 19.6232C13.4385 19.2599 13.7107 18.965 14.2552 18.375L18.4332 13.8485Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                                </svg>
-                              </span>
-                            </li>
-                            {/*==== editing li ends  ====*/}
+                              {/*==== editing li starts  ====*/}
+                              <li onMouseDown={() => {
+                                setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.edit, whichArray: `teams.${teamValIndex}`, arrItemForEdit: `teams.${teamValIndex}`, playerName: val, editBtnClickBy: valIndex });
+                                setTimeout(() => mainInput.current.focus(), 100);
+                              }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] `}>
+                                <span>edit...</span>
+                                <span>
+                                  <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
+                                    <path d="M10.5 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C8.12805 13.9629 11.2057 13.6118 14 14.4281" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M18.4332 13.8485C18.7685 13.4851 18.9362 13.3035 19.1143 13.1975C19.5442 12.9418 20.0736 12.9339 20.5107 13.1765C20.6918 13.2771 20.8646 13.4537 21.2103 13.8067C21.5559 14.1598 21.7287 14.3364 21.8272 14.5214C22.0647 14.9679 22.0569 15.5087 21.8066 15.9478C21.7029 16.1298 21.5251 16.3011 21.1694 16.6437L16.9378 20.7194C16.2638 21.3686 15.9268 21.6932 15.5056 21.8577C15.0845 22.0222 14.6214 22.0101 13.6954 21.9859L13.5694 21.9826C13.2875 21.9752 13.1466 21.9715 13.0646 21.8785C12.9827 21.7855 12.9939 21.6419 13.0162 21.3548L13.0284 21.1988C13.0914 20.3906 13.1228 19.9865 13.2807 19.6232C13.4385 19.2599 13.7107 18.965 14.2552 18.375L18.4332 13.8485Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                                  </svg>
+                                </span>
+                              </li>
+                              {/*==== editing li ends  ====*/}
 
-                            {/*==== deleting li starts  ====*/}
-                            <li onMouseDown={() => {
-                              setAllTypeplayersAndTeams({ type: reducerTypes.deletePlayer, payload: { details: { ...PlayerInfoAndMore } } }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', whichArray: `teams.${teamValIndex}`, playerIndex: null, currentInputBtn: formSubmitBtnState.add, editBtnClickBy: null })
-                            }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`}>
-                              <span>delete</span>
-                              <span>
-                                <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
-                                  <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                  <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
-                                  <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                              </span>
-                            </li>
-                            {/*==== deleting li ends  ====*/}
+                              {/*==== deleting li starts  ====*/}
+                              <li onMouseDown={() => {
+                                setAllTypeplayersAndTeams({ type: reducerTypes.deletePlayer, payload: { details: { ...PlayerInfoAndMore } } }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', whichArray: `teams.${teamValIndex}`, playerIndex: null, currentInputBtn: formSubmitBtnState.add, editBtnClickBy: null })
+                              }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}>
+                                <span>delete</span>
+                                <span>
+                                  <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
+                                    <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                  </svg>
+                                </span>
+                              </li>
+                              {/*==== deleting li ends  ====*/}
 
-                          </ul>
+                            </ul>
+                          }
                           {/*====  actions ends   =====*/}
 
                         </li>
@@ -807,7 +823,7 @@ function App() {
               :
               <ol className='cardsContainer text-white list-inside flex flex-wrap justify-center gap-3 sm:py-5 mt-8 py-4'>
                 {allTypeplayersAndTeams.players.map((val, valIndex) => (
-                  <li key={val + valIndex + 'players'} className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline-1 outline ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#4d4aff] outline-offset-2' : 'outline-[#303030]'}`}>
+                  <li key={val + valIndex + 'players'} className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap bg-[#0a0a0a] outline-1 outline ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' outline-[#a06800] outline-offset-2' : 'outline-[#303030]'}`}>
                     <span>{val}</span>
 
                     {/*== backface of card starts  ==*/}
@@ -834,40 +850,42 @@ function App() {
                     {/*====  three dots ends  =====*/}
 
                     {/*==== actions starts  =====*/}
-                    <ul className={`popupContainer backdrop-blur-[4px]  shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px]  ${PlayerInfoAndMore.whichArray === `players` && PlayerInfoAndMore.playerIndex === valIndex ? '' : 'hidden'}`}>
+                    {PlayerInfoAndMore.whichArray === `players` && PlayerInfoAndMore.playerIndex === valIndex &&
+                      <ul className={`popupContainer bg-[#0a0a0a] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? ' border-[#a06800]' : ''}`}>
 
-                      {/*==== editing li starts  ====*/}
-                      <li onMouseDown={() => {
-                        setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.edit, whichArray: `players`, playerName: val, editBtnClickBy: valIndex, arrItemForEdit: `players` });
-                        setTimeout(() => mainInput.current.focus(), 100);
-                      }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626] `}>
-                        <span>edit...</span>
-                        <span>
-                          <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
-                            <path d="M10.5 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C8.12805 13.9629 11.2057 13.6118 14 14.4281" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
-                            <path d="M18.4332 13.8485C18.7685 13.4851 18.9362 13.3035 19.1143 13.1975C19.5442 12.9418 20.0736 12.9339 20.5107 13.1765C20.6918 13.2771 20.8646 13.4537 21.2103 13.8067C21.5559 14.1598 21.7287 14.3364 21.8272 14.5214C22.0647 14.9679 22.0569 15.5087 21.8066 15.9478C21.7029 16.1298 21.5251 16.3011 21.1694 16.6437L16.9378 20.7194C16.2638 21.3686 15.9268 21.6932 15.5056 21.8577C15.0845 22.0222 14.6214 22.0101 13.6954 21.9859L13.5694 21.9826C13.2875 21.9752 13.1466 21.9715 13.0646 21.8785C12.9827 21.7855 12.9939 21.6419 13.0162 21.3548L13.0284 21.1988C13.0914 20.3906 13.1228 19.9865 13.2807 19.6232C13.4385 19.2599 13.7107 18.965 14.2552 18.375L18.4332 13.8485Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                          </svg>
-                        </span>
-                      </li>
-                      {/*==== editing li ends  ====*/}
+                        {/*==== editing li starts  ====*/}
+                        <li onMouseDown={() => {
+                          setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.edit, whichArray: `players`, playerName: val, editBtnClickBy: valIndex, arrItemForEdit: `players` });
+                          setTimeout(() => mainInput.current.focus(), 100);
+                        }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] `}>
+                          <span>edit...</span>
+                          <span>
+                            <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
+                              <path d="M10.5 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C8.12805 13.9629 11.2057 13.6118 14 14.4281" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
+                              <path d="M18.4332 13.8485C18.7685 13.4851 18.9362 13.3035 19.1143 13.1975C19.5442 12.9418 20.0736 12.9339 20.5107 13.1765C20.6918 13.2771 20.8646 13.4537 21.2103 13.8067C21.5559 14.1598 21.7287 14.3364 21.8272 14.5214C22.0647 14.9679 22.0569 15.5087 21.8066 15.9478C21.7029 16.1298 21.5251 16.3011 21.1694 16.6437L16.9378 20.7194C16.2638 21.3686 15.9268 21.6932 15.5056 21.8577C15.0845 22.0222 14.6214 22.0101 13.6954 21.9859L13.5694 21.9826C13.2875 21.9752 13.1466 21.9715 13.0646 21.8785C12.9827 21.7855 12.9939 21.6419 13.0162 21.3548L13.0284 21.1988C13.0914 20.3906 13.1228 19.9865 13.2807 19.6232C13.4385 19.2599 13.7107 18.965 14.2552 18.375L18.4332 13.8485Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                            </svg>
+                          </span>
+                        </li>
+                        {/*==== editing li ends  ====*/}
 
-                      {/*==== deleting li starts  ====*/}
-                      <li onMouseDown={() => {
-                        setAllTypeplayersAndTeams({ type: reducerTypes.deletePlayer, payload: { details: { ...PlayerInfoAndMore } } }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', whichArray: `players`, playerIndex: null, currentInputBtn: formSubmitBtnState.add, editBtnClickBy: null })
-                      }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#262626]`}>
-                        <span>delete</span>
-                        <span>
-                          <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
-                            <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
-                            <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                          </svg>
-                        </span>
-                      </li>
-                      {/*==== deleting li ends  ====*/}
+                        {/*==== deleting li starts  ====*/}
+                        <li onMouseDown={() => {
+                          setAllTypeplayersAndTeams({ type: reducerTypes.deletePlayer, payload: { details: { ...PlayerInfoAndMore } } }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', whichArray: `players`, playerIndex: null, currentInputBtn: formSubmitBtnState.add, editBtnClickBy: null })
+                        }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}>
+                          <span>delete</span>
+                          <span>
+                            <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
+                              <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
+                              <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                          </span>
+                        </li>
+                        {/*==== deleting li ends  ====*/}
 
-                    </ul>
+                      </ul>
+                    }
                     {/*====  actions ends   =====*/}
 
                   </li>

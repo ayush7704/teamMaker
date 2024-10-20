@@ -89,6 +89,13 @@ button:is([type='submit'], [type='reset']):hover svg {
 }
 
 @media (max-width:350px) {
+<<<<<<< HEAD
+=======
+    html,
+    body {
+        font-size: 14.5px;
+    }
+>>>>>>> subnewchange
     nav{
         padding: 0 0.5rem
     }
@@ -185,4 +192,8 @@ button:is([type='submit'], [type='reset']):hover svg {
     100% {
         transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
     }
+}
+
+div .searchInput:focus{
+flex: 1 1 9.375rem;
 }

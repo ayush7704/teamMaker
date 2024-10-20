@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom'
 import ScrollToTop from './components/scrollToTop.jsx'
 import { mainContext } from './components/context/context.js'
 function routes() {
+  // styled modal buttons 
   const { Modal ,Notification} = useContext(mainContext)
   return (
     <section className='min-h-[100vh] text-white'>
