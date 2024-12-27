@@ -1,6 +1,6 @@
 import React, { useRef, useState, useLayoutEffect, memo, useCallback, useContext } from "react";
 import { mainContext } from "./context";
-import { savedTeamReducerActions, alertMsgs ,alertMsgsTime} from "../home";
+import { savedTeamReducerActions, alertMsgs, alertMsgsTime } from "../home";
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap'
 
@@ -9,15 +9,22 @@ function ContextProvider({ children }) {
     const timeout = useRef(null)
     const [savedTeam, setsavedTeam] = useState([])
     const [modalOpen, setmodalOpen] = useState(false)
-    const [alertMsgsState, setalertMsgsState] = useState('minimum 2 players required');
+    const [alertMsgsState, setalertMsgsState] = useState('You need at least 2 players to generate a team.');
 
     const { contextSafe } = useGSAP();
 
+    const clearNotification = () => {
+        clearTimeout(timeout.current)    
+        gsap.to('.fixedmsg', { opacity: 0, duration: 0.4, display: 'none' })
+    }
+ 
     // Notification animation
-    const popupAnim = contextSafe((time) => {
-        console.log( time ?? 2500)
+    let inter;
+    const popupAnim = contextSafe((time) => {        
         clearTimeout(timeout.current) // removing old timeout 
+        
         gsap.fromTo('.fixedmsg', { bottom: 0, opacity: 0.5, display: 'none' }, { bottom: 100, opacity: 1, display: 'block', ease: 'back', duration: 0.5 })
+        
         timeout.current = setTimeout(() => {
             gsap.to('.fixedmsg', { opacity: 0, duration: 0.4, display: 'none' })
         }, time ?? 2500);
@@ -62,7 +69,7 @@ function ContextProvider({ children }) {
     }, [savedTeam])
 
     return (
-        <mainContext.Provider value={{ savedTeam, setsavedTeam, PageHeading, compareObjects, Modal, modalOpen, setmodalOpen, alertMsgsState, setalertMsgsState, Notification, popupAnim }}>
+        <mainContext.Provider value={{ savedTeam, setsavedTeam, PageHeading, compareObjects, Modal, modalOpen, setmodalOpen, alertMsgsState, setalertMsgsState, Notification, popupAnim, clearNotification }}>
             {children}
         </mainContext.Provider>
     )
@@ -71,7 +78,7 @@ function ContextProvider({ children }) {
 export default React.memo(ContextProvider)
 
 let PageHeading = memo(({ heading }) => {
-// 
+    // 
     return (
         <div className='grid grid-cols-12 items-center py-4 px-4 text-xl'>
             {/* return btn  */}
@@ -89,6 +96,7 @@ let PageHeading = memo(({ heading }) => {
 
 const Modal = () => {
     const modalContainer = useRef(null)
+    const modal = useRef(null)
     const { savedTeam, setsavedTeam, modalOpen, setmodalOpen, setalertMsgsState, popupAnim } = useContext(mainContext)
     const savedTeamOpened = structuredClone(savedTeam.find((savedteam) => { return savedteam.openedInGenerator }))
 
@@ -112,7 +120,7 @@ const Modal = () => {
                 {
                     localStorage.setItem('allTeamAndPlayers', JSON.stringify(savedTeamOpened))
                     setalertMsgsState(alertMsgs.changesDiscard)
-                    copiedsavedTeam[openedArrIndex] = savedTeamOpened                                                            
+                    copiedsavedTeam[openedArrIndex] = savedTeamOpened
                     setsavedTeam(copiedsavedTeam)
                     popupAnim(alertMsgsTime.get(alertMsgs.changesDiscard))
                 }
@@ -122,10 +130,16 @@ const Modal = () => {
         }
     }
 
+    useGSAP(() => {
+        if (modalOpen) {  //while opening 
+            gsap.fromTo(modal.current, { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back' })
+        }
+    }, [modalOpen])
+
     const { contextSafe } = useGSAP();
 
     const backClickedHandle = contextSafe(() => {
-        gsap.fromTo(modalContainer.current.children, {scale:0.9}, {scale:1,duration:.8, ease:'back'})
+        gsap.fromTo(modalContainer.current.children, { scale: 0.9 }, { scale: 0, duration: .8, ease: 'back' })
         setTimeout(() => {
             setmodalOpen(false)
         }, 150);
@@ -133,19 +147,28 @@ const Modal = () => {
 
     return (
         <div ref={modalContainer} onClick={backClickedHandle} className={`fixed inset-0 z-20 grid place-items-center backdrop-blur-[2px] ${modalOpen ? '' : 'hidden'}`}>
-            <div onClick={(e)=>{e.stopPropagation()}} className={`sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 outline outline-1 outline-[#303030] rounded-sm`}>
+            <div ref={modal} onClick={(e) => { e.stopPropagation() }} className={`relative sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 outline outline-1 outline-[#303030] rounded`}>
+
+                {/* ======= close btn starts ===== */}
+                <button onClick={backClickedHandle} className='absolute top-4 right-3 transition-all duration-100 drop-shadow-[0px_0px_5px_white] hover:drop-shadow-[0px_0px_7px_white]'>
+                    <svg className='w-5 h-5' viewBox="0 0 24 24" fill="none">
+                        <path d="M19.0005 4.99988L5.00049 18.9999M5.00049 4.99988L19.0005 18.9999" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                </button>
+                {/* ======= close btn ends ===== */}
+
                 <h3 className='capitalize text-lg px-[0.625rem]'>save changes ?</h3>
-                <div className='p-[0.625rem]'>
+                <div className='p-[0.625rem] w-[90%]'>
                     <p className='text-[#d1d1d1]'>
                         would you like to save current changes in
                         <span className='whitespace-nowrap'> {savedTeamOpened?.title} ?</span>
                     </p>
                 </div>
-                <div className='text-end mt-[0.35rem] text-[0.9em]'>
-                {/* hover:bg-[#a06800]  */}
-                    <button onClick={(e) => {e.stopPropagation(); savingFunc({ type: savedTeamReducerActions.saveChanges }); setmodalOpen(false) }} className='capitalize rounded-sm py-1 px-2 transition duration-75 ease-out bg-[#1b1b1b] text-[#ffa600] hover:bg-[#a0680080] hover:text-white'>save</button>
+                <div className='flex items-center text-end mt-[1.50rem] text-[0.9em]'>
+                    {/* hover:bg-[#a06800]  */}
+                    <button onClick={(e) => { e.stopPropagation(); savingFunc({ type: savedTeamReducerActions.saveChanges }); setmodalOpen(false) }} className='capitalize flex-1 rounded-sm py-[0.45rem] px-2 transition duration-75 ease-out hover:bg-[#f49e0073] bg-[#a0680080] active:scale-[0.96] text-white'>save</button>
                     {/* bg-[#e8252517] hover:bg-[#e8252538] */}
-                    <button onClick={(e) => {e.stopPropagation(); savingFunc({ type: savedTeamReducerActions.discardChanges }); setmodalOpen(false); }} className='capitalize rounded-sm py-1 px-2 transition duration-75 ease-out bg-[#1b1b1b70] text-[#a06800] hover:bg-[#1b1b1b] hover:text-[#ffa600] ml-2'>discard</button>
+                    <button onClick={(e) => { e.stopPropagation(); savingFunc({ type: savedTeamReducerActions.discardChanges }); setmodalOpen(false); }} className='capitalize flex-1 rounded-sm py-[0.45rem] px-2 transition duration-75 ease-out bg-[#1b1b1b70] text-[#a06800] hover:bg-[#1b1b1b] hover:text-[#ffa600] active:scale-[0.96] ml-2'>discard</button>
                 </div>
             </div>
         </div>
@@ -153,13 +176,20 @@ const Modal = () => {
 }
 
 const Notification = () => {
-    const { alertMsgsState } = useContext(mainContext)
+    const { alertMsgsState, clearNotification } = useContext(mainContext)
 
     return (
         <>
             {/* notifcation div starts  */}
-            < div className={`fixedmsg fixed hidden  w-[75%] max-[21.875rem]:w-[80%] px-3 sm:max-w-[16.875rem] capitalize text-[0.9rem] text-center  left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] `
-            }> {alertMsgsState}</div >
+            < div className={`fixedmsg fixed hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] sm:max-w-[20.875rem] capitalize text-[0.85rem] text-center left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] tracking-[0.1px]`
+            }>
+                <button onClick={() => { clearNotification() }} className='absolute p-1 top-[-4px] right-[-4px] bg-black transition-all duration-100 rounded-[50%] outline outline-1 outline-[#ffffffab]'>
+                    <svg className='w-[0.75rem] h-[0.75rem]' viewBox="0 0 24 24" fill="none">
+                        <path d="M19.0005 4.99988L5.00049 18.9999M5.00049 4.99988L19.0005 18.9999" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                </button>
+                {alertMsgsState}
+            </div >
             {/* notifcation div ends  */}
         </>
     )

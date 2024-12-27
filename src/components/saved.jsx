@@ -32,14 +32,14 @@ function saved() {
   const oldfilters = JSON.parse(sessionStorage.getItem('oldfilters'))
 
   useLayoutEffect(() => {
-    console.log(savedTeam)
+    // console.log(savedTeam)
     setsavedTeamsState({ ...savedTeamsState, saveTeams: [...savedTeam] });
     if (savedTeamsState.saveTeams.length > 0) {
       if (oldfilters) {
-        console.log(oldfilters.aTozOptions)
+        // console.log(oldfilters.aTozOptions)
         getFiltersFunc({ a2z: oldfilters.aTozOptions })
       } else {
-        console.log(allfiltersDefault.aTozOptions)
+        // console.log(allfiltersDefault.aTozOptions)
         getFiltersFunc({ a2z: allfiltersDefault.aTozOptions })
       }
     }
@@ -48,16 +48,16 @@ function saved() {
 
   //  this func will set all values 
   function setfiltersFunc({ aToz }) {
-    console.log(aToz)
+    // console.log(aToz)
     switch (aToz) {
       case aTozOptionsSimplified.newToOld:
         // newest to oldest 
-        console.log(savedTeamsState.saveTeams)
+        // console.log(savedTeamsState.saveTeams)
         setsavedTeamsState({
           ...savedTeamsState,
           saveTeams: [...savedTeam].sort((a, b) => new Date(b.savingTime) - new Date(a.savingTime)),
         });
-        console.log(savedTeamsState.saveTeams)
+        // console.log(savedTeamsState.saveTeams)
         break;
       case aTozOptionsSimplified.OldToNew:
         // oldest to newest 
@@ -67,10 +67,10 @@ function saved() {
         });
         break;
       default:
-        console.log(aToz);
+        // console.log(aToz);
         break;
     }
-    console.log(aToz)
+    // console.log(aToz)
   }
 
   // i putted them get and set function seprate because when we need to set them we can do this independently
@@ -87,7 +87,7 @@ function saved() {
             setfiltersFunc({ aToz: elm.option })
             break;
           default:
-            console.log('random');
+            // console.log('random');
             break;
         }
       }
@@ -119,12 +119,12 @@ function saved() {
         break;
       }
       case seeMoreActions.removeFromGenerator: {
-        console.log('inside remove')
+        // console.log('inside remove')
         let changesSavedOrnot = compareObjects(JSON.parse(localStorage.getItem('savedTeamOpened')), JSON.parse(localStorage.getItem('allTeamAndPlayers')))
         // checking unsaved changes 
 
         if (changesSavedOrnot) {
-          console.log('inside true')
+          // console.log('inside true')
           // this local storage data will remove the current opening object from the generator
           localStorage.setItem('savedTeamOpened', JSON.stringify(false))
           localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
@@ -177,7 +177,7 @@ function saved() {
   return (
     <>
       <PageHeading heading={'saved'} />
-      <div className={`${!savedTeamsState.saveTeams.length < 1 ? 'min-h-[80vh]' : ''} p-3 pt-4 pb-24 sm:p-[1.875rem]`}>
+      <div className={`${!savedTeamsState.saveTeams.length < 1 ? 'min-h-[80vh]' : ''} p-3 pt-4 pb-24 sm:pb-14 sm:p-[1.875rem]`}>
         {
           savedTeamsState.saveTeams.length < 1 ?
             <section className='min-h-[70vh] grid place-items-center'>
@@ -302,13 +302,13 @@ const AccordionDropdown = memo(({ options, newOptions }) => {
 
 
   const toggleDropdown = () => {
-    console.log(defaultSelectedValue)
+    // console.log(defaultSelectedValue)
     setAccordionOpened(!AccordionOpened);
   };
 
   // for options when clicking 
   const handleOptionClick = (option) => {
-    console.log(defaultSelectedValue)
+    // console.log(defaultSelectedValue)
     setcurrentOption(option);
     // new options 
     const updatedOptions = options.map((object) => {

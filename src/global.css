@@ -19,8 +19,14 @@ body {
         conic-gradient(from -63.44deg at calc(200%/3) 100%, #0000 90deg, #000000 0) #0a0a0a;
     background-size: 3.5rem 3.5rem;
     user-select: none;
-
 }
+
+.bruno {
+    font-family: "Bruno Ace SC", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
 
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
@@ -89,16 +95,16 @@ button:is([type='submit'], [type='reset']):hover svg {
 }
 
 @media (max-width:350px) {
-<<<<<<< HEAD
-=======
+
     html,
     body {
         font-size: 14.5px;
     }
->>>>>>> subnewchange
-    nav{
+
+    nav {
         padding: 0 0.5rem
     }
+
     nav a.pageLinks {
         font-size: 0.7rem;
         padding-inline: 0.5rem;
@@ -137,7 +143,7 @@ button:is([type='submit'], [type='reset']):hover svg {
 .spinner {
     width: 1.75rem;
     height: 1.75rem;
-    animation: spinner 4.4s infinite ease;
+    animation: spinner 8.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
 }
 
@@ -180,6 +186,30 @@ button:is([type='submit'], [type='reset']):hover svg {
     transform: translateZ(0.875rem);
 }
 
+/* @keyframes spinner {
+    0% {
+        transform: rotate(45deg) rotateX(0deg) rotateY(90deg);
+    }
+
+    10% {
+         transform: rotate(0deg) rotateX(30deg) rotateY(90deg); 
+        transform: rotate(45deg) rotateX(395deg) rotateY(45deg);
+
+    }
+
+    20% {
+        transform: rotate(45deg) rotateX(35deg) rotateY(45deg);
+    }
+
+    50% {
+        transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+    }
+
+    100% {
+        transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+    }
+} */
+
 @keyframes spinner {
     0% {
         transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
@@ -194,6 +224,6 @@ button:is([type='submit'], [type='reset']):hover svg {
     }
 }
 
-div .searchInput:focus{
-flex: 1 1 9.375rem;
+div .searchInput:focus {
+    flex: 1 1 9.375rem;
 }

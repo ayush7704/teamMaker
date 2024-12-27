@@ -30,18 +30,20 @@ export const alertMsgs = {
   savedTeamChangesSaved: 'Your changes were saved successfully!',
   changesDiscard: 'Your changes were removed successfully!',
   nothingToDiscard: 'There’s nothing to discard.',
-  teamDeleted: 'Your project was removed successfully!'
+  teamDeleted: 'Your project was removed successfully!',
+  removeAll: 'removing all',
 }
 
 export const alertMsgsTime = new Map([
-  [alertMsgs.teamSaved,3000],
-  [alertMsgs.teamNotSaved,4000],
-  [alertMsgs.notGenerated,4000],
-  [alertMsgs.savedTeamNoChanges,3000],
-  [alertMsgs.savedTeamChangesSaved,2500],
-  [alertMsgs.changesDiscard,3500],
-  [alertMsgs.nothingToDiscard,2500],
-  [alertMsgs.teamDeleted,3000],
+  [alertMsgs.teamSaved, 3000],
+  [alertMsgs.teamNotSaved, 4000],
+  [alertMsgs.notGenerated, 4000],
+  [alertMsgs.savedTeamNoChanges, 3000],
+  [alertMsgs.savedTeamChangesSaved, 2500],
+  [alertMsgs.changesDiscard, 3500],
+  [alertMsgs.nothingToDiscard, 2500],
+  [alertMsgs.teamDeleted, 3000],
+  [alertMsgs.removeAll, 1500],
 ])
 
 const reducer = (oldobj, action) => {
@@ -224,6 +226,7 @@ function App() {
   const [savedTeamChanges, setSavedTeamChanges] = useState({ popup: false })
 
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({ playerName: '', arrItemForEdit: 'players', whichArray: 'players', playerIndex: null, editBtnClickBy: null, currentInputBtn: formSubmitBtnState.add })
+  
 
   useLayoutEffect(() => {
     const savedallTeamAndPlayers = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
@@ -404,9 +407,12 @@ function App() {
     }
 
     if (allTypeplayersAndTeams.players.length < 2) {
-      if (msg === alertMsgsWork.generateTeam) setalertMsgsState(alertMsgs.notGenerated);
-      if (msg === alertMsgsWork.saveTeamMsg) setalertMsgsState(alertMsgs.teamNotSaved);
-      popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved))
+      if (msg === alertMsgsWork.generateTeam) {setalertMsgsState(alertMsgs.notGenerated);
+        popupAnim(alertMsgsTime.get(alertMsgs.notGenerated))
+      }
+      if (msg === alertMsgsWork.saveTeamMsg) {setalertMsgsState(alertMsgs.teamNotSaved);
+        popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved))
+      }      
     } else {
       if (msg === alertMsgsWork.generateTeam) generateTeamFunc();
       if (msg === alertMsgsWork.saveTeamMsg) {
@@ -442,6 +448,17 @@ function App() {
 
 
   function newTeam() {
+    function defaultSetFunc() {
+      // setting states to default values
+      setdifferentBtnStates({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
+      setAllTypeplayersAndTeams({ type: reducerTypes.removeAll })
+
+      setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: '', arrItemForEdit: null, editBtnClickBy: null, whichArray: null, whichplayer: null, currentInputBtn: formSubmitBtnState.add });
+
+      // setting resetted obj 
+      setsavedTeam([...resetOld])
+    }
+
     const resetOld = savedTeam.map((team) => { return { ...team, openedInGenerator: false } })
     if (savedTeamOpened) { // if there is savedTeamOpened 
       let localSavedsaveTeam = JSON.parse(localStorage.getItem('savedTeamOpened'))
@@ -454,21 +471,11 @@ function App() {
         localStorage.setItem('savedTeamOpened', JSON.stringify(false))
         localStorage.setItem('allTeamAndPlayers', JSON.stringify(false))
 
-        // setting states to default values
-        setdifferentBtnStates({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
-        setAllTypeplayersAndTeams({ type: reducerTypes.removeAll })
-
-        // setting resetted obj 
-        setsavedTeam([...resetOld])
+        defaultSetFunc()
       }
     }
     else {
-      // setting states to default values
-      setdifferentBtnStates({ GeneratingTeam: false, needToGenerate: false, savedProcessing: false })
-      setAllTypeplayersAndTeams({ type: reducerTypes.removeAll })
-
-      // setting resetted obj 
-      setsavedTeam([...resetOld])
+      defaultSetFunc()
     }
   }
 
@@ -522,7 +529,7 @@ function App() {
   return (
 
     <main>
-      <div className="wrapper sm:w-[75%] mx-auto p-3 pb-20">
+      <div className="wrapper sm:w-[75%] mx-auto p-3">
 
         {/* details div starts  */}
         <div className="details lg:max-w-[45%] sm:max-w-[75%] mx-auto p-2">
@@ -537,7 +544,7 @@ function App() {
           {/* total teams label starts  */}
           <label htmlFor='totalTeamsInput' className='flex justify-between p-2 cursor-pointer'>
             <span className='capitalize'>total teams</span>
-            <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={allTypeplayersAndTeams.totalTeams} className='w-[2.5rem] text-end bg-transparent focus:outline-none text-lg font-medium' onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.addTeam, payload: { newTotalTeams: e.target.value } })} onBlur={(e) => { setAllTypeplayersAndTeams({ type: reducerTypes.addTeamBlur, payload: { newTotalTeams: e.target.value } }); }} />
+            <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={allTypeplayersAndTeams.totalTeams} className='w-[2.5rem] text-end bg-transparent focus:outline-none focus:text-[#ffa600] text-lg font-medium' onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.addTeam, payload: { newTotalTeams: e.target.value } })} onBlur={(e) => { setAllTypeplayersAndTeams({ type: reducerTypes.addTeamBlur, payload: { newTotalTeams: e.target.value } }); }} />
           </label>
           {/* total teams label ends  */}
 
@@ -583,7 +590,7 @@ function App() {
             {
               // only  visible while editing name 
               PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.edit &&
-              <button type="reset" value={'cancle'} className='p-2 border-[#414141] border border-1 rounded-[50%]'>
+              <button type="reset" value={'cancle'} className='p-2 outline outline-1 outline-[#ffffff41] rounded-[50%]'>
                 <svg className='w-[1.375rem] h-[1.375rem]' viewBox="0 0 24 24" color="#e50f0f" fill="none">
                   <path d="M14.9994 15L9 9M9.00064 15L15 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="2" />
@@ -671,7 +678,7 @@ function App() {
               {/* save team button starts  */}
               <button onClick={() => { checkingFunction(alertMsgsWork.saveTeamMsg); }} className={`bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center} ${differentBtnStates.savedProcessing ? 'btnLoadTime' : ''}`} disabled={differentBtnStates.savedProcessing}>
                 {differentBtnStates.savedProcessing ?
-                  <svg className='sm:w-[1.375rem] w-[1rem]  h-[1rem] sm:h-[1.375rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  <svg className='sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
                     <path d="M12 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M12 18V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M21 12L18 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -682,7 +689,7 @@ function App() {
                     <path d="M7.75804 7.75804L5.63672 5.63672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                   :
-                  <svg className='sm:w-[1.375rem] w-[1rem]  h-[1rem] sm:h-[1.375rem] text-white' viewBox="0 0 24 24" fill="none">
+                  <svg className='sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem] text-white' viewBox="0 0 24 24" fill="none">
                     <path d="M11 2C7.22876 2 5.34315 2 4.17157 3.12874C3 4.25748 3 6.07416 3 9.70753V17.9808C3 20.2867 3 21.4396 3.77285 21.8523C5.26947 22.6514 8.0768 19.9852 9.41 19.1824C10.1832 18.7168 10.5698 18.484 11 18.484C11.4302 18.484 11.8168 18.7168 12.59 19.1824C13.9232 19.9852 16.7305 22.6514 18.2272 21.8523C19 21.4396 19 20.2867 19 17.9808V12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M3.5 7.00005H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     <path d="M17 10L17 2M13 6H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -782,7 +789,7 @@ function App() {
                               <li onMouseDown={() => {
                                 setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.edit, whichArray: `teams.${teamValIndex}`, arrItemForEdit: `teams.${teamValIndex}`, playerName: val, editBtnClickBy: valIndex });
                                 setTimeout(() => mainInput.current.focus(), 100);
-                              }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] `}>
+                              }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.arrItemForEdit === ('teams.' + teamValIndex) && PlayerInfoAndMore.editBtnClickBy === valIndex ? 'hover:bg-[#f49e0073] bg-[#a0680080]' : ''}`}>
                                 <span>edit...</span>
                                 <span>
                                   <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
@@ -800,11 +807,7 @@ function App() {
                               }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}>
                                 <span>delete</span>
                                 <span>
-                                  <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
-                                    <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
-                                    <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                  </svg>
+                                  <svg className='w-[1rem] h-[1rem]' color="#ffffff" fill="none" viewBox="0 0 512 512"><path fill="currentColor" d="M384 256c-70.7 0-128 57.3-128 128s57.3 128 128 128s128-57.3 128-128s-57.3-128-128-128m85.3 149.3H298.7v-42.7h170.7v42.7zm-256-21.3c0-87 65.2-158.7 149.3-169.2v-1.5c5.5-8 21.3-21.3 21.3-42.7s-21.3-42.7-21.3-53.3C362.7 32 319.2 0 256 0c-60.5 0-106.7 32-106.7 117.3c0 10.7-21.3 32-21.3 53.3s15.2 35.4 21.3 42.7c0 0 0 21.3 10.7 53.3c0 10.7 21.3 21.3 32 32c0 10.7 0 21.3-10.7 42.7L64 362.7C21.3 373.3 0 448 0 512h271.4c-35.5-31.3-58.1-77-58.1-128" /></svg>
                                 </span>
                               </li>
                               {/*==== deleting li ends  ====*/}
@@ -857,7 +860,7 @@ function App() {
                         <li onMouseDown={() => {
                           setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.edit, whichArray: `players`, playerName: val, editBtnClickBy: valIndex, arrItemForEdit: `players` });
                           setTimeout(() => mainInput.current.focus(), 100);
-                        }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] `}>
+                        }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.whichArray === ('players') && PlayerInfoAndMore.editBtnClickBy === valIndex ? 'hover:bg-[#f49e0073] bg-[#a0680080]' : ''}`}>
                           <span>edit...</span>
                           <span>
                             <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
@@ -875,11 +878,7 @@ function App() {
                         }} className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}>
                           <span>delete</span>
                           <span>
-                            <svg className='w-[1rem] h-[1rem]' viewBox="0 0 24 24" color="#ffffff" fill="none">
-                              <path d="M13 22H6.59087C5.04549 22 3.81631 21.248 2.71266 20.1966C0.453365 18.0441 4.1628 16.324 5.57757 15.4816C7.97679 14.053 10.8425 13.6575 13.5 14.2952" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                              <path d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z" stroke="currentColor" strokeWidth="2" />
-                              <path d="M16 22L19 19M19 19L22 16M19 19L16 16M19 19L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                            </svg>
+                            <svg className='w-[1rem] h-[1rem]' color="#ffffff" fill="none" viewBox="0 0 512 512"><path fill="currentColor" d="M384 256c-70.7 0-128 57.3-128 128s57.3 128 128 128s128-57.3 128-128s-57.3-128-128-128m85.3 149.3H298.7v-42.7h170.7v42.7zm-256-21.3c0-87 65.2-158.7 149.3-169.2v-1.5c5.5-8 21.3-21.3 21.3-42.7s-21.3-42.7-21.3-53.3C362.7 32 319.2 0 256 0c-60.5 0-106.7 32-106.7 117.3c0 10.7-21.3 32-21.3 53.3s15.2 35.4 21.3 42.7c0 0 0 21.3 10.7 53.3c0 10.7 21.3 21.3 32 32c0 10.7 0 21.3-10.7 42.7L64 362.7C21.3 373.3 0 448 0 512h271.4c-35.5-31.3-58.1-77-58.1-128" /></svg>
                           </span>
                         </li>
                         {/*==== deleting li ends  ====*/}

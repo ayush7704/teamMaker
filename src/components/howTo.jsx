@@ -30,20 +30,20 @@ function howTo() {
   return (
     <>
       <PageHeading heading={'how to'} />
-      <div className='sm:w-[80%] mx-auto p-3'>
+      <div className='sm:w-[80%] mx-auto p-3 sm:text-[1rem] text-[0.95rem]'>
         {/* what is random team maker starts */}
         <div className='mb-4 sm:p-8 p-5 backdrop-blur-[8px] rounded-2xl outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up'>
-          <h2 className='text-[1.05rem] leading-[100%] capitalize'>1. what is random team maker ?</h2>
-          <p className='p-3 text-[0.90rem]'>Need to randomly divide people into teams? Our random team maker makes it easy to create fair and balanced teams for any activity. Simply add the names of the participants, and let our algorithm do the rest. Whether you're planning a group activity, creating teams for a sports tournament , a classroom project, or a volunteer activity, our web-app is the perfect solution.
+          <h2 className='text-[1.05em] leading-[100%] capitalize'>1. what is random team maker ?</h2>
+          <p className='p-3 text-[0.90em]'>Need to randomly divide people into teams? Our random team maker makes it easy to create fair and balanced teams for any activity. Simply add the names of the participants, and let our algorithm do the rest. Whether you're planning a group activity, creating teams for a sports tournament , a classroom project, or a volunteer activity, our web-app is the perfect solution.
           </p>
         </div>
         {/* what is random team maker ends */}
 
         {/*  How to Generate Random Team? starts */}
         <div className='mb-4 sm:p-8 p-5 backdrop-blur-[8px] rounded-2xl outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up'>
-          <h2 className='text-[1.05rem] leading-[100%] capitalize'>2. How to Generate Random Team ?</h2>
+          <h2 className='text-[1.05em] leading-[100%] capitalize'>2. How to Generate Random Team ?</h2>
           <div className='grid gap-8 p-3'>
-            <HowToExamples title={`1. Insert participants' names. ( min-2 participants )`} element={(
+            <HowToExamples title={`1. Insert participants' names. (min-2)`} element={(
               <div className='relative backdrop-blur-[4px] inline-block cursor-default'>
                 <input type="text" placeholder='Add player' className='w-full bg-transparent px-3 py-2 rounded-md outline outline-1 outline-[#ffffff41] pr-[2.5rem]' readOnly />
 
@@ -57,12 +57,12 @@ function howTo() {
                 {/* submit button ends  */}
               </div>)} />
 
-            <HowToExamples title={`2. Set Project Title ( optional ).`} element={<div className='max-w-[250px]'>
+            <HowToExamples title={`2. Set Project Title (optional).`} element={<div className='max-w-[250px]'>
               <p>Project Title</p>
               <input type="text" placeholder='Fifa team 2026' className='w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] backdrop-blur-[4px]' readOnly />
             </div>} />
 
-            <HowToExamples title={`3. Type total teams you want. by default( 2 ).`} element={<div className='flex justify-between min-w-[13.875rem]'>
+            <HowToExamples title={`3. Type total teams you want. by default (2).`} element={<div className='flex justify-between min-w-[13.875rem]'>
               <span className='capitalize'>total teams</span>
               <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={'2'} className='w-[2.5rem] text-end bg-transparent focus:outline-none text-lg font-medium' readOnly />
             </div>} />
@@ -85,7 +85,7 @@ function howTo() {
 
         {/* save your Projects locally in the browser starts */}
         <div className='mb-4 sm:p-8 p-5 backdrop-blur-[8px] rounded-2xl outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up'>
-          <h2 className='text-[1.05rem] leading-[100%] capitalize'>3. save your Projects locally in the browser.</h2>
+          <h2 className='text-[1.05em] leading-[100%] capitalize'>3. save your Projects locally in the browser.</h2>
           <div className='grid gap-8 p-3'>
             <HowToExamples title={`1. Click this save icon to save your Projects in your browser's storage. So, you can still access the same data the next time when you visit again at the same browser .`} element={<button className={` bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}>
               <svg className='sm:w-[1.375rem] w-[1rem]  h-[1rem] sm:h-[1.375rem] text-white' viewBox="0 0 24 24" fill="none">
@@ -110,10 +110,10 @@ function howTo() {
 
         {/* Why is this random team maker useful? starts  */}
         <div className='mb-4 sm:p-8 p-5 backdrop-blur-[8px] rounded-2xl outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up'>
-          <h2 className='text-[1.05rem] leading-[100%] capitalize'>4. Why is this random team maker useful?.</h2>
-          <p className="sm:text-[0.95rem] text-[0.93rem] py-2">Our efficient random team maker simplifies group formation, saving you time and effort in various settings.</p>
-          <p className="sm:text-[0.92rem] text-[0.90rem] py-2">Use Cases for Our Random Team maker :</p>
-          <ul className='list-disc list-inside p-1 sm:text-[0.9rem] text-[0.88rem]'>
+          <h2 className='text-[1.05em] leading-[100%] capitalize'>4. Why is this random team maker useful?.</h2>
+          <p className="sm:text-[0.95em] text-[0.93em] py-2">Our efficient random team maker simplifies group formation, saving you time and effort with just a few clicks.</p>
+          <p className="sm:text-[0.92em] text-[0.90em] py-2">Use Cases for Our Random Team maker :</p>
+          <ul className='list-disc list-inside p-1 sm:text-[0.9em] text-[0.88em]'>
             {
               ['In sports tournament team generation.', 'To Create diverse and balanced teams.', 'In diversing groups for interactive learning.', 'For card games,  video games & more.', 'Random teams for various contests or competitions.', 'Divide students into groups for various activities.'].map((para, ind) => (
                 <li key={ind} className='p-1'><span className='text-center'>{para}</span></li>
@@ -139,6 +139,7 @@ function HowToExamples({ element, title }) {
         {
           rotateX: '0deg',
           duration: 0.8,ease:'back',
+          transformOrigin:'bottom',
           scrollTrigger: {
             trigger: element,
             start: 'top 83%',
@@ -155,7 +156,7 @@ function HowToExamples({ element, title }) {
   return (
     <div className='grid sm:grid-cols-[repeat(auto-fit,minmax(18.75rem,1fr))] items-center gap-5'>
       <div className='flex justify-start'>
-        <p className='text-[0.9rem]'>{title}</p>
+        <p className='text-[0.9em]'>{title}</p>
       </div>
       <div className='example-elm flex justify-start'>
         {element}
