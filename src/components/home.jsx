@@ -25,6 +25,7 @@ const alertMsgsWork = {
 export const alertMsgs = {
   teamSaved: 'Your project was saved successfully!',
   teamNotSaved: 'You need at least 2 players to save a project.',
+  titleNotSaved: 'The project requires a title',
   notGenerated: 'You need at least 2 players to generate a team. ',
   savedTeamNoChanges: 'There are no changes to save.',
   savedTeamChangesSaved: 'Your changes were saved successfully!',
@@ -37,6 +38,7 @@ export const alertMsgs = {
 export const alertMsgsTime = new Map([
   [alertMsgs.teamSaved, 3000],
   [alertMsgs.teamNotSaved, 4000],
+  [alertMsgs.titleNotSaved, 2500],
   [alertMsgs.notGenerated, 4000],
   [alertMsgs.savedTeamNoChanges, 3000],
   [alertMsgs.savedTeamChangesSaved, 2500],
@@ -226,7 +228,7 @@ function App() {
   const [savedTeamChanges, setSavedTeamChanges] = useState({ popup: false })
 
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({ playerName: '', arrItemForEdit: 'players', whichArray: 'players', playerIndex: null, editBtnClickBy: null, currentInputBtn: formSubmitBtnState.add })
-  
+
 
   useLayoutEffect(() => {
     const savedallTeamAndPlayers = JSON.parse(localStorage.getItem('allTeamAndPlayers'))
@@ -406,13 +408,19 @@ function App() {
       setalertMsgsState(alertMsgs.nothingToDiscard); popupAnim(alertMsgsTime.get(alertMsgs.nothingToDiscard))
     }
 
-    if (allTypeplayersAndTeams.players.length < 2) {
-      if (msg === alertMsgsWork.generateTeam) {setalertMsgsState(alertMsgs.notGenerated);
+    if (allTypeplayersAndTeams.players.length < 2 || allTypeplayersAndTeams.title.trim().length < 1) {
+      if (allTypeplayersAndTeams.title.trim().length < 1) { // title required
+        setalertMsgsState(alertMsgs.titleNotSaved);
+        popupAnim(alertMsgsTime.get(alertMsgs.titleNotSaved))
+      }
+      else if (msg === alertMsgsWork.generateTeam) {
+        setalertMsgsState(alertMsgs.notGenerated);
         popupAnim(alertMsgsTime.get(alertMsgs.notGenerated))
       }
-      if (msg === alertMsgsWork.saveTeamMsg) {setalertMsgsState(alertMsgs.teamNotSaved);
-        popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved))
-      }      
+      else if (msg === alertMsgsWork.saveTeamMsg) {
+        setalertMsgsState(alertMsgs.teamNotSaved);
+        popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved))      
+      }
     } else {
       if (msg === alertMsgsWork.generateTeam) generateTeamFunc();
       if (msg === alertMsgsWork.saveTeamMsg) {
@@ -544,7 +552,7 @@ function App() {
           {/* total teams label starts  */}
           <label htmlFor='totalTeamsInput' className='flex justify-between p-2 cursor-pointer'>
             <span className='capitalize'>total teams</span>
-            <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={allTypeplayersAndTeams.totalTeams} className='w-[2.5rem] text-end bg-transparent focus:outline-none focus:text-[#ffa600] text-lg font-medium' onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.addTeam, payload: { newTotalTeams: e.target.value } })} onBlur={(e) => { setAllTypeplayersAndTeams({ type: reducerTypes.addTeamBlur, payload: { newTotalTeams: e.target.value } }); }} />
+            <input type="number" name="totalTeamsInput" id="totalTeamsInput" value={allTypeplayersAndTeams.totalTeams} className={`w-[2.5rem] text-end bg-transparent focus:outline-none focus:text-[#ffa600] text-lg font-medium`} onChange={(e) => setAllTypeplayersAndTeams({ type: reducerTypes.addTeam, payload: { newTotalTeams: e.target.value } })} onBlur={(e) => { setAllTypeplayersAndTeams({ type: reducerTypes.addTeamBlur, payload: { newTotalTeams: e.target.value } }); }} />
           </label>
           {/* total teams label ends  */}
 
@@ -567,15 +575,16 @@ function App() {
               <input ref={mainInput} type="text" name="playerName" id="formInput" placeholder='Add player' className='w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#a06800] pr-[2.5rem]' value={PlayerInfoAndMore.playerName} onChange={(e) => { setPlayerInfoAndMore({ ...PlayerInfoAndMore, playerName: e.target.value }) }} required />
 
               {/* submit button starts  */}
-              <button type="submit" className='absolute p-2 right-0 h-full border-l border-lime-400'>
+              {/* border-lime-400 */}
+              <button type="submit" className='absolute p-2 right-0 h-full border-l border-[#ffa600]'>
                 {
-                  PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.add ?
-                    <svg className='w-[1.375rem] h-[1.375rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  PlayerInfoAndMore.currentInputBtn === formSubmitBtnState.add ? //#ffa600
+                    <svg className='w-[1.375rem] h-[1.375rem]' viewBox="0 0 24 24" color="#ffa600" fill="none">
                       <path d="M12 8V16M16 12L8 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="2" />
                     </svg>
                     :
-                    <svg className='w-[1.3125rem] h-[1.3125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                    <svg className='w-[1.3125rem] h-[1.3125rem]' viewBox="0 0 24 24" color="#ffa600" fill="none">
                       <path d="M3 13.3333C3 13.3333 4.5 14 6.5 17C6.5 17 6.78485 16.5192 7.32133 15.7526M17 6C14.7085 7.14577 12.3119 9.55181 10.3879 11.8223" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M8 13.3333C8 13.3333 9.5 14 11.5 17C11.5 17 17 8.5 22 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -608,11 +617,11 @@ function App() {
           <div className='flex justify-center my-4 text-center gap-2'>
 
             {/* generate button starts */}
-            <button onClick={() => { setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: true }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.add, playerName: '', playerIndex: null, editBtnClickBy: null, whichArray: null }); checkingFunction(alertMsgsWork.generateTeam) }} className={`flex gap-2 items-center bg-[#ffff0004] outline-lime-50 text-[0.95rem] font-medium  outline-1 outline px-3 py-2 rounded-sm ${differentBtnStates.needToGenerate ? 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_95%)]' : 'bg-[linear-gradient(to_bottom,_black_80%,rgb(163_230_53)_111%)]'} ${differentBtnStates.GeneratingTeam ? 'btnLoadTime' : ''} `} disabled={differentBtnStates.GeneratingTeam}>
+            <button onClick={() => { setdifferentBtnStates({ ...differentBtnStates, GeneratingTeam: true }); setPlayerInfoAndMore({ ...PlayerInfoAndMore, currentInputBtn: formSubmitBtnState.add, playerName: '', playerIndex: null, editBtnClickBy: null, whichArray: null }); checkingFunction(alertMsgsWork.generateTeam) }} className={`flex gap-2 items-center bg-[#ffff0004] outline-lime-50 text-[0.95rem] font-medium  outline-1 outline px-3 py-2 rounded-sm ${differentBtnStates.needToGenerate ? 'bg-[linear-gradient(to_bottom,_black_80%,_#ffa600)]' : 'bg-[linear-gradient(to_bottom,_black_80%,#ffa600)]'} ${differentBtnStates.GeneratingTeam ? 'btnLoadTime' : ''} `} disabled={differentBtnStates.GeneratingTeam}>
               <span>{!differentBtnStates.needToGenerate ? 'Generate' : 'Recalculate Teams'}</span>
               <span>
                 {differentBtnStates.GeneratingTeam ?
-                  <svg className='w-[1.125rem] h-[1.125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  <svg className='w-[1.125rem] h-[1.125rem]' viewBox="0 0 24 24" color="#ffa600" fill="none">
                     <path d="M12 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M12 18V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M21 12L18 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -623,7 +632,7 @@ function App() {
                     <path d="M7.75804 7.75804L5.63672 5.63672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                   :
-                  <svg className='w-[1.125rem] h-[1.125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  <svg className='w-[1.125rem] h-[1.125rem]' viewBox="0 0 24 24" color="#ffa600" fill="none">
                     <path d="M14 12.6483L16.3708 10.2775C16.6636 9.98469 16.81 9.83827 16.8883 9.68032C17.0372 9.3798 17.0372 9.02696 16.8883 8.72644C16.81 8.56849 16.6636 8.42207 16.3708 8.12923C16.0779 7.83638 15.9315 7.68996 15.7736 7.61169C15.473 7.46277 15.1202 7.46277 14.8197 7.61169C14.6617 7.68996 14.5153 7.83638 14.2225 8.12923L11.8517 10.5M14 12.6483L5.77754 20.8708C5.4847 21.1636 5.33827 21.31 5.18032 21.3883C4.8798 21.5372 4.52696 21.5372 4.22644 21.3883C4.06849 21.31 3.92207 21.1636 3.62923 20.8708C3.33639 20.5779 3.18996 20.4315 3.11169 20.2736C2.96277 19.973 2.96277 19.6202 3.11169 19.3197C3.18996 19.1617 3.33639 19.0153 3.62923 18.7225L11.8517 10.5M14 12.6483L11.8517 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M19.5 2.5L19.3895 2.79873C19.2445 3.19044 19.172 3.38629 19.0292 3.52917C18.8863 3.67204 18.6904 3.74452 18.2987 3.88946L18 4L18.2987 4.11054C18.6904 4.25548 18.8863 4.32796 19.0292 4.47083C19.172 4.61371 19.2445 4.80956 19.3895 5.20127L19.5 5.5L19.6105 5.20127C19.7555 4.80956 19.828 4.61371 19.9708 4.47083C20.1137 4.32796 20.3096 4.25548 20.7013 4.11054L21 4L20.7013 3.88946C20.3096 3.74452 20.1137 3.67204 19.9708 3.52917C19.828 3.38629 19.7555 3.19044 19.6105 2.79873L19.5 2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
                     <path d="M19.5 12.5L19.3895 12.7987C19.2445 13.1904 19.172 13.3863 19.0292 13.5292C18.8863 13.672 18.6904 13.7445 18.2987 13.8895L18 14L18.2987 14.1105C18.6904 14.2555 18.8863 14.328 19.0292 14.4708C19.172 14.6137 19.2445 14.8096 19.3895 15.2013L19.5 15.5L19.6105 15.2013C19.7555 14.8096 19.828 14.6137 19.9708 14.4708C20.1137 14.328 20.3096 14.2555 20.7013 14.1105L21 14L20.7013 13.8895C20.3096 13.7445 20.1137 13.672 19.9708 13.5292C19.828 13.3863 19.7555 13.1904 19.6105 12.7987L19.5 12.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -678,7 +687,7 @@ function App() {
               {/* save team button starts  */}
               <button onClick={() => { checkingFunction(alertMsgsWork.saveTeamMsg); }} className={`bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center} ${differentBtnStates.savedProcessing ? 'btnLoadTime' : ''}`} disabled={differentBtnStates.savedProcessing}>
                 {differentBtnStates.savedProcessing ?
-                  <svg className='sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  <svg className='sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem]' viewBox="0 0 24 24" color="#ffa600" fill="none">
                     <path d="M12 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M12 18V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M21 12L18 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
