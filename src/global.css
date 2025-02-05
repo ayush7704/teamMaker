@@ -4,186 +4,182 @@
 
 html,
 body {
-    font-family: "Radio Canada Big", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    /* background:
+  font-family: "Radio Canada Big", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  /* background:
         linear-gradient(135deg, #0000 20.5%, #1c1c1c 0 29.5%, #0000 0) 0 14.5px,
         linear-gradient(45deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%) 29px 0,
         linear-gradient(135deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%, #1c1c1c 0 67%, #0000 0),
         linear-gradient(45deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%, #1c1c1c 0 67%, #0000 0 83%, #1c1c1c 0 92%, #0000 0),
         #000000;
     background-size: 100vw 100vh; */
-    background:
-        conic-gradient(from 116.56deg at calc(100%/3) 0, #0000 90deg, #000000 0),
-        conic-gradient(from -63.44deg at calc(200%/3) 100%, #0000 90deg, #000000 0) #0a0a0a;
-    background-size: 3.5rem 3.5rem;
-    user-select: none;
+  background: conic-gradient(
+      from 116.56deg at calc(100% / 3) 0,
+      #0000 90deg,
+      #000000 0
+    ),
+    conic-gradient(
+        from -63.44deg at calc(200% / 3) 100%,
+        #0000 90deg,
+        #000000 0
+      )
+      #0a0a0a;
+  background-size: 3.5rem 3.5rem;
+  user-select: none;
 }
 
 .bruno {
-    font-family: "Bruno Ace SC", sans-serif;
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Bruno Ace SC", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
-
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 
 input {
-    outline: none;
+  outline: none;
+}
+
+input::placeholder{
+  font-size: 0.95em;
 }
 
 ol {
-    list-style-type: decimal;
+  list-style-type: decimal;
+}
+.cards {
+  text-shadow: 2px 0px 1px black;
 }
 
 :is(.cardsContainer, .cards, .example-elm) {
-    transform-style: preserve-3d;
-    perspective: 1500px;
-    will-change: transform;
+  transform-style: preserve-3d;
+  perspective: 1500px;
+  will-change: transform;
 }
 
 :is(.cards, .back) {
-    backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-
 .back {
-    outline: 1px solid white;
-    transform: rotateY(180deg) translateZ(-1px);
+  outline: 1px solid white;
+  transform: rotateY(180deg) translateZ(-1px);
 }
 
 .popupContainer {
-    transform: translateZ(1px);
+  transform: translateZ(1px);
+}
+
+.card-linear:not(.how-to-page .card-linear) {
+  transform: translateZ(-1px);
+  background: linear-gradient(#ed9a01, #ed9a01);
+  width: 25%;
+  height: 25%;
+  animation: bgMoving 5s alternate ease-in-out infinite;
+  top: 2px;
+}
+.card-blur {
+  transform: translateZ(-1px);
+}
+
+@keyframes bgMoving {
+  /* outline offset and width accourding */
+  0% {
+    left: calc(25% - 25% + 2px);
+  }
+  100% {
+    left: calc(25% - -50% - 2px);
+  }
 }
 
 .btnLoadTime svg {
-    animation: rotate 1s linear infinite;
+  animation: rotate 1s linear infinite;
 }
-
 
 @keyframes rotate {
-    0% {
-        rotate: 0deg;
-    }
+  0% {
+    rotate: 0deg;
+  }
 
-    100% {
-        rotate: 360deg;
-    }
+  100% {
+    rotate: 360deg;
+  }
 }
 
-button:is([type='submit'], [type='reset']):hover svg {
-    scale: 0.93;
-    transition: 0.1s scale ease;
+button:is([type="submit"], [type="reset"]):hover svg {
+  scale: 0.93;
+  transition: 0.1s scale ease;
 }
 
-:is(button:is([type='submit'], [type='reset']):active) {
-    scale: 0.93;
-    transition: 0.1s scale ease;
+:is(button:is([type="submit"], [type="reset"]):active) {
+  scale: 0.93;
+  transition: 0.1s scale ease;
 }
 
-@media (max-width:400px) {
-
-    html,
-    body {
-        font-size: 15.5px;
-    }
+.how-to-page .card-linear {
+  background: linear-gradient(#ed9a01, #ed9a01);
+  width: 15%;
+  height: 15%;
+  animation: bgMovingHowTo 8s alternate ease-in-out infinite;
+  transition:0s;
 }
-
-@media (max-width:350px) {
-
-    html,
-    body {
-        font-size: 14.5px;
-    }
-
-    nav {
-        padding: 0 0.5rem
-    }
-
-    nav a.pageLinks {
-        font-size: 0.7rem;
-        padding-inline: 0.5rem;
-    }
+@keyframes bgMovingHowTo {
+  0% {
+    left: calc(0% );
+  }
+  100% {
+    left: calc(100% - 15%);
+  }
 }
-
-@media (max-width:300px) {
-
-    html,
-    body {
-        font-size: 13.5px;
-    }
-
-    nav a.pageLinks {
-        font-size: 0rem;
-    }
-}
-
-@media (min-width:1400px) {
-
-    html,
-    body {
-        font-size: 16.5px;
-    }
-}
-
-@media (min-width:1600px) {
-
-    html,
-    body {
-        font-size: 18.5px;
-    }
-}
-
 
 .spinner {
-    width: 1.75rem;
-    height: 1.75rem;
-    animation: spinner 8.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
-    transform-style: preserve-3d;
+  width: 1.75rem;
+  height: 1.75rem;
+  animation: spinner 8.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
 }
 
-.spinner>div {
-    background-color: rgb(0 0 0 / 33%);
-    height: 100%;
-    position: absolute;
-    width: 100%;
-    border: 1px solid #ffffff;
-    border-radius: 0.75rem;
-    box-shadow: 0 0 0.125rem 0px white inset;
-    box-shadow: 0 0 0px 0.4px #ffa600 inset;
+.spinner > div {
+  background-color: rgb(0 0 0 / 33%);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  border: 1px solid #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 0.125rem 0px white inset;
+  box-shadow: 0 0 0px 0.4px #ffa600 inset;
 }
 
 .spinner div:nth-of-type(1) {
-    transform: translateZ(-0.875rem) rotateY(180deg);
+  transform: translateZ(-0.875rem) rotateY(180deg);
 }
 
 .spinner div:nth-of-type(2) {
-    transform: rotateY(-270deg) translateX(50%);
-    transform-origin: top right;
+  transform: rotateY(-270deg) translateX(50%);
+  transform-origin: top right;
 }
 
 .spinner div:nth-of-type(3) {
-    transform: rotateY(270deg) translateX(-50%);
-    transform-origin: center left;
+  transform: rotateY(270deg) translateX(-50%);
+  transform-origin: center left;
 }
 
 .spinner div:nth-of-type(4) {
-    transform: rotateX(90deg) translateY(-50%);
-    transform-origin: top center;
+  transform: rotateX(90deg) translateY(-50%);
+  transform-origin: top center;
 }
 
 .spinner div:nth-of-type(5) {
-    transform: rotateX(-90deg) translateY(50%);
-    transform-origin: bottom center;
+  transform: rotateX(-90deg) translateY(50%);
+  transform-origin: bottom center;
 }
 
 .spinner div:nth-of-type(6) {
-    transform: translateZ(0.875rem);
+  transform: translateZ(0.875rem);
 }
 
 /* @keyframes spinner {
@@ -211,19 +207,70 @@ button:is([type='submit'], [type='reset']):hover svg {
 } */
 
 @keyframes spinner {
-    0% {
-        transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
-    }
+  0% {
+    transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+  }
 
-    50% {
-        transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
-    }
+  50% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+  }
 
-    100% {
-        transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
-    }
+  100% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+  }
 }
 
 div .searchInput:focus {
-    flex: 1 1 9.375rem;
+  flex: 1 1 9.375rem;
+}
+
+
+
+
+@media (max-width: 400px) {
+  html,
+  body {
+    font-size: 15.5px;
+  }
+}
+
+@media (max-width: 350px) {
+  html,
+  body {
+    font-size: 14.5px;
+  }
+
+  nav {
+    padding: 0 0.5rem;
+  }
+
+  nav a.pageLinks {
+    font-size: 0.7rem;
+    padding-inline: 0.5rem;
+  }
+}
+
+@media (max-width: 300px) {
+  html,
+  body {
+    font-size: 13.5px;
+  }
+
+  nav a.pageLinks {
+    font-size: 0rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  html,
+  body {
+    font-size: 16.5px;
+  }
+}
+
+@media (min-width: 1600px) {
+  html,
+  body {
+    font-size: 18.5px;
+  }
 }

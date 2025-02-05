@@ -161,7 +161,7 @@ const Modal = () => {
                 <div className='p-[0.625rem] w-[90%]'>
                     <p className='text-[#d1d1d1]'>
                         would you like to save current changes in
-                        <span className='whitespace-nowrap'> {savedTeamOpened?.title} ?</span>
+                        <span className='whitespace-nowrap text-[0.98em] text-[#a06800]'> {savedTeamOpened?.title} </span>?
                     </p>
                 </div>
                 <div className='flex items-center text-end mt-[1.50rem] text-[0.9em]'>

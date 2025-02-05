@@ -204,6 +204,7 @@ function saved() {
                         <p className='text-[1em] capitalize'>{team.title}</p>
                         {/* timing  */}
                         <p className='text-[0.8em] text-[#c4c4c4]'>{(new Date(team.savingTime)).toDateString()} {new Date(team.savingTime).toLocaleTimeString()}</p>
+                        {/* <p className='text-[0.8em] text-[#c4c4c4]'>{team.description}</p> */}
                       </div>
                       <div>
                         {/* total players  */}
@@ -343,7 +344,7 @@ const AccordionDropdown = memo(({ options, newOptions }) => {
               <span>{optionsObj.option}</span>
               {optionsObj.selected &&
                 <span>
-                  <svg className='w-[1.3125rem] h-[1.3125rem]' viewBox="0 0 24 24" color="#a3e635" fill="none">
+                  <svg className='w-[1.3125rem] h-[1.3125rem]' viewBox="0 0 24 24"  color="#ffa600" fill="none">
                     <path d="M3 13.3333C3 13.3333 4.5 14 6.5 17C6.5 17 6.78485 16.5192 7.32133 15.7526M17 6C14.7085 7.14577 12.3119 9.55181 10.3879 11.8223" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M8 13.3333C8 13.3333 9.5 14 11.5 17C11.5 17 17 8.5 22 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
