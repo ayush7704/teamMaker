@@ -28,6 +28,9 @@ body {
   background-size: 3.5rem 3.5rem;
   user-select: none;
 }
+:root{
+  --navbarWidth:330px;
+}
 
 .bruno {
   font-family: "Bruno Ace SC", sans-serif;

@@ -43,6 +43,7 @@ export const alertMsgs = {
   changesDiscard: "Your changes were removed successfully!",
   nothingToDiscard: "There’s nothing to discard.",
   teamDeleted: "Your project was removed successfully!",
+  errorMsg: "Something broke generate again !",
   removeAll: "removing all",
 };
 
@@ -56,6 +57,7 @@ export const alertMsgsTime = new Map([
   [alertMsgs.changesDiscard, 3500],
   [alertMsgs.nothingToDiscard, 2500],
   [alertMsgs.teamDeleted, 3000],
+  [alertMsgs.errorMsg, 3000],
   [alertMsgs.removeAll, 1500],
 ]);
 
@@ -161,29 +163,13 @@ const reducer = (oldobj, action) => {
     let newTotalTeams = Number(action.payload.newTotalTeams);
     // if input is '' or less than 2
     if (newTotalTeams <= 2) {
-      worker.totalTeams = 2;
-      while (worker.teams.length !== 2) {
-        if (worker.teams.length > worker.totalteams) {
-          worker.teams.pop();
-        } else {
-          const name = `team${worker.teams.length + 1}`;
-          worker.teams.push({ teamName: name, teamPlayers: [] });
-        }
-      }
+      worker.totalTeams = 2;     
       return { ...worker };
     }
 
     // if input is equal or greater 3
     else if (action.payload.newTotalTeams >= 3) {
-      worker = { ...oldobj };
-      while (Number(worker.teams.length) !== newTotalTeams) {
-        if (worker.teams.length > newTotalTeams) {
-          worker.teams.pop();
-        } else {
-          const name = `team${worker.teams.length + 1}`;
-          worker.teams.push({ teamName: name, teamPlayers: [] });
-        }
-      }
+      worker = { ...oldobj };     
       return {
         ...worker,
         totalTeams: newTotalTeams,
@@ -196,15 +182,6 @@ const reducer = (oldobj, action) => {
     if (newTotalTeams < 0) {
       return { ...worker, finalTotalTeams: 2 };
     } else {
-      // while teams are not equal to the current totalteams this loop will run
-      while (Number(worker.teams.length) !== newTotalTeams) {
-        if (worker.teams.length > newTotalTeams) {
-          worker.teams.pop();
-        } else {
-          const name = `team${worker.teams.length + 1}`;
-          worker.teams.push({ teamName: name, teamPlayers: [] });
-        }
-      }
       return {
         ...worker,
         totalTeams: action.payload.newTotalTeams,
@@ -272,6 +249,7 @@ export const savedTeamReducerActions = {
 function App() {
   const mainInput = useRef(null);
   const titleInput = useRef(null);
+  const totalTeamInput = useRef(null);
   const {
     savedTeam,
     setsavedTeam,
@@ -319,6 +297,8 @@ function App() {
     currentInputBtn: formSubmitBtnState.add,
   });
 
+  const [lastTotalTeams,setlastTotalTeams]= useState(allTypeplayersAndTeams.finalTotalTeams)
+
   useEffect(() => {
     console.log(allTypeplayersAndTeams);
   });
@@ -358,10 +338,10 @@ function App() {
         allTypeplayersAndTeams.totalTeams &&
       allTypeplayersAndTeams.hasShuffled
     ) {
-      localStorage.setItem(
-        "differentBtnStates",
-        JSON.stringify(differentBtnStates)
-      );
+      // localStorage.setItem(
+      //   "differentBtnStates",
+      //   JSON.stringify(differentBtnStates)
+      // );
       console.log(localStorage.getItem("differentBtnStates"));
     }
   }, [
@@ -410,85 +390,191 @@ function App() {
     });
   }
 
-  const { contextSafe } = useGSAP();
-  const generateTeamFunc = contextSafe(async () => {
-    let worker = { ...allTypeplayersAndTeams };
+  const { contextSafe } = useGSAP();  
+    const generateTeamFunc = contextSafe(async () => {
+      let worker = { ...allTypeplayersAndTeams };
+      console.log(worker);
+      let uniqueRandomsArr = new Set([]);
 
-    let uniqueRandomsArr = new Set([]);
-
-    await new Promise((resolve) => {
-      gsap.fromTo(
-        ".cards",
-        { rotateY: "0deg" },
-        { rotateY: "180deg", duration: 1, ease: "back" }
-      );
-      setTimeout(() => {
-        resolve("dfd");
-      }, 1000);
-    });
-
-    await new Promise(async (resolve) => {
-      const promises = allTypeplayersAndTeams.players.map(
-        async (element, index) => {
-          // loop will run till player total length
-          while (
-            uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length
-          ) {
-            let random = Math.floor(
-              Math.random() * allTypeplayersAndTeams.players.length
-            );
-            uniqueRandomsArr.add(random); // adding random value in  new set
-          }
-        }
-      );
-      await Promise.all(promises);
-
-      // making teams array empty
-      const teamsArrEmpty = allTypeplayersAndTeams.teams.map(
-        async (team, teamIndex) => {
-          worker.teams[teamIndex].teamPlayers = [];
-          return undefined;
-        }
-      );
-
-      await Promise.all(teamsArrEmpty);
-
-      const promises2 = allTypeplayersAndTeams.players.map(
-        async (element, index) => {
-          // this is dynamic start index calculator for splicing in all teams array
-          let startIndex = Math.floor(
-            (index % allTypeplayersAndTeams.players.length) /
-              allTypeplayersAndTeams.teams.length
-          );
-          let teamIndex = index % allTypeplayersAndTeams.teams.length; // whichteam
-          let value =
-            allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]]; // name
-          worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value);
-        }
-      );
-
-      await Promise.all(promises2);
-
-      // new object after shuffing
-      setAllTypeplayersAndTeams({
-        type: reducerTypes.teamShuffle,
-        payload: { newTeams: [...worker.teams] },
+      // First animation promise
+      await new Promise((resolve) => {
+        gsap.fromTo(
+          ".cards",
+          { rotateY: "0deg" },
+          { rotateY: "180deg", duration: 1, ease: "back" }
+        );
+        setTimeout(resolve, 1000);
       });
-      resolve("done");
-    });
 
-    gsap.fromTo(
-      ".cards",
-      { rotateY: "180deg" },
-      { rotateY: "360deg", duration: 1, ease: "back" }
-    );
-    setdifferentBtnStates({
-      ...differentBtnStates,
-      savedProcessing: false,
-      GeneratingTeam: false,
-      needToGenerate: false,
-    });
+      await new Promise((resolve) => {
+        // Generate unique random numbers
+        Promise.all(
+          allTypeplayersAndTeams.players.map(async () => {
+            while (uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length) {
+              let random = Math.floor(Math.random() * allTypeplayersAndTeams.players.length);
+              uniqueRandomsArr.add(random);
+            }
+          })
+        ).then(async () => {          
+          // Creating teams
+          await Promise.all(
+            Array(worker.finalTotalTeams).fill(null).map(async (_, index) => {
+              console.log(`inside ${index}`);
+              while (worker.finalTotalTeams !== worker.teams.length) {
+                if (worker.teams.length > worker.finalTotalTeams) {
+                  worker.teams.pop();
+                } else {
+                  const name = `team${worker.teams.length + 1}`;
+                  worker.teams.push({ teamName: name, teamPlayers: [] });
+                }
+              }
+            })
+          );
+
+          // Making teams array empty
+          await Promise.all(
+            allTypeplayersAndTeams.teams.map(async (_, teamIndex) => {
+              worker.teams[teamIndex].teamPlayers = [];
+            })
+          );
+
+          // Shuffling players into teams
+          await Promise.all(
+            allTypeplayersAndTeams.players.map(async (element, index) => {
+              let startIndex = Math.floor(
+                (index % allTypeplayersAndTeams.players.length) / allTypeplayersAndTeams.teams.length
+              );
+              let teamIndex = index % allTypeplayersAndTeams.teams.length;
+              let value = allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]];
+              worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value);
+            })
+          );
+
+          // Updating state after shuffling
+          setAllTypeplayersAndTeams({
+            type: reducerTypes.teamShuffle,
+            payload: { newTeams: [...worker.teams] },
+          });
+
+          resolve();
+        });
+      });
+
+      setdifferentBtnStates({
+        ...differentBtnStates,
+        savedProcessing: false,
+        GeneratingTeam: false,
+        needToGenerate: false,
+      });
+
+      // Second animation
+      await new Promise((resolve) => {
+        gsap.fromTo(
+          ".cards",
+          { rotateY: "180deg" },
+          { rotateY: "360deg", duration: 1, ease: "back" }
+        );
+        setTimeout(resolve, 1000);
+      });
+
   });
+
+  //   const generateTeamFunc = contextSafe(async () => {
+  //     let worker = { ...allTypeplayersAndTeams };
+  // console.log(worker)
+  //     let uniqueRandomsArr = new Set([]);
+
+  //     await new Promise((resolve) => {
+  //       gsap.fromTo(
+  //         ".cards",
+  //         { rotateY: "0deg" },
+  //         { rotateY: "180deg", duration: 1, ease: "back" }
+  //       );
+  //       setTimeout(() => {
+  //         resolve("dfd");
+  //       }, 1000);
+  //     });
+
+  //     await new Promise(async (resolve) => {
+  //       const promises = allTypeplayersAndTeams.players.map(
+  //         async (element, index) => {
+  //           // loop will run till player total length
+  //           while (
+  //             uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length
+  //           ) {
+  //             let random = Math.floor(
+  //               Math.random() * allTypeplayersAndTeams.players.length
+  //             );
+  //             uniqueRandomsArr.add(random); // adding random value in  new set
+  //           }
+  //         }
+  //       );
+  //       await Promise.all(promises);
+
+  //       console.log("before teams");
+  //       const teamsMaking = Array(worker.finalTotalTeams)
+  //         .fill(null)
+  //         .map(async (_, index) => {
+  //           console.log(`inside ${index}`)
+  //           while (worker.finalTotalTeams !== worker.teams.length) {
+  //             console.log()
+  //             if (worker.teams.length > worker.finalTotalTeams) {
+  //               worker.teams.pop();
+  //             } else {
+  //               const name = `team${worker.teams.length + 1}`;
+  //               worker.teams.push({ teamName: name, teamPlayers: [] });
+  //             }
+  //           }
+  //         });
+  //         await Promise.all(teamsMaking);
+  //         console.log("after teams");
+
+  //       // making teams array empty
+  //       const teamsArrEmpty = allTypeplayersAndTeams.teams.map(
+  //         async (team, teamIndex) => {
+  //           worker.teams[teamIndex].teamPlayers = [];
+  //           return undefined;
+  //         }
+  //       );
+
+  //       await Promise.all(teamsArrEmpty);
+
+  //       const promises2 = allTypeplayersAndTeams.players.map(
+  //         async (element, index) => {
+  //           // this is dynamic start index calculator for splicing in all teams array
+  //           let startIndex = Math.floor(
+  //             (index % allTypeplayersAndTeams.players.length) /
+  //               allTypeplayersAndTeams.teams.length
+  //           );
+  //           let teamIndex = index % allTypeplayersAndTeams.teams.length; // whichteam
+  //           let value =
+  //             allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]]; // name
+  //           worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value);
+  //         }
+  //       );
+
+  //       await Promise.all(promises2);
+
+  //       // new object after shuffing
+  //       setAllTypeplayersAndTeams({
+  //         type: reducerTypes.teamShuffle,
+  //         payload: { newTeams: [...worker.teams] },
+  //       });
+  //       resolve("done");
+  //     });
+
+  //     gsap.fromTo(
+  //       ".cards",
+  //       { rotateY: "180deg" },
+  //       { rotateY: "360deg", duration: 1, ease: "back" }
+  //     );
+  //     setdifferentBtnStates({
+  //       ...differentBtnStates,
+  //       savedProcessing: false,
+  //       GeneratingTeam: false,
+  //       needToGenerate: false,
+  //     });
+  //   });
 
   useGSAP(() => {
     gsap.fromTo(
@@ -805,7 +891,12 @@ function App() {
               current players
             </span>
           </div>
-          <div className="whitespace-nowrap flex-1">
+          <div
+            onClick={() => {
+              totalTeamInput.current.focus();
+            }}
+            className="whitespace-nowrap flex-1"
+          >
             <span className="font-medium text-[#ffa600] mr-[2px]">
               {allTypeplayersAndTeams.totalTeams}{" "}
             </span>
@@ -837,13 +928,15 @@ function App() {
               name="totalTeamsInput"
               id="totalTeamsInput"
               value={allTypeplayersAndTeams.totalTeams}
+              ref={totalTeamInput}
               className={`w-[2.5rem] text-end bg-transparent focus:outline-none focus:text-[#ffa600] text-lg font-medium`}
-              onChange={(e) => {              
-              if(allTypeplayersAndTeams.hasShuffled){
-                setdifferentBtnStates({
-                  ...differentBtnStates,
-                  needToGenerate: true,
-                });}
+              onChange={(e) => {
+                if (allTypeplayersAndTeams.hasShuffled) {
+                  setdifferentBtnStates({
+                    ...differentBtnStates,
+                    needToGenerate: true,
+                  });
+                }
                 setAllTypeplayersAndTeams({
                   type: reducerTypes.addTeam,
                   payload: { newTotalTeams: e.target.value },
@@ -1059,8 +1152,8 @@ function App() {
               } `}
               disabled={differentBtnStates.GeneratingTeam}
             >
-              <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)]"></div>
-              <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2 pointer-events-none">
+              <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)] pointer-events-none"></div>
+              <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
                 <span>
                   {!differentBtnStates.needToGenerate
                     ? "Generate"
@@ -1069,54 +1162,62 @@ function App() {
                 <span>
                   {differentBtnStates.GeneratingTeam ? (
                     <svg
-                      className="w-[1.125rem] h-[1.125rem] drop-shadow-[1px_3px_0_black]"
+                      className="w-[1.125rem] h-[1.125rem]"
                       viewBox="0 0 24 24"
                       color="#ffa600"
                       fill="none"
                     >
                       <path
+                        className="drop-shadow-[1px_3px_0_black]"
                         d="M12 3V6"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[1px_3px_0_black]"
                         d="M12 18V21"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[1px_3px_0_black]"
                         d="M21 12L18 12"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[1px_3px_0_black]"
                         d="M6 12L3 12"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[3px_1px_0_black]"
                         d="M18.3635 5.63672L16.2422 7.75804"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[3px_1px_0_black]"
                         d="M7.75804 16.2422L5.63672 18.3635"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[3px_1px_0_black]"
                         d="M18.3635 18.3635L16.2422 16.2422"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
+                        className="drop-shadow-[3px_1px_0_black]"
                         d="M7.75804 7.75804L5.63672 5.63672"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -1184,8 +1285,8 @@ function App() {
                   }}
                   className="relative overflow-hidden outline outline-1 text-[0.95rem] font-medium rounded-[0.425rem] [textShadow:1px_3px_0_black]"
                 >
-                  <div className="absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_88%,red)]"></div>
-                  <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2 pointer-events-none">
+                  <div className="absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_88%,red)] pointer-events-none"></div>
+                  <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
                     <span>Clear all</span>
                     <span>
                       <svg

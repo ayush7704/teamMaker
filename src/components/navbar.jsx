@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom'
 
 
-function navbar() {
+function navbar() {  
     let location = useLocation()
     return (
         // <nav className='flex bg-[#141414] sticky rounded-[4rem] overflow-hidden items-center  bottom-2 mx-auto z-[25] w-max'>

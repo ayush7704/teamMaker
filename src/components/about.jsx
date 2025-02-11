@@ -8,21 +8,21 @@ import { useGSAP } from '@gsap/react'
 gsap.registerPlugin(ScrollTrigger)
 function aboutUs() {
   const { PageHeading } = useContext(mainContext)
-  useGSAP(() => {
-    gsap.utils.toArray('.card').forEach((el) => {
-      gsap.to(el ,{
-        opacity: 0.5, ease:'power1',scale: .8,scrollTrigger: {
-          trigger: el,
-          scrub:1,
-          // pin:true,
-          // pinSpacing:false,
-          start: 'top 0%',
-          end:'bottom 0%',
-          // markers: true
-        }
-      })
-    })
-  }, [])
+  // useGSAP(() => {
+  //   gsap.utils.toArray('.card').forEach((el) => {
+  //     gsap.to(el ,{
+  //       opacity: 0.5, ease:'power1',scale: .8,scrollTrigger: {
+  //         trigger: el,
+  //         scrub:1,
+  //         // pin:true,
+  //         // pinSpacing:false,
+  //         start: 'top 0%',
+  //         end:'bottom 0%',
+  //         // markers: true
+  //       }
+  //     })
+  //   })
+  // }, [])
   return (
     <>
       <PageHeading heading={'about'} />
