@@ -18,7 +18,7 @@ function howTo() {
           ease: "back",
           scrollTrigger: {
             trigger: element,
-            start: "top 100%",
+            start: "top 105%",
             // markers:true,
             toggleActions: "play none none reverse",
           },
@@ -30,27 +30,22 @@ function howTo() {
   return (
     <>
       <PageHeading heading={"how to"} />
-      <div className="how-to-page sm:w-[80%] mx-auto p-3 sm:text-[1rem] text-[0.95rem]">
+      <div className="how-to-page sm:w-[80%] mx-auto p-3 mt-[1.375rem] max-sm:text-[0.95rem]">
         {/* what is random team maker starts */}
-        <div className="relative rounded-2xl mb-4 outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[linear-gradient(to_bottom_left,#ffa600,black,black,black,black,black)]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               1. what is random team maker ?
             </h2>
             <p className="p-3 text-[0.90em]">
-              Need to randomly divide people into teams? Our random team maker
-              makes it easy to create fair and balanced teams for any activity.
-              Simply add the names of the participants, and let our algorithm do
-              the rest. Whether you're planning a group activity, creating teams
-              for a sports tournament , a classroom project, or a volunteer
-              activity, our web-app is the perfect solution.
+              Random Team Maker is a quick, free and easy tool that creates random teams from a list of participants. Simply enter the names and choose the number of teams. It's ideal for games, tournaments, or group activities, ensuring fair team assignments in just a few clicks. This removes the need for manual team selection, which can take a lot of time and may seem unfair.
             </p>
           </div>
         </div>
         {/* what is random team maker ends */}
 
         {/*  How to Generate Random Team? starts */}
-        <div className="relative rounded-2xl mb-4 outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[linear-gradient(to_bottom_left,#ffa600,black,black,black,black,black)]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               2. How to Generate Random Team ?
@@ -59,16 +54,16 @@ function howTo() {
               <HowToExamples
                 title={`1. Insert participants' names. (min-2)`}
                 element={
-                  <div className="relative backdrop-blur-[4px] inline-block cursor-default">
+                  <div className="relative bg-black backdrop-blur-[4px] rounded-md inline-block  max-w-[300px] w-full cursor-context-menu ">
                     <input
                       type="text"
                       placeholder="Add player"
-                      className="w-full bg-transparent px-3 py-2 rounded-md outline outline-1 outline-[#ffffff41] pr-[2.5rem]"
+                      className="w-full text-[0.96em] bg-transparent px-3 py-2 rounded-md outline outline-1 outline-[#ffffff41] pr-[2.5rem] cursor-context-menu"
                       readOnly
                     />
 
                     {/* submit button starts  */}
-                    <button className="absolute p-2 right-0 h-full border-l border-[#ffa600]">
+                    <button className="absolute p-2 right-0 h-full border-l border-[#ffa600] cursor-context-menu">
                       <svg
                         className="w-[1.375rem] h-[1.375rem]"
                         viewBox="0 0 24 24"
@@ -93,43 +88,58 @@ function howTo() {
                   </div>
                 }
               />
-
+              <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`2. Set Project Title (optional).`}
+                title={`2. Type total teams you want. by default (2).`}
                 element={
-                  <div className="max-w-[250px]">
-                    <p>Project Title</p>
-                    <input
-                      type="text"
-                      placeholder="Fifa team 2026"
-                      className="w-full bg-transparent px-3 py-2 mt-2 rounded-md outline outline-1 outline-[#ffffff41] backdrop-blur-[4px]"
-                      readOnly
-                    />
-                  </div>
-                }
-              />
-
-              <HowToExamples
-                title={`3. Type total teams you want. by default (2).`}
-                element={
-                  <div className="flex justify-between min-w-[13.875rem]">
+                  <div className="flex bg-black justify-between max-w-[300px] outline outline-1 rounded-md outline-[#ffffff41] backdrop-blur-[100px] px-3 py-2 w-full cursor-context-menu text-[0.97em]">
                     <span className="capitalize">total teams</span>
                     <input
                       type="number"
                       name="totalTeamsInput"
                       id="totalTeamsInput"
                       value={"2"}
-                      className="w-[2.5rem] text-end bg-transparent focus:outline-none text-lg font-medium"
+                      className="w-[2.5rem] bg-transparent leading-[normal] text-end focus:outline-none text-lg font-medium cursor-context-menu"
                       readOnly
                     />
                   </div>
                 }
               />
+              <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`4. Click generate button to generate random teams.`}
+                title={`3. Set Project Title (Required).`}
+                element={
+                  <div className="max-w-[300px] w-full cursor-context-menu text-[0.96em]">
+                    <p className="text-[0.97em]">Project Title</p>
+                    <input
+                      type="text"
+                      placeholder="Fifa team 2026"
+                      className="w-full px-3 py-2 mt-[0.125rem] rounded-md outline outline-1 outline-[#ffffff41] bg-black backdrop-blur-[100px] cursor-context-menu"
+                      readOnly
+                    />
+                  </div>
+                }
+              />
+              <hr className="border-[#5050507d]" />
+              <HowToExamples
+                title={`4. Set Project Description (optional).`}
+                element={
+                  <div className="max-w-[300px] w-full cursor-context-menu text-[0.96em]">
+                    <p className="text-[0.97em]">Project Description</p>
+                    <input
+                      placeholder="Description"
+                      className="w-full bg-black px-3 py-2 mt-[0.125rem] rounded-md outline outline-1 outline-[#ffffff41]  backdrop-blur-[100px] cursor-context-menu"
+                      readOnly
+                    />
+                  </div>
+                }
+              />
+              <hr className="border-[#5050507d]" />
+              <HowToExamples
+                title={`5. Click generate button to generate random teams.`}
                 element={
                   <button
-                    className={`relative outline outline-1 text-[0.95rem] font-medium  rounded-[0.425rem] overflow-hidden [textShadow:1px_3px_0_black]`}
+                    className={`relative outline outline-1 text-[0.95rem] font-medium  rounded-[0.425rem] overflow-hidden [textShadow:1px_3px_0_black] cursor-context-menu`}
                     readOnly
                   >
                     <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)]"></div>
@@ -173,13 +183,132 @@ function howTo() {
                   </button>
                 }
               />
+              <hr className="border-[#5050507d]" />
+            </div>
+            <h2 className="text-[1.05em] leading-[100%] capitalize sm:mt-8 mt-5">
+              Signs & Their Meanings
+            </h2>
+            <div className="grid gap-8 p-3">
+              <HowToExamples
+                title={<div className="sm:w-5/6">
+                  <div className="mb-[10px]">
+                    <span className="text-[1.025em] leading-[100%] capitalize">Sign : </span>
+                    <span>Players Not Divided into Teams.</span>
+                  </div>
+                  <div className="mb-[10px]">
+                    <span className="text-[1.025em] leading-[100%] capitalize">meaning : </span>
+                    <span className="sm:text-center">This sign indicates that players are still in the initial phase and have not yet been divided into teams.</span>
+                  </div>
+                </div>}
+                element={
+                  <div className="max-w-[300px] w-full">
+                    <div className="flex items-center gap-2 mb-[10px]">
+                      <span className="inline-block leading-[100%] capitalize">example :</span>
+                      <span className="inine-bloack"><svg className="w-6 h-6" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m12 19.5l5-5m-5 5l-5-5m5 5V13m0-3.5c0-1.667-1-5-5-5" /></svg></span>
+                    </div>
+                    <div className="flex justify-between w-full cursor-context-menu">
+                      <span className="capitalize">total teams</span>
+                      <input
+                        type="number"
+                        name="totalTeamsInput"
+                        id="totalTeamsInput"
+                        value={"2"}
+                        className="w-[2.5rem] text-end bg-transparent focus:outline-none text-lg font-medium line-through cursor-context-menu"
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                } />
+              <hr className="border-[#5050507d]" />
+              <HowToExamples
+                title={<div className="sm:w-5/6">
+                  <div className="mb-[10px]">
+                    <span className="text-[1.025em] leading-[100%] capitalize">Sign : </span>
+                    <span>Teams Length Changed - Recalculation Needed.</span>
+                  </div>
+                  <div className="mb-[10px]">
+                    <span className="text-[1.025em] leading-[100%] capitalize">meaning : </span>
+                    <span className="sm:text-center"> This sign means that the teams need to be recalculated because the team size has changed.</span>
+                  </div>
+                </div>}
+                element={
+                  <div>
+                    <div className="flex items-center gap-2 mb-[10px]">
+                      <span className="inline-block leading-[100%] capitalize">examples :</span>
+                      <span className="inine-bloack"><svg className="w-6 h-6" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m12 19.5l5-5m-5 5l-5-5m5 5V13m0-3.5c0-1.667-1-5-5-5" /></svg></span>
+                    </div>
+                    <div className="max-w-[300px] flex flex-col justify-center items-center gap-5">
+                      <div className="topdiv sm:text-base text-sm w-full flex justify-between sm:gap-[1.5rem] gap-[1rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] cursor-context-menu">
+                        <div className="whitespace-nowrap">
+                          <span className="font-medium text-[#ffa600] mr-[2px]">
+                            {2}{" "}
+                          </span>
+                          <span className="capitalize font-light text-[0.95em]">
+                            current players
+                          </span>
+                        </div>
+                        <div
+                          className="whitespace-nowrap"
+                        >
+                          <span className={`font-medium fo text-[#ffa600] mr-[2px] line-through`}>
+                            {2}{" "}
+                          </span>
+                          <span className={`capitalize font-light text-[0.95em] line-through`}>
+                            total teams
+                          </span>
+                        </div>
+                      </div>
+                      {/* generate button starts */}
+                      <button className={`relative flex gap-2 items-center px-4 py-2 bg-white outline outline-1 text-[0.95rem] rounded-[0.425rem] overflow-hidden text-[red] [textShadow:1px_2px_0_#bdbdbd] outline-[red] font-semibold cursor-context-menu`}>
+                        <span>
+                          Recalculate Teams
+                        </span>
+                        <span>
+                          <svg
+                            className={`w-[1.125rem] h-[1.125rem] drop-shadow-[1px_3px_0_#bdbdbd]`}
+                            viewBox="0 0 24 24"
+                            color={'red'}
+                            fill="none"
+                          >
+                            <path
+                              d="M14 12.6483L16.3708 10.2775C16.6636 9.98469 16.81 9.83827 16.8883 9.68032C17.0372 9.3798 17.0372 9.02696 16.8883 8.72644C16.81 8.56849 16.6636 8.42207 16.3708 8.12923C16.0779 7.83638 15.9315 7.68996 15.7736 7.61169C15.473 7.46277 15.1202 7.46277 14.8197 7.61169C14.6617 7.68996 14.5153 7.83638 14.2225 8.12923L11.8517 10.5M14 12.6483L5.77754 20.8708C5.4847 21.1636 5.33827 21.31 5.18032 21.3883C4.8798 21.5372 4.52696 21.5372 4.22644 21.3883C4.06849 21.31 3.92207 21.1636 3.62923 20.8708C3.33639 20.5779 3.18996 20.4315 3.11169 20.2736C2.96277 19.973 2.96277 19.6202 3.11169 19.3197C3.18996 19.1617 3.33639 19.0153 3.62923 18.7225L11.8517 10.5M14 12.6483L11.8517 10.5"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M19.5 2.5L19.3895 2.79873C19.2445 3.19044 19.172 3.38629 19.0292 3.52917C18.8863 3.67204 18.6904 3.74452 18.2987 3.88946L18 4L18.2987 4.11054C18.6904 4.25548 18.8863 4.32796 19.0292 4.47083C19.172 4.61371 19.2445 4.80956 19.3895 5.20127L19.5 5.5L19.6105 5.20127C19.7555 4.80956 19.828 4.61371 19.9708 4.47083C20.1137 4.32796 20.3096 4.25548 20.7013 4.11054L21 4L20.7013 3.88946C20.3096 3.74452 20.1137 3.67204 19.9708 3.52917C19.828 3.38629 19.7555 3.19044 19.6105 2.79873L19.5 2.5Z"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M19.5 12.5L19.3895 12.7987C19.2445 13.1904 19.172 13.3863 19.0292 13.5292C18.8863 13.672 18.6904 13.7445 18.2987 13.8895L18 14L18.2987 14.1105C18.6904 14.2555 18.8863 14.328 19.0292 14.4708C19.172 14.6137 19.2445 14.8096 19.3895 15.2013L19.5 15.5L19.6105 15.2013C19.7555 14.8096 19.828 14.6137 19.9708 14.4708C20.1137 14.328 20.3096 14.2555 20.7013 14.1105L21 14L20.7013 13.8895C20.3096 13.7445 20.1137 13.672 19.9708 13.5292C19.828 13.3863 19.7555 13.1904 19.6105 12.7987L19.5 12.5Z"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M10.5 2.5L10.3895 2.79873C10.2445 3.19044 10.172 3.38629 10.0292 3.52917C9.88629 3.67204 9.69044 3.74452 9.29873 3.88946L9 4L9.29873 4.11054C9.69044 4.25548 9.88629 4.32796 10.0292 4.47083C10.172 4.61371 10.2445 4.80956 10.3895 5.20127L10.5 5.5L10.6105 5.20127C10.7555 4.80956 10.828 4.61371 10.9708 4.47083C11.1137 4.32796 11.3096 4.25548 11.7013 4.11054L12 4L11.7013 3.88946C11.3096 3.74452 11.1137 3.67204 10.9708 3.52917C10.828 3.38629 10.7555 3.19044 10.6105 2.79873L10.5 2.5Z"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                        {/* </div> */}
+                      </button>
+                    </div>
+                  </div>
+                } />
             </div>
           </div>
         </div>
         {/*  How to Generate Random Team? ends */}
 
         {/* save your Projects locally in the browser starts */}
-        <div className="relative rounded-2xl mb-4 outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[linear-gradient(to_bottom_left,#ffa600,black,black,black,black,black)]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               3. save your Projects locally in the browser.
@@ -192,7 +321,7 @@ function howTo() {
                     className={` bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}
                   >
                     <svg
-                      className="sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem] text-white"
+                      className="sm:w-[1.275rem] w-[1rem] drop-shadow-[0px_0px_3px_currentColor] h-[1rem] sm:h-[1.275rem] text-white"
                       viewBox="0 0 24 24"
                       fill="none"
                     >
@@ -219,6 +348,7 @@ function howTo() {
                   </button>
                 }
               />
+              <hr className="border-[#5050507d]" />
               <HowToExamples
                 title={`2. Click here in the navbar to see saved Projects.`}
                 element={
@@ -226,7 +356,7 @@ function howTo() {
                     <p className="flex justify-center">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-[1.19rem] h-[1.19rem]"
+                        className="w-[1.19rem] drop-shadow-[0px_0px_9px_currentColor] h-[1.19rem]"
                         color="inherit"
                         fill="none"
                       >
@@ -257,32 +387,35 @@ function howTo() {
         {/* save your Projects locally in the browser ends */}
 
         {/* Why is this random team maker useful? starts  */}
-        <div className="relative rounded-2xl mb-4 outline outline-1 outline-[#2a2a2a] overflow-hidden fade-up before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[linear-gradient(to_bottom_left,#ffa600,black,black,black,black,black)]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               4. Why is this random team maker useful?.
             </h2>
             <p className="sm:text-[0.95em] text-[0.93em] py-2">
-              Our efficient random team maker simplifies group formation, saving
+              Our efficient <span className="saira-stencil">random team maker</span> simplifies group formation, saving
               you time and effort with just a few clicks.
             </p>
             <p className="sm:text-[0.92em] text-[0.90em] py-2">
-              Use Cases for Our Random Team maker :
+              Use Cases for Our <span className="saira-stencil">Random Team maker</span> :
             </p>
-            <ul className="list-disc list-inside p-1 sm:text-[0.9em] text-[0.88em]">
+            <div className="p-1 sm:text-[0.9em] text-[0.88em]">
               {[
-                "In sports tournament team generation.",
-                "To Create diverse and balanced teams.",
-                "In diversing groups for interactive learning.",
-                "For card games,  video games & more.",
-                "Random teams for various contests or competitions.",
-                "Divide students into groups for various activities.",
+                "fair and random teams for sports tournaments.",
+                "Create diverse and balanced teams for competitions or group activities.",
+                "Form interactive learning groups for classrooms and workshops.",
+                "Assign players to teams for card games, video games, or e-sports tournaments.",
+                "Distribute participants randomly for contests, quizzes, or office challenges.",
+                "Divide students into teams for school projects, debates, or study sessions.",
               ].map((para, ind) => (
-                <li key={ind} className="p-1">
-                  <span className="text-center">{para}</span>
-                </li>
+                <div key={ind} className="p-1 flex gap-2">
+                  <span className="flex-grow-0">
+                    👉
+                  </span>
+                  <p>{para}</p>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
         {/* Why is this random team maker useful? ends  */}

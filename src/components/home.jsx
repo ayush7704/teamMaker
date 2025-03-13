@@ -2,7 +2,6 @@ import gsap from "gsap";
 import {
   useReducer,
   useState,
-  useEffect,
   useRef,
   useLayoutEffect,
   useContext,
@@ -44,6 +43,7 @@ export const alertMsgs = {
   nothingToDiscard: "There’s nothing to discard.",
   teamDeleted: "Your project was removed successfully!",
   errorMsg: "Something broke generate again !",
+  teams_length_broken: "Teams length can't be bigger than total players length",
   removeAll: "removing all",
 };
 
@@ -58,14 +58,14 @@ export const alertMsgsTime = new Map([
   [alertMsgs.nothingToDiscard, 2500],
   [alertMsgs.teamDeleted, 3000],
   [alertMsgs.errorMsg, 3000],
+  [alertMsgs.teams_length_broken, 5500],
   [alertMsgs.removeAll, 1500],
 ]);
 
 const reducer = (oldobj, action) => {
   let worker;
   // for adding players
-  if (action.type === reducerTypes.initial) {
-    console.log({ ...action.oldobj });
+  if (action.type === reducerTypes.initial) {    
     return { ...action.oldobject };
   }
   if (action.type === reducerTypes.addPlayer) {
@@ -98,8 +98,7 @@ const reducer = (oldobj, action) => {
           worker.players = [...flatArr];
           return { ...worker };
         }
-      } catch (error) {
-        console.log(error);
+      } catch (error) {        
       }
     }
     return { ...worker };
@@ -125,8 +124,7 @@ const reducer = (oldobj, action) => {
           flatArr = flatArr.concat(a);
         });
         worker.players = [...flatArr];
-      } catch (error) {
-        console.log(error);
+      } catch (error) {        
       }
     }
     return { ...worker };
@@ -148,8 +146,7 @@ const reducer = (oldobj, action) => {
           flatArr = flatArr.concat(a);
         });
         worker.players = [...flatArr];
-      } catch (error) {
-        console.log(error);
+      } catch (error) {        
       }
     } else {
       worker[team][playerInd] = action.payload.details.playerName;
@@ -163,13 +160,31 @@ const reducer = (oldobj, action) => {
     let newTotalTeams = Number(action.payload.newTotalTeams);
     // if input is '' or less than 2
     if (newTotalTeams <= 2) {
-      worker.totalTeams = 2;     
+      worker.totalTeams = 2;
       return { ...worker };
     }
-
+    // when team length is greater than total players
+    else if (newTotalTeams > worker.players.length) {
+      // if there is 2 players least available
+      
+      if (worker.players.length >= 2) {
+        return {
+          ...worker,
+          totalTeams: worker.players.length,
+          finalTotalTeams: worker.players.length,
+        }
+      }
+      // if 2 players are not available
+      else {
+        return {
+          ...worker,
+          totalTeams: 2,
+          finalTotalTeams: 2,
+        }
+      }
+    }
     // if input is equal or greater 3
-    else if (action.payload.newTotalTeams >= 3) {
-      worker = { ...oldobj };     
+    else if (newTotalTeams >= 3) {
       return {
         ...worker,
         totalTeams: newTotalTeams,
@@ -184,7 +199,7 @@ const reducer = (oldobj, action) => {
     } else {
       return {
         ...worker,
-        totalTeams: action.payload.newTotalTeams,
+        totalTeams: action.payload.newTotalTeams, // here if the input is being used it could be empty or anything for that time
         finalTotalTeams: 2,
       };
     }
@@ -264,14 +279,8 @@ function App() {
     })
   );
   const formSubmitBtnState = { add: "add", edit: "editing" };
-  const [differentBtnStates, setdifferentBtnStates] = useState({
-    GeneratingTeam: false,
-    needToGenerate: false,
-    savedProcessing: false,
-  });
   const [allTypeplayersAndTeams, setAllTypeplayersAndTeams] = useReducer(
-    reducer,
-    {
+    reducer,{
       players: [],
       finalTotalTeams: 2,
       totalTeams: 2,
@@ -285,6 +294,11 @@ function App() {
       description: "",
     }
   );
+  const [differentBtnStates, setdifferentBtnStates] = useState({
+    GeneratingTeam: false,
+    needToGenerate: allTypeplayersAndTeams.hasShuffled ? !(allTypeplayersAndTeams.finalTotalTeams === allTypeplayersAndTeams.teams.length && Number(allTypeplayersAndTeams.totalTeams) === allTypeplayersAndTeams.teams.length) : false,
+    savedProcessing: false,
+  });
   const [savedTeamChanges, setSavedTeamChanges] = useState({ popup: false });
 
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({
@@ -297,31 +311,19 @@ function App() {
     currentInputBtn: formSubmitBtnState.add,
   });
 
-  const [lastTotalTeams,setlastTotalTeams]= useState(allTypeplayersAndTeams.finalTotalTeams)
-
-  useEffect(() => {
-    console.log(allTypeplayersAndTeams);
-  });
-
   useLayoutEffect(() => {
-    const savedallTeamAndPlayers = JSON.parse(
-      localStorage.getItem("allTeamAndPlayers")
-    );
     const savedsavedTeamOpened = JSON.parse(
       localStorage.getItem("savedTeamOpened")
     );
     // temporary solution of
     //  main reducer object was not updating itself even after removing latest changes from saved work while we are on home page
     // it had to navigate on other pages for updating value
-
-    console.log(savedallTeamAndPlayers);
-    console.log(savedsavedTeamOpened);
+        
     if (Boolean(savedsavedTeamOpened)) {
       const areEqual = compareObjects(
         JSON.parse(localStorage.getItem("allTeamAndPlayers")),
         JSON.parse(localStorage.getItem("savedTeamOpened"))
-      );
-      console.log(areEqual);
+      );      
       if (areEqual) {
         setAllTypeplayersAndTeams({
           type: reducerTypes.initial,
@@ -330,25 +332,6 @@ function App() {
       }
     }
   }, [savedTeam]);
-
-  useEffect(() => {
-    console.log(differentBtnStates);
-    if (
-      allTypeplayersAndTeams.finalTotalTeams ===
-        allTypeplayersAndTeams.totalTeams &&
-      allTypeplayersAndTeams.hasShuffled
-    ) {
-      // localStorage.setItem(
-      //   "differentBtnStates",
-      //   JSON.stringify(differentBtnStates)
-      // );
-      console.log(localStorage.getItem("differentBtnStates"));
-    }
-  }, [
-    allTypeplayersAndTeams.finalTotalTeams,
-    allTypeplayersAndTeams.totalTeams,
-    differentBtnStates,
-  ]);
 
   function formSubmit(e) {
     e.preventDefault();
@@ -390,191 +373,90 @@ function App() {
     });
   }
 
-  const { contextSafe } = useGSAP();  
-    const generateTeamFunc = contextSafe(async () => {
-      let worker = { ...allTypeplayersAndTeams };
-      console.log(worker);
-      let uniqueRandomsArr = new Set([]);
+  const { contextSafe } = useGSAP();
+  const generateTeamFunc = contextSafe(async () => {
+    let worker = { ...allTypeplayersAndTeams };    
+    let uniqueRandomsArr = new Set([]);
 
-      // First animation promise
-      await new Promise((resolve) => {
-        gsap.fromTo(
-          ".cards",
-          { rotateY: "0deg" },
-          { rotateY: "180deg", duration: 1, ease: "back" }
-        );
-        setTimeout(resolve, 1000);
-      });
+    // First animation promise
+    await new Promise((resolve) => {
+      gsap.fromTo(
+        ".cards",
+        { rotateY: "0deg" },
+        { rotateY: "180deg", duration: 1, ease: "back" }
+      );
+      setTimeout(resolve, 1000);
+    });
 
-      await new Promise((resolve) => {
-        // Generate unique random numbers
-        Promise.all(
-          allTypeplayersAndTeams.players.map(async () => {
-            while (uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length) {
-              let random = Math.floor(Math.random() * allTypeplayersAndTeams.players.length);
-              uniqueRandomsArr.add(random);
+    await new Promise((resolve) => {
+      // Generate unique random numbers
+      Promise.all(
+        allTypeplayersAndTeams.players.map(async () => {
+          while (uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length) {
+            let random = Math.floor(Math.random() * allTypeplayersAndTeams.players.length);
+            uniqueRandomsArr.add(random);
+          }
+        })
+      ).then(async () => {
+        // Creating teams
+        await Promise.all(
+          Array(worker.finalTotalTeams).fill(null).map(async (_, index) => {            
+            while (worker.finalTotalTeams !== worker.teams.length) {
+              if (worker.teams.length > worker.finalTotalTeams) {
+                worker.teams.pop();
+              } else {
+                const name = `team${worker.teams.length + 1}`;
+                worker.teams.push({ teamName: name, teamPlayers: [] });
+              }
             }
           })
-        ).then(async () => {          
-          // Creating teams
-          await Promise.all(
-            Array(worker.finalTotalTeams).fill(null).map(async (_, index) => {
-              console.log(`inside ${index}`);
-              while (worker.finalTotalTeams !== worker.teams.length) {
-                if (worker.teams.length > worker.finalTotalTeams) {
-                  worker.teams.pop();
-                } else {
-                  const name = `team${worker.teams.length + 1}`;
-                  worker.teams.push({ teamName: name, teamPlayers: [] });
-                }
-              }
-            })
-          );
-
-          // Making teams array empty
-          await Promise.all(
-            allTypeplayersAndTeams.teams.map(async (_, teamIndex) => {
-              worker.teams[teamIndex].teamPlayers = [];
-            })
-          );
-
-          // Shuffling players into teams
-          await Promise.all(
-            allTypeplayersAndTeams.players.map(async (element, index) => {
-              let startIndex = Math.floor(
-                (index % allTypeplayersAndTeams.players.length) / allTypeplayersAndTeams.teams.length
-              );
-              let teamIndex = index % allTypeplayersAndTeams.teams.length;
-              let value = allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]];
-              worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value);
-            })
-          );
-
-          // Updating state after shuffling
-          setAllTypeplayersAndTeams({
-            type: reducerTypes.teamShuffle,
-            payload: { newTeams: [...worker.teams] },
-          });
-
-          resolve();
-        });
-      });
-
-      setdifferentBtnStates({
-        ...differentBtnStates,
-        savedProcessing: false,
-        GeneratingTeam: false,
-        needToGenerate: false,
-      });
-
-      // Second animation
-      await new Promise((resolve) => {
-        gsap.fromTo(
-          ".cards",
-          { rotateY: "180deg" },
-          { rotateY: "360deg", duration: 1, ease: "back" }
         );
-        setTimeout(resolve, 1000);
+
+        // Making teams array empty
+        await Promise.all(
+          allTypeplayersAndTeams.teams.map(async (_, teamIndex) => {
+            worker.teams[teamIndex].teamPlayers = [];
+          })
+        );
+
+        // Shuffling players into teams
+        await Promise.all(
+          allTypeplayersAndTeams.players.map(async (element, index) => {
+            let startIndex = Math.floor(
+              (index % allTypeplayersAndTeams.players.length) / allTypeplayersAndTeams.teams.length
+            );
+            let teamIndex = index % allTypeplayersAndTeams.teams.length;
+            let value = allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]];
+            worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value);
+          })
+        );
+
+        // Updating state after shuffling
+        setAllTypeplayersAndTeams({
+          type: reducerTypes.teamShuffle,
+          payload: { newTeams: [...worker.teams] },
+        });
+
+        resolve();
       });
+    });
 
+    setdifferentBtnStates((prevStates) => ({
+      ...prevStates,
+      savedProcessing: false,
+      GeneratingTeam: false,
+    }));    
+
+    // Second animation
+    await new Promise((resolve) => {
+      gsap.fromTo(
+        ".cards",
+        { rotateY: "180deg" },
+        { rotateY: "360deg", duration: 1, ease: "back" }
+      );
+      setTimeout(resolve, 1000);
+    });
   });
-
-  //   const generateTeamFunc = contextSafe(async () => {
-  //     let worker = { ...allTypeplayersAndTeams };
-  // console.log(worker)
-  //     let uniqueRandomsArr = new Set([]);
-
-  //     await new Promise((resolve) => {
-  //       gsap.fromTo(
-  //         ".cards",
-  //         { rotateY: "0deg" },
-  //         { rotateY: "180deg", duration: 1, ease: "back" }
-  //       );
-  //       setTimeout(() => {
-  //         resolve("dfd");
-  //       }, 1000);
-  //     });
-
-  //     await new Promise(async (resolve) => {
-  //       const promises = allTypeplayersAndTeams.players.map(
-  //         async (element, index) => {
-  //           // loop will run till player total length
-  //           while (
-  //             uniqueRandomsArr.size !== allTypeplayersAndTeams.players.length
-  //           ) {
-  //             let random = Math.floor(
-  //               Math.random() * allTypeplayersAndTeams.players.length
-  //             );
-  //             uniqueRandomsArr.add(random); // adding random value in  new set
-  //           }
-  //         }
-  //       );
-  //       await Promise.all(promises);
-
-  //       console.log("before teams");
-  //       const teamsMaking = Array(worker.finalTotalTeams)
-  //         .fill(null)
-  //         .map(async (_, index) => {
-  //           console.log(`inside ${index}`)
-  //           while (worker.finalTotalTeams !== worker.teams.length) {
-  //             console.log()
-  //             if (worker.teams.length > worker.finalTotalTeams) {
-  //               worker.teams.pop();
-  //             } else {
-  //               const name = `team${worker.teams.length + 1}`;
-  //               worker.teams.push({ teamName: name, teamPlayers: [] });
-  //             }
-  //           }
-  //         });
-  //         await Promise.all(teamsMaking);
-  //         console.log("after teams");
-
-  //       // making teams array empty
-  //       const teamsArrEmpty = allTypeplayersAndTeams.teams.map(
-  //         async (team, teamIndex) => {
-  //           worker.teams[teamIndex].teamPlayers = [];
-  //           return undefined;
-  //         }
-  //       );
-
-  //       await Promise.all(teamsArrEmpty);
-
-  //       const promises2 = allTypeplayersAndTeams.players.map(
-  //         async (element, index) => {
-  //           // this is dynamic start index calculator for splicing in all teams array
-  //           let startIndex = Math.floor(
-  //             (index % allTypeplayersAndTeams.players.length) /
-  //               allTypeplayersAndTeams.teams.length
-  //           );
-  //           let teamIndex = index % allTypeplayersAndTeams.teams.length; // whichteam
-  //           let value =
-  //             allTypeplayersAndTeams.players[Array.from(uniqueRandomsArr)[index]]; // name
-  //           worker.teams[teamIndex].teamPlayers.splice(startIndex, 1, value);
-  //         }
-  //       );
-
-  //       await Promise.all(promises2);
-
-  //       // new object after shuffing
-  //       setAllTypeplayersAndTeams({
-  //         type: reducerTypes.teamShuffle,
-  //         payload: { newTeams: [...worker.teams] },
-  //       });
-  //       resolve("done");
-  //     });
-
-  //     gsap.fromTo(
-  //       ".cards",
-  //       { rotateY: "180deg" },
-  //       { rotateY: "360deg", duration: 1, ease: "back" }
-  //     );
-  //     setdifferentBtnStates({
-  //       ...differentBtnStates,
-  //       savedProcessing: false,
-  //       GeneratingTeam: false,
-  //       needToGenerate: false,
-  //     });
-  //   });
 
   useGSAP(() => {
     gsap.fromTo(
@@ -659,55 +541,77 @@ function App() {
         }
       }
     }
-    const savedBtnStates = localStorage.getItem("differentBtnStates");
-    if (savedBtnStates) {
-      console.log(differentBtnStates);
-      console.log(JSON.parse(savedBtnStates));
-      setdifferentBtnStates(JSON.parse(savedBtnStates));
-    }
   }, []);
 
   useLayoutEffect(() => {
     // here i insure that savedTeamOpened is not undefined
     if (savedTeamOpened) {
-      try {
-      } catch (e) {
-        console.log(e);
-      }
       localStorage.setItem("savedTeamOpened", JSON.stringify(savedTeamOpened));
-      try {
-      } catch (e) {
-        console.log(e);
-      }
     }
   }, [savedTeamOpened]);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(() => {    
     localStorage.setItem(
       "allTeamAndPlayers",
       JSON.stringify(allTypeplayersAndTeams)
     );
+    if (
+      allTypeplayersAndTeams.finalTotalTeams ===
+      allTypeplayersAndTeams.totalTeams &&
+      allTypeplayersAndTeams.hasShuffled
+    ) {      
+      setdifferentBtnStates((prevStates) => ({
+        ...prevStates,
+        needToGenerate: allTypeplayersAndTeams.hasShuffled ? !(allTypeplayersAndTeams.finalTotalTeams === allTypeplayersAndTeams.teams.length && Number(allTypeplayersAndTeams.totalTeams) === allTypeplayersAndTeams.teams.length) : false,
+      }));
+    }
   }, [allTypeplayersAndTeams]);
 
   const checkingFunction = contextSafe((msg = "default") => {
     setTimeout(() => {
       // change for debugging of savedbutton
-      setdifferentBtnStates({
-        ...differentBtnStates,
+      setdifferentBtnStates((prevStates) => ({
+        ...prevStates,
         savedProcessing: false,
         GeneratingTeam: false,
-        needToGenerate: false,
-      });
-    }, 2000);
+      }));
+    }, 1900);
+
+    // players and title required
+    function playerAndTitleCheck({ mainTypeCheck }) {
+      if (allTypeplayersAndTeams.title.trim().length < 1) {
+        setalertMsgsState(alertMsgs.titleNotSaved);
+        popupAnim(alertMsgsTime.get(alertMsgs.titleNotSaved));
+        return false
+      } else if (allTypeplayersAndTeams.players.length < 2) {
+        if (mainTypeCheck === alertMsgs.teamSaved) {
+          setalertMsgsState(alertMsgs.teamNotSaved);
+          popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved));
+          return false
+        }
+        else if (mainTypeCheck === alertMsgs.generateTeam) {
+          setalertMsgsState(alertMsgs.notGenerated);
+          popupAnim(alertMsgsTime.get(alertMsgs.notGenerated));
+          return false
+        }
+      }
+      // else{      
+      return true
+      // }
+    }
+
     // no changes to save
     if (msg === alertMsgs.savedTeamNoChanges) {
       setalertMsgsState(alertMsgs.savedTeamNoChanges);
       popupAnim(alertMsgsTime.get(alertMsgs.savedTeamNoChanges));
     }
+
     // changes saved successfully
-    else if (msg === alertMsgs.savedTeamChangesSaved) {
-      setalertMsgsState(alertMsgs.savedTeamChangesSaved);
-      popupAnim(alertMsgsTime.get(alertMsgs.savedTeamChangesSaved));
+    else if (msg === alertMsgs.savedTeamChangesSaved) {      
+      if (playerAndTitleCheck({ mainTypeCheck: null })) {
+        setalertMsgsState(alertMsgs.savedTeamChangesSaved);
+        popupAnim(alertMsgsTime.get(alertMsgs.savedTeamChangesSaved));
+      }
     }
 
     // changes removed successfully
@@ -721,24 +625,9 @@ function App() {
       popupAnim(alertMsgsTime.get(alertMsgs.nothingToDiscard));
     }
 
-    if (
-      allTypeplayersAndTeams.players.length < 2 ||
-      allTypeplayersAndTeams.title.trim().length < 1
-    ) {
-      if (allTypeplayersAndTeams.title.trim().length < 1) {
-        // title required
-        setalertMsgsState(alertMsgs.titleNotSaved);
-        popupAnim(alertMsgsTime.get(alertMsgs.titleNotSaved));
-      } else if (msg === alertMsgsWork.generateTeam) {
-        setalertMsgsState(alertMsgs.notGenerated);
-        popupAnim(alertMsgsTime.get(alertMsgs.notGenerated));
-      } else if (msg === alertMsgsWork.saveTeamMsg) {
-        setalertMsgsState(alertMsgs.teamNotSaved);
-        popupAnim(alertMsgsTime.get(alertMsgs.teamNotSaved));
-      }
-    } else {
-      if (msg === alertMsgsWork.generateTeam) generateTeamFunc();
-      if (msg === alertMsgsWork.saveTeamMsg) {
+    if (msg === alertMsgsWork.generateTeam) { if (playerAndTitleCheck({ mainTypeCheck: alertMsgs.generateTeam })) { generateTeamFunc(); } }
+    if (msg === alertMsgsWork.saveTeamMsg) {
+      if (playerAndTitleCheck({ mainTypeCheck: alertMsgs.teamSaved })) {
         setalertMsgsState(alertMsgs.teamSaved);
         handleSaved();
         popupAnim(alertMsgsTime.get(alertMsgs.teamSaved));
@@ -752,13 +641,6 @@ function App() {
       ...prevStates,
       savedProcessing: true,
     }));
-
-    setTimeout(() => {
-      setdifferentBtnStates((prevStates) => ({
-        ...prevStates,
-        savedProcessing: false,
-      }));
-    }, 1900);
 
     // after working on continuesly 3,4 on bug of changing savedTeam array objects unknowly i figured it out that the
     // [...] {...}  does not work that properly i thought it just make a copy of ground label and fails out when i comes to nesting and complexiness  so i found an alternatives of that where map and JSON methods also have some limitations but this structuredClone is better than other options . Aug/27/2024/2:19 pm.
@@ -779,8 +661,8 @@ function App() {
     function defaultSetFunc() {
       // setting states to default values
       setdifferentBtnStates({
-        GeneratingTeam: false,
         needToGenerate: false,
+        GeneratingTeam: false,
         savedProcessing: false,
       });
       setAllTypeplayersAndTeams({ type: reducerTypes.removeAll });
@@ -827,8 +709,9 @@ function App() {
     }
   }
 
-  const savedTeamFunc = ({ type }) => {
+  const savedTeamFunc = async ({ type }) => {
     const areEqual = compareObjects(allTypeplayersAndTeams, savedTeamOpened);
+
     switch (type) {
       case savedTeamReducerActions.onfocus:
         {
@@ -846,17 +729,24 @@ function App() {
           if (areEqual) {
             checkingFunction(alertMsgs.savedTeamNoChanges);
           } else {
-            // structuredClone best way to copy nested arr , obj
-            const currentTeam = structuredClone(allTypeplayersAndTeams);
-            const copiedsavedTeam = structuredClone(savedTeam);
+            if (allTypeplayersAndTeams.title.trim().length < 1) {
+              setalertMsgsState(alertMsgs.titleNotSaved);
+              popupAnim(alertMsgsTime.get(alertMsgs.titleNotSaved));
+            }
+            else {
+              // structuredClone best way to copy nested arr , obj
+              //  await checkingFunction()
+              const currentTeam = structuredClone(allTypeplayersAndTeams);
+              const copiedsavedTeam = structuredClone(savedTeam);
 
-            const openedArrIndex = copiedsavedTeam.findIndex(
-              (savedteam) => savedteam.openedInGenerator
-            ); // finding opened array index
+              const openedArrIndex = copiedsavedTeam.findIndex(
+                (savedteam) => savedteam.openedInGenerator
+              ); // finding opened array index
 
-            copiedsavedTeam[openedArrIndex] = currentTeam; // pushing current allTypeplayersAndTeams copy in copy of savedTeam
-            setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
-            checkingFunction(alertMsgs.savedTeamChangesSaved); // popup msg for changes saved
+              copiedsavedTeam[openedArrIndex] = currentTeam; // pushing current allTypeplayersAndTeams copy in copy of savedTeam
+              setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
+              checkingFunction(alertMsgs.savedTeamChangesSaved); // popup msg for changes saved
+            }
           }
         }
         break;
@@ -882,6 +772,7 @@ function App() {
   return (
     <main>
       <div className="wrapper relative sm:w-[75%] mx-auto p-3">
+        {/* topdiv starts  */}
         <div className="topdiv fixed sm:text-base text-sm left-1/2 -translate-x-1/2 z-10 top-[-100%] w-auto flex justify-between sm:gap-[5rem] gap-[3rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] ">
           <div className="whitespace-nowrap flex-1">
             <span className="font-medium text-[#ffa600] mr-[2px]">
@@ -895,72 +786,64 @@ function App() {
             onClick={() => {
               totalTeamInput.current.focus();
             }}
-            className="whitespace-nowrap flex-1"
-          >
-            <span className="font-medium text-[#ffa600] mr-[2px]">
+            className="whitespace-nowrap flex-1 cursor-pointer">
+            <span className={`font-medium fo text-[#ffa600] mr-[2px] ${differentBtnStates.needToGenerate || !allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}>
               {allTypeplayersAndTeams.totalTeams}{" "}
             </span>
-            <span className="capitalize font-light text-[0.95em]">
+            <span className={`capitalize font-light text-[0.95em] ${differentBtnStates.needToGenerate || !allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}>
               total teams
             </span>
           </div>
         </div>
+        {/* topdiv ends  */}
 
         {/* details div starts  */}
-        <div className="details lg:max-w-[45%] sm:max-w-[75%] mx-auto p-2 text-[1em]">
-          {/* current players div starts  */}
-          <div className="flex justify-between p-2">
-            <span className="capitalize">current players</span>
-            <span className="capitalize text-lg font-medium">
-              {allTypeplayersAndTeams.players.length}
-            </span>
-          </div>
-          {/* current players div ends  */}
+        <div className="details lg:max-w-[45%] sm:max-w-[75%] mx-auto px-2 py-[0.35rem] text-[0.96em]">
+          <div className="px-2 py-[0.35rem]">
+            {/* current players div starts  */}
+            <div className="flex justify-between items-center p-2">
+              <span className="capitalize">current players</span>
+              <span className="capitalize text-lg">
+                {allTypeplayersAndTeams.players.length}
+              </span>
+            </div>
+            {/* current players div ends  */}
 
-          {/* total teams label starts  */}
-          <label
-            htmlFor="totalTeamsInput"
-            className="flex justify-between p-2 cursor-pointer"
-          >
-            <span className="capitalize">total teams</span>
-            <input
-              type="number"
-              name="totalTeamsInput"
-              id="totalTeamsInput"
-              value={allTypeplayersAndTeams.totalTeams}
-              ref={totalTeamInput}
-              className={`w-[2.5rem] text-end bg-transparent focus:outline-none focus:text-[#ffa600] text-lg font-medium`}
-              onChange={(e) => {
-                if (allTypeplayersAndTeams.hasShuffled) {
-                  setdifferentBtnStates({
-                    ...differentBtnStates,
-                    needToGenerate: true,
+            {/* total teams label starts  */}
+            <label
+              htmlFor="totalTeamsInput"
+              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[#a06800] focus-within:hover:border-[#a06800]  focus-within:border border border-1 border-[#696969d1] rounded-md">
+              <span className="capitalize">total teams</span>
+              <input
+                type="number"
+                name="totalTeamsInput"
+                id="totalTeamsInput"
+                value={allTypeplayersAndTeams.totalTeams}
+                maxLength={allTypeplayersAndTeams.players.length}
+                ref={totalTeamInput}
+                className={`w-[2.5rem] peer leading-[normal] text-end bg-transparent focus:border-none focus:text-[#ffa600] text-lg font-medium ${!allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}
+                onChange={(e) => {
+                  setAllTypeplayersAndTeams({
+                    type: reducerTypes.addTeam,
+                    payload: { newTotalTeams: e.target.value },
                   });
-                }
-                setAllTypeplayersAndTeams({
-                  type: reducerTypes.addTeam,
-                  payload: { newTotalTeams: e.target.value },
-                });
-              }}
-              onBlur={(e) => {
-                // setdifferentBtnStates({
-                //   ...differentBtnStates,
-                //   needToGenerate: true,
-                // });
-                setAllTypeplayersAndTeams({
-                  type: reducerTypes.addTeamBlur,
-                  payload: { newTotalTeams: e.target.value },
-                });
-              }}
-            />
-          </label>
-          {/* total teams label ends  */}
+                }}
+                onBlur={(e) => {
+                  setAllTypeplayersAndTeams({
+                    type: reducerTypes.addTeamBlur,
+                    payload: { newTotalTeams: e.target.value },
+                  });
+                }}
+              />
+            </label>
+            {/* total teams label ends  */}
+          </div>
 
           {/* add title div starts  */}
-          <div className="p-2 top-div-triggerer">
+          <div className="px-2 py-[0.35rem] top-div-triggerer">
             <label
               htmlFor="titleForGenerationTeam"
-              className="cursor-pointer block"
+              className="cursor-pointer block text-[0.97em]"
             >
               Project Title
             </label>
@@ -976,15 +859,17 @@ function App() {
               type="text"
               name="titleForGenerationTeam"
               id="titleForGenerationTeam"
+              maxLength={25}
+              max={25}
               placeholder="Title"
-              className="w-full bg-transparent px-3 py-2 mt-1 rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#a06800] backdrop-blur-[100px]"
+              className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] focus:border-[#a06800] hover:border-[#ffffff9e] transition-all duration-100 ease-in bg-[#000000]"
             />
           </div>
           {/* add title div ends  */}
 
           {/* description label starts  */}
-          <div className="p-2">
-            <label htmlFor="description" className="cursor-pointer block">
+          <div className="px-2 py-[0.35rem]">
+            <label htmlFor="description" className="cursor-pointer block text-[0.97em]">
               Project Description
             </label>
             <input
@@ -999,7 +884,7 @@ function App() {
               name="description"
               id="description"
               placeholder="Description"
-              className="w-full bg-transparent px-3 py-2 mt-1 rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#a06800] backdrop-blur-[100px]"
+              className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] focus:border-[#a06800] hover:border-[#ffffff9e] transition-all duration-100 ease-in bg-[#000000]"
             />
           </div>
           {/* description label ends  */}
@@ -1010,30 +895,26 @@ function App() {
         <form
           onSubmit={formSubmit}
           onReset={formReset}
-          className="lg:max-w-[45%] sm:max-w-[75%] mx-auto p-2 text-[1em]"
-        >
+          className="lg:max-w-[45%] sm:max-w-[75%] mx-auto px-2 py-[0.35rem] text-[0.96em]">
           <div className="flex px-2 items-center gap-2">
             {/* main input btn starts  */}
             <label
               htmlFor="formInput"
-              className="relative flex-1 backdrop-blur-[100px]"
-            >
+              className="relative flex-1 bg-[#000000] rounded-md">
               <input
                 ref={mainInput}
                 type="text"
                 name="playerName"
                 id="formInput"
                 placeholder="Add player"
-                className="w-full bg-transparent px-3 py-2  rounded-md outline outline-1 outline-[#ffffff41] focus:outline-[#a06800] pr-[2.5rem]"
+                className="w-full bg-transparent px-3 py-2 rounded-md border border-1 border-[#696969d1] focus:border-[#a06800] hover:border-[#ffffff9e] transition-all duration-100 ease-in pr-[2.5rem]"
                 value={PlayerInfoAndMore.playerName}
                 onChange={(e) => {
                   setPlayerInfoAndMore({
                     ...PlayerInfoAndMore,
                     playerName: e.target.value,
                   });
-                }}
-                required
-              />
+                }} required />
 
               {/* submit button starts  */}
               {/* border-lime-400 */}
@@ -1042,7 +923,7 @@ function App() {
                 className="absolute p-2 right-0 h-full border-l border-[#ffa600]"
               >
                 {PlayerInfoAndMore.currentInputBtn ===
-                formSubmitBtnState.add ? ( //#ffa600
+                  formSubmitBtnState.add ? ( //#ffa600
                   <svg
                     className="w-[1.375rem] h-[1.375rem]"
                     viewBox="0 0 24 24"
@@ -1097,27 +978,14 @@ function App() {
                 <button
                   type="reset"
                   value={"cancle"}
-                  className="p-2 outline outline-1 outline-[#ffa600] rounded-[50%]"
+                  className="relative rounded-[50%] before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[radial-gradient(red_18%,black_65%,red_90%)] overflow-hidden"
                 >
-                  <svg
-                    className="w-[1.375rem] h-[1.375rem]"
-                    viewBox="0 0 24 24"
-                    color="#e50f0f"
-                    fill="none"
-                  >
-                    <path
-                      d="M14.9994 15L9 9M9.00064 15L15 9"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                  </svg>
+                  <div className="relative backdrop-blur-[1px] flex items-center justify-center p-2">
+                    <svg className="w-[1.3rem] h-[1.3rem]"
+                      viewBox="0 0 24 24"
+                      color="white"
+                      fill="none"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g></svg>
+                  </div>
                 </button>
               )
             }
@@ -1132,10 +1000,10 @@ function App() {
             {/* generate button starts */}
             <button
               onClick={() => {
-                setdifferentBtnStates({
-                  ...differentBtnStates,
+                setdifferentBtnStates((prevStates) => ({
+                  ...prevStates,
                   GeneratingTeam: true,
-                });
+                }));
                 setPlayerInfoAndMore({
                   ...PlayerInfoAndMore,
                   currentInputBtn: formSubmitBtnState.add,
@@ -1147,77 +1015,75 @@ function App() {
                 });
                 checkingFunction(alertMsgsWork.generateTeam);
               }}
-              className={`relative outline outline-1 text-[0.95rem] font-medium  rounded-[0.425rem] [textShadow:1px_3px_0_black] overflow-hidden ${
-                differentBtnStates.GeneratingTeam ? "btnLoadTime" : ""
-              } `}
+              className={`relative border border-1 text-[0.92rem] rounded-[0.425rem]  transition-all duration-100 hover:shadow-[0_0_10px_-4px_white] overflow-hidden ${differentBtnStates.GeneratingTeam ? "btnLoadTime" : ""} ${differentBtnStates.needToGenerate ? "text-[red] [textShadow:1px_2px_0_#bdbdbd] border-[red] font-semibold" : "[textShadow:1px_2px_0_black] font-medium text-white"} `}
               disabled={differentBtnStates.GeneratingTeam}
             >
               <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)] pointer-events-none"></div>
-              <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
+              <div className={`backdrop-blur-[10px] flex gap-2 items-center px-4 py-2 ${differentBtnStates.needToGenerate ? "bg-white" : ""}`}>
                 <span>
-                  {!differentBtnStates.needToGenerate
-                    ? "Generate"
-                    : "Recalculate Teams"}
+                  { differentBtnStates.GeneratingTeam ? "Generating":
+                  differentBtnStates.needToGenerate
+                    ? "Recalculate Teams" : "Generate"}
                 </span>
                 <span>
                   {differentBtnStates.GeneratingTeam ? (
                     <svg
                       className="w-[1.125rem] h-[1.125rem]"
                       viewBox="0 0 24 24"
-                      color="#ffa600"
+                      color={`${differentBtnStates.needToGenerate ? 'red' : "#ffa600"}`}
                       fill="none"
                     >
                       <path
-                        className="drop-shadow-[1px_3px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                         d="M12 3V6"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[1px_3px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                         d="M12 18V21"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[1px_3px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                         d="M21 12L18 12"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[1px_3px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                         d="M6 12L3 12"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[3px_1px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[3px_1px_0_black]"}`}
                         d="M18.3635 5.63672L16.2422 7.75804"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[3px_1px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[3px_1px_0_black]"}`}
                         d="M7.75804 16.2422L5.63672 18.3635"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[3px_1px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[3px_1px_0_black]"}`}
                         d="M18.3635 18.3635L16.2422 16.2422"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       <path
-                        className="drop-shadow-[3px_1px_0_black]"
+                        className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[3px_1px_0_black]"}`}
                         d="M7.75804 7.75804L5.63672 5.63672"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -1226,9 +1092,9 @@ function App() {
                     </svg>
                   ) : (
                     <svg
-                      className="w-[1.125rem] h-[1.125rem] drop-shadow-[1px_3px_0_black]"
+                      className={`w-[1.125rem] h-[1.125rem] ${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                       viewBox="0 0 24 24"
-                      color="#ffa600"
+                      color={`${differentBtnStates.needToGenerate ? 'red' : "#ffa600"}`}
                       fill="none"
                     >
                       <path
@@ -1282,8 +1148,13 @@ function App() {
                       type: reducerTypes.removeAll,
                       savedOpenedTeam: savedTeamOpened,
                     });
+                    setdifferentBtnStates({
+                      needToGenerate: false,
+                      GeneratingTeam: false,
+                      savedProcessing: false
+                    })
                   }}
-                  className="relative overflow-hidden outline outline-1 text-[0.95rem] font-medium rounded-[0.425rem] [textShadow:1px_3px_0_black]"
+                  className="relative overflow-hidden border border-1 text-[0.92rem] font-medium rounded-[0.425rem] [textShadow:1px_2px_0_black] transition duration-100 hover:shadow-[0_0_10px_-4px_white]"
                 >
                   <div className="absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_88%,red)] pointer-events-none"></div>
                   <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
@@ -1331,18 +1202,16 @@ function App() {
 
           {/* change title starts  */}
           <div
-            className={`relative flex justify-between items-center bg-transparent backdrop-blur-[100px] rounded-[4px]  p-3 mt-9 mb-4 ${
-              savedTeamOpened
-                ? "outline outline-[0.3px] outline-[#a06800]"
-                : "outline outline-[0.3px] outline-[#ffffff41]"
-            }`}
-          >
+            className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 mt-9 mb-4 ${savedTeamOpened
+              ? "border border-[0.3px] border-[#a06800]"
+              : "border border-[0.3px] border-[#ffffff41]"
+              }`}>
             {/* make new team starts  */}
             <button
               onClick={() => {
                 newTeam();
               }}
-              className="flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] outline outline-1 outline-[#ffffff3d]"
+              className="flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] border border-1 border-[#ffffff3d]"
             >
               <span>New</span>
               <span className="inline-block">
@@ -1388,9 +1257,8 @@ function App() {
                 onClick={() => {
                   checkingFunction(alertMsgsWork.saveTeamMsg);
                 }}
-                className={`bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center} ${
-                  differentBtnStates.savedProcessing ? "btnLoadTime" : ""
-                }`}
+                className={`bg-[#0a0a0a] border border-1 border-[#303030] p-3 rounded-[50%] grid justify-center items-center} ${differentBtnStates.savedProcessing ? "btnLoadTime" : ""
+                  }`}
                 disabled={differentBtnStates.savedProcessing}
               >
                 {differentBtnStates.savedProcessing ? (
@@ -1451,7 +1319,7 @@ function App() {
                   </svg>
                 ) : (
                   <svg
-                    className="sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem] text-white"
+                    className="sm:w-[1.275rem] w-[1rem] hover:drop-shadow-[0px_0px_9px_currentColor] drop-shadow-[0px_0px_3px_currentColor]  h-[1rem] sm:h-[1.275rem] text-white transition-all duration-100"
                     viewBox="0 0 24 24"
                     fill="none"
                   >
@@ -1482,37 +1350,14 @@ function App() {
               {/* will visible on only saved team  */}
               {savedTeamOpened && (
                 <button
-                  className={`relative p-[5px] rounded-[50%] hover:bg-[#000000] ${
-                    savedTeamChanges.popup ? "bg-[#000000]" : ""
-                  }`}
+                  className={`relative p-[5px] rounded-[50%] hover:bg-[#141414] ${savedTeamChanges.popup ? "bg-[#141414]" : ""
+                    }`}
                 >
-                  <svg
-                    className="w-[1.25rem] h-[1.25rem] text-white rotate-90"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M6 12C6 11.1716 5.32843 10.5 4.5 10.5C3.67157 10.5 3 11.1716 3 12C3 12.8284 3.67157 13.5 4.5 13.5C5.32843 13.5 6 12.8284 6 12Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                  </svg>
-
+                  <svg className="w-[1.35rem] h-[1.35rem] text-white drop-shadow-[1px_1px_2px_black]"
+                    viewBox="0 0 24 24" fill="none"><path fill="currentColor" d="M12 20q-.825 0-1.412-.587T10 18t.588-1.412T12 16t1.413.588T14 18t-.587 1.413T12 20m0-6q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m0-6q-.825 0-1.412-.587T10 6t.588-1.412T12 4t1.413.588T14 6t-.587 1.413T12 8" /></svg>
                   {/*====  three dots starts  =====*/}
                   <label
-                    className="inset-0 w-[100%] h-[100%] opacity-0 absolute"
-                    htmlFor={`savedTeamSeeMore`}
-                  >
+                    className="inset-0 w-[100%] h-[100%] opacity-0 absolute" htmlFor={`savedTeamSeeMore`}>
                     <input
                       onFocus={() => {
                         savedTeamFunc({
@@ -1533,7 +1378,7 @@ function App() {
                   {/*==== actions starts  =====*/}
                   {savedTeamChanges.popup && (
                     <ul
-                      className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[-1.875rem] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[#a06800]`}
+                      className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.78rem] absolute z-[1] top-[-1.875rem] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[#a06800]`}
                     >
                       {/*==== save changes li starts  ====*/}
                       <li
@@ -1575,29 +1420,27 @@ function App() {
             </div>
           </div>
           {/* change title ends  */}
+
           {allTypeplayersAndTeams.hasShuffled ? (
             // devided teams sections starts
-            <section className="flex flex-wrap gap-x-3 gap-y-7 py-5 text-[1.08rem]">
+            <section className="flex flex-wrap gap-x-3 gap-y-7 py-5 max-sm:text-[0.95em]">
               {allTypeplayersAndTeams.teams.map((team, teamValIndex) => (
                 <div
                   key={teamValIndex}
-                  className={`md:flex-[1_0_12.5rem] sm:flex-[1_0_9.375rem] flex-[1_0_8.125rem]`}
-                >
-                  <h1 className="mb-4 text-center text-[0.98em] font-medium">
+                  className={`md:flex-[1_0_12.5rem] sm:flex-[1_0_9.375rem] flex-[1_0_8.125rem]`}>
+                  <h1 className="mb-4 text-center font-medium text-[1.0375em]">
                     Team {teamValIndex + 1}
                   </h1>
-                  <ol className="cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.9em]">
+                  <ol className="cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.97em]">
                     {team.teamPlayers.map((val, valIndex) => (
                       <li
                         key={`${team.teamName}-${valIndex}`}
-                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap outline outline-1  ${
-                          PlayerInfoAndMore.arrItemForEdit ===
-                            "teams." + teamValIndex &&
+                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border border-1  ${PlayerInfoAndMore.arrItemForEdit ===
+                          "teams." + teamValIndex &&
                           PlayerInfoAndMore.editBtnClickBy === valIndex
-                            ? " outline-[#a06800] outline-offset-2"
-                            : "outline-[#303030]"
-                        }`}
-                      >
+                          ? " border-[#a06800]"
+                          : "border-[#696969c2]"
+                          }`}>
                         <span>{val}</span>
 
                         {/*== backface of card starts  ==*/}
@@ -1609,7 +1452,7 @@ function App() {
                         {/*== backface of card ends  ==*/}
 
                         {/*====  three dots starts  =====*/}
-                        <span className="seeMore absolute rounded-[50%]  p-[2px] top-[0px] right-2">
+                        <span className="seeMore absolute rounded-[50%] top-[0px] right-[0.35rem]">
                           <label
                             className="inset-0 w-[100%] h-[100%] opacity-0 absolute"
                             htmlFor={`${team.teamName}-${valIndex}`}
@@ -1635,45 +1478,26 @@ function App() {
                             />
                           </label>
                           <span>
-                            <svg
-                              className="w-[1.25rem] h-[1.25rem]"
+                            <svg className="w-[1.45rem] h-[auto]"
                               viewBox="0 0 24 24"
                               color="#ffffff"
-                              fill="none"
-                            >
-                              <path
-                                d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                              />
-                              <path
-                                d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                              />
-                              <path
-                                d="M6 12C6 11.1716 5.32843 10.5 4.5 10.5C3.67157 10.5 3 11.1716 3 12C3 12.8284 3.67157 13.5 4.5 13.5C5.32843 13.5 6 12.8284 6 12Z"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                              />
+                              fill="none"><path fill="currentColor" d="M6 14q-.825 0-1.412-.587T4 12t.588-1.412T6 10t1.413.588T8 12t-.587 1.413T6 14m6 0q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m6 0q-.825 0-1.412-.587T16 12t.588-1.412T18 10t1.413.588T20 12t-.587 1.413T18 14" />
                             </svg>
                           </span>
                         </span>
                         {/*====  three dots ends  =====*/}
 
                         {/*==== actions starts  =====*/}
-                        {PlayerInfoAndMore.whichArray ===
-                          `teams.${teamValIndex}` &&
-                          PlayerInfoAndMore.playerIndex === valIndex && (
+                    {PlayerInfoAndMore.whichArray ===
+                          `teams.${teamValIndex}` && 
+                           PlayerInfoAndMore.playerIndex === valIndex && (
                             <ul
-                              className={`popupContainer bg-[#0a0a0a] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8em] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${
-                                PlayerInfoAndMore.arrItemForEdit ===
-                                  "teams." + teamValIndex &&
+                              className={`popupContainer bg-[#000000] shadow-[0_0_0.9375rem_-1px_#000000b8] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-[inherit] border-[0.4px] text-[0.93em] ${PlayerInfoAndMore.arrItemForEdit ===
+                                "teams." + teamValIndex &&
                                 PlayerInfoAndMore.editBtnClickBy === valIndex
-                                  ? " border-[#a06800]"
-                                  : ""
-                              } `}
-                            >
+                                ? " border-[#a06800]"
+                                : ""
+                                } `}>
                               {/*==== editing li starts  ====*/}
                               <li
                                 onMouseDown={() => {
@@ -1690,18 +1514,17 @@ function App() {
                                     100
                                   );
                                 }}
-                                className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${
-                                  PlayerInfoAndMore.arrItemForEdit ===
-                                    "teams." + teamValIndex &&
+                                className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.arrItemForEdit ===
+                                  "teams." + teamValIndex &&
                                   PlayerInfoAndMore.editBtnClickBy === valIndex
-                                    ? "hover:bg-[#f49e0073] bg-[#a0680080]"
-                                    : ""
-                                }`}
+                                  ? "hover:bg-[#f49e0073] bg-[#a0680080]"
+                                  : ""
+                                  }`}
                               >
                                 <span>edit...</span>
                                 <span>
                                   <svg
-                                    className="w-[1rem] h-[1rem]"
+                                    className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                                     viewBox="0 0 24 24"
                                     color="#ffffff"
                                     fill="none"
@@ -1752,7 +1575,7 @@ function App() {
                                 <span>delete</span>
                                 <span>
                                   <svg
-                                    className="w-[1rem] h-[1rem]"
+                                    className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                                     color="#ffffff"
                                     fill="none"
                                     viewBox="0 0 512 512"
@@ -1766,7 +1589,7 @@ function App() {
                               </li>
                               {/*==== deleting li ends  ====*/}
                             </ul>
-                          )}
+                           )}
                         {/*====  actions ends   =====*/}
                       </li>
                     ))}
@@ -1776,17 +1599,15 @@ function App() {
             </section>
           ) : (
             // devided teams sections ends
-            <ol className="cardsContainer text-white list-inside flex flex-wrap justify-center gap-3 sm:py-5 mt-8 py-4">
+            <ol className="cardsContainer text-white list-inside flex flex-wrap justify-center gap-3 sm:py-5 mt-8 py-4 max-sm:text-[0.95em]">
               {allTypeplayersAndTeams.players.map((val, valIndex) => (
                 <li
                   key={val + valIndex + "players"}
-                  className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-sm p-2 pt-3 text-wrap outline-1 outline ${
-                    PlayerInfoAndMore.whichArray === "players" &&
+                  className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border-1 border text-[0.97em] ${PlayerInfoAndMore.whichArray === "players" &&
                     PlayerInfoAndMore.editBtnClickBy === valIndex
-                      ? " outline-[#a06800] outline-offset-2"
-                      : "outline-[#303030]"
-                  }`}
-                >
+                    ? " border-[#a06800]"
+                    : "border-[#696969c2]"
+                    }`}>
                   <span>{val}</span>
 
                   {/*== backface of card starts  ==*/}
@@ -1798,7 +1619,7 @@ function App() {
                   {/*== backface of card ends  ==*/}
 
                   {/*====  three dots starts  =====*/}
-                  <span className="seeMore absolute rounded-[50%]  p-[2px] top-[0px] right-2">
+                  <span className="seeMore absolute rounded-[50%] top-[0px] right-[0.35rem]">
                     <label
                       className="inset-0 w-[100%] h-[100%] opacity-0 absolute"
                       htmlFor={"Players" + valIndex}
@@ -1824,43 +1645,24 @@ function App() {
                       />
                     </label>
                     <span>
-                      <svg
-                        className="w-[1.25rem] h-[1.25rem]"
+                      <svg className="w-[1.45rem] h-[auto]"
                         viewBox="0 0 24 24"
                         color="#ffffff"
-                        fill="none"
-                      >
-                        <path
-                          d="M21 12C21 11.1716 20.3284 10.5 19.5 10.5C18.6716 10.5 18 11.1716 18 12C18 12.8284 18.6716 13.5 19.5 13.5C20.3284 13.5 21 12.8284 21 12Z"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                        <path
-                          d="M13.5 12C13.5 11.1716 12.8284 10.5 12 10.5C11.1716 10.5 10.5 11.1716 10.5 12C10.5 12.8284 11.1716 13.5 12 13.5C12.8284 13.5 13.5 12.8284 13.5 12Z"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                        <path
-                          d="M6 12C6 11.1716 5.32843 10.5 4.5 10.5C3.67157 10.5 3 11.1716 3 12C3 12.8284 3.67157 13.5 4.5 13.5C5.32843 13.5 6 12.8284 6 12Z"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
+                        fill="none"><path fill="currentColor" d="M6 14q-.825 0-1.412-.587T4 12t.588-1.412T6 10t1.413.588T8 12t-.587 1.413T6 14m6 0q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m6 0q-.825 0-1.412-.587T16 12t.588-1.412T18 10t1.413.588T20 12t-.587 1.413T18 14" />
                       </svg>
                     </span>
                   </span>
                   {/*====  three dots ends  =====*/}
 
                   {/*==== actions starts  =====*/}
-                  {PlayerInfoAndMore.whichArray === `players` &&
+                 {PlayerInfoAndMore.whichArray === `players` &&
                     PlayerInfoAndMore.playerIndex === valIndex && (
                       <ul
-                        className={`popupContainer bg-[#0a0a0a] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.8rem] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-sm border-[0.4px] ${
-                          PlayerInfoAndMore.whichArray === "players" &&
+                        className={`popupContainer bg-[#000000] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.93em] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-[inherit] border-[0.4px] ${PlayerInfoAndMore.whichArray === "players" &&
                           PlayerInfoAndMore.editBtnClickBy === valIndex
-                            ? " border-[#a06800]"
-                            : ""
-                        }`}
-                      >
+                          ? " border-[#a06800]"
+                          : ""
+                          }`}>
                         {/*==== editing li starts  ====*/}
                         <li
                           onMouseDown={() => {
@@ -1874,17 +1676,16 @@ function App() {
                             });
                             setTimeout(() => mainInput.current.focus(), 100);
                           }}
-                          className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${
-                            PlayerInfoAndMore.whichArray === "players" &&
+                          className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.whichArray === "players" &&
                             PlayerInfoAndMore.editBtnClickBy === valIndex
-                              ? "hover:bg-[#f49e0073] bg-[#a0680080]"
-                              : ""
-                          }`}
+                            ? "hover:bg-[#f49e0073] bg-[#a0680080]"
+                            : ""
+                            }`}
                         >
                           <span>edit...</span>
                           <span>
                             <svg
-                              className="w-[1rem] h-[1rem]"
+                              className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                               viewBox="0 0 24 24"
                               color="#ffffff"
                               fill="none"
@@ -1933,7 +1734,7 @@ function App() {
                           <span>delete</span>
                           <span>
                             <svg
-                              className="w-[1rem] h-[1rem]"
+                              className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                               color="#ffffff"
                               fill="none"
                               viewBox="0 0 512 512"

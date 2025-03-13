@@ -35,7 +35,7 @@ function ContextProvider({ children }) {
     gsap.fromTo(
       ".fixedmsg",
       { bottom: 0, opacity: 0.5, display: "none" },
-      { bottom: 100, opacity: 1, display: "block", ease: "back", duration: 0.5 }
+      { bottom: 100, opacity: 1, display: "block", ease: "back", duration: 0.8 }
     );
 
     timeout.current = setTimeout(() => {
@@ -132,11 +132,11 @@ let PageHeading = memo(({ heading }) => {
   return (
     <div
       ref={headingCompo}
-      className={`sticky top-2 z-[2] rounded-[4rem] lg:w-1/2 w-[--navbarWidth] mx-auto bg-[#141414] grid grid-cols-12 items-center sm:py-[0.6rem] py-[0.4rem] pl-2 pr-4 text-xl mb-2 border-b border-t border-[#ffffff41]`}
+      className={`sticky top-2 z-[2] rounded-[4rem] lg:w-1/2 w-[--navbarWidth] mx-auto bg-[#141414] grid grid-cols-12 items-center sm:py-[0.6rem] py-[0.4rem] pl-2 pr-4 text-xl border-b border-t border-[#ffffff41]`}
     >
       {/* return btn  */}
       <button
-        className={`capitalize col-[1/1] row-start-1 z-[1] inline-flex w-[2.1rem] h-[2.1rem] items-center justify-center cursor-pointer outline outline-1 outline-[#707070] hover:shadow-[3px_0px_5px_-2px_black] rounded-full dark:text-white transition-all duration-300`}
+        className={`capitalize col-[1/1] row-start-1 z-[1] inline-flex w-[2.1rem] h-[2.1rem] items-center justify-center cursor-pointer border-l border-r hover:border-t hover:border-b border-[#ffffff41] hover:shadow-[3px_0px_5px_-2px_black] rounded-full dark:text-white transition-all duration-300`}
         onClick={() => {
           window.history.back();
         }}
@@ -144,7 +144,7 @@ let PageHeading = memo(({ heading }) => {
         <span>
           <svg
             viewBox="0 0 24 24"
-            className={`w-[1.3rem] h-[1.3rem] dark:drop-shadow-[4px_1px_1px_black] drop-shadow-[3px_0px_1px_black]`}
+            className={`w-[1.3rem] h-[1.3rem] drop-shadow-[0px_0px_2px_currentColor]`}
             color="#ffffff"
             fill="none"
           >
@@ -195,11 +195,18 @@ const Modal = () => {
     switch (type) {
       case savedTeamReducerActions.saveChanges:
         {
-          copiedsavedTeam[openedArrIndex] = currentTeam; // pushing current allTypeplayersAndTeams copy in copy of savedTeam
-          localStorage.setItem("savedTeamOpened", JSON.stringify(currentTeam)); //updating with latest changes
-          setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
-          setalertMsgsState(alertMsgs.savedTeamChangesSaved); // popup msg for changes saved
-          popupAnim(alertMsgsTime.get(alertMsgs.savedTeamChangesSaved));
+          if (currentTeam.title.trim().length < 1) {
+            console.log(currentTeam.title)
+            setalertMsgsState(alertMsgs.titleNotSaved);
+            popupAnim(alertMsgsTime.get(alertMsgs.titleNotSaved));
+          } else{
+            console.log(currentTeam.title)
+            copiedsavedTeam[openedArrIndex] = currentTeam; // pushing current allTypeplayersAndTeams copy in copy of savedTeam
+            localStorage.setItem("savedTeamOpened", JSON.stringify(currentTeam)); //updating with latest changes
+            setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
+            setalertMsgsState(alertMsgs.savedTeamChangesSaved); // popup msg for changes saved
+            popupAnim(alertMsgsTime.get(alertMsgs.savedTeamChangesSaved));
+          }
         }
         break;
       case savedTeamReducerActions.discardChanges:
@@ -247,22 +254,15 @@ const Modal = () => {
     <div
       ref={modalContainer}
       onClick={backClickedHandle}
-      className={`fixed inset-0 z-20 grid place-items-center backdrop-blur-[2px] ${
+      className={`fixed inset-0 z-30 grid place-items-center backdrop-blur-[2px] ${
         modalOpen ? "" : "hidden"
-      }`}
-    >
-      <div
-        ref={modal}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        className={`relative sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 outline outline-1 outline-[#303030] rounded`}
-      >
+      }`}>
+      <div ref={modal} onClick={(e) => {e.stopPropagation();}}
+        className={`relative sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 border border-1 border-[#303030] rounded`} >
         {/* ======= close btn starts ===== */}
         <button
           onClick={backClickedHandle}
-          className="absolute top-4 right-3 transition-all duration-100 drop-shadow-[0px_0px_5px_white] hover:drop-shadow-[0px_0px_7px_white]"
-        >
+          className="absolute top-4 right-3 transition-all duration-100 drop-shadow-[0px_0px_5px_white] hover:drop-shadow-[0px_0px_7px_white]">
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
             <path
               d="M19.0005 4.99988L5.00049 18.9999M5.00049 4.99988L19.0005 18.9999"
@@ -281,7 +281,7 @@ const Modal = () => {
             would you like to save current changes in
             <span className="whitespace-nowrap text-[0.98em] text-[#a06800]">
               {" "}
-              {savedTeamOpened?.title}{" "}
+              {savedTeamOpened?.title.trim().length < 1 ? "current project":savedTeamOpened?.title}{" "}
             </span>
             ?
           </p>
@@ -322,27 +322,15 @@ const Notification = () => {
     <>
       {/* notifcation div starts  */}
       <div
-        className={`fixedmsg fixed hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] sm:max-w-[20.875rem] capitalize text-[0.85rem] text-center left-1/2 -translate-x-1/2 rounded-sm z-20 p-2 outline outline-1 bg-black outline-[gray] tracking-[0.1px]`}
+        className={`fixedmsg fixed z-40 hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] md:max-w-[23.875rem] sm:max-w-[20.875rem] sm:text-[0.90rem] capitalize text-[0.80rem] text-center left-1/2 -translate-x-1/2 rounded-md p-2 border border-1 bg-black border-[gray] tracking-[0.1px]`}
       >
         <button
           onClick={() => {
             clearNotification();
-          }}
-          className="absolute p-1 top-[-4px] right-[-4px] bg-black transition-all duration-100 rounded-[50%] outline outline-1 outline-[#ffffffab]"
-        >
-          <svg
-            className="w-[0.75rem] h-[0.75rem]"
+          }} className="absolute p-1 top-[-4px] right-[-4px] bg-black transition-all duration-100 rounded-[50%] border border-1 border-[#ffffffab]">         
+          <svg className="w-[0.75rem] h-[0.75rem]"
             viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path
-              d="M19.0005 4.99988L5.00049 18.9999M5.00049 4.99988L19.0005 18.9999"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+            fill="none"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g></svg>
         </button>
         {alertMsgsState}
       </div>

@@ -14,26 +14,41 @@ body {
         linear-gradient(45deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%, #1c1c1c 0 67%, #0000 0 83%, #1c1c1c 0 92%, #0000 0),
         #000000;
     background-size: 100vw 100vh; */
-  background: conic-gradient(
-      from 116.56deg at calc(100% / 3) 0,
+  /* background: conic-gradient(from 116.56deg at calc(100% / 3) 0,
       #0000 90deg,
-      #000000 0
-    ),
-    conic-gradient(
-        from -63.44deg at calc(200% / 3) 100%,
-        #0000 90deg,
-        #000000 0
-      )
-      #0a0a0a;
-  background-size: 3.5rem 3.5rem;
+      #000000 0),
+    conic-gradient(from -63.44deg at calc(200% / 3) 100%,
+      #0000 90deg,
+      #000000 0) #0a0a0a;
+  background-size: 3.5rem 3.5rem; */
+  /* background: url('/bgrandomteams.svg') no-repeat fixed;
+  background-size: cover;   */
   user-select: none;
 }
-:root{
-  --navbarWidth:330px;
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/bgrandomteams.svg') no-repeat center center;
+  background-size: cover;
+  z-index: -1;
+}
+
+
+:root {
+  --navbarWidth: 330px;
 }
 
 .bruno {
   font-family: "Bruno Ace SC", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.saira-stencil{
+  font-family: "Saira Stencil One", serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -47,13 +62,18 @@ input {
   outline: none;
 }
 
-input::placeholder{
+input::placeholder {
   font-size: 0.95em;
 }
 
 ol {
   list-style-type: decimal;
 }
+::marker {
+  font-weight: lighter;
+  font-size: 0.95em;
+}
+
 .cards {
   text-shadow: 2px 0px 1px black;
 }
@@ -69,7 +89,7 @@ ol {
 }
 
 .back {
-  outline: 1px solid white;
+  outline: 1px solid inherit;
   transform: rotateY(180deg) translateZ(-1px);
 }
 
@@ -79,21 +99,26 @@ ol {
 
 .card-linear:not(.how-to-page .card-linear) {
   transform: translateZ(-1px);
-  background: linear-gradient(#ed9a01, #ed9a01);
+  background: #ed9a01;
   width: 25%;
   height: 25%;
   animation: bgMoving 5s alternate ease-in-out infinite;
   top: 2px;
 }
+
 .card-blur {
   transform: translateZ(-1px);
+  /* background-color: #1a1e2da6; */
+  background-color: #11131b9e;
 }
 
 @keyframes bgMoving {
+
   /* outline offset and width accourding */
   0% {
     left: calc(25% - 25% + 2px);
   }
+
   100% {
     left: calc(25% - -50% - 2px);
   }
@@ -128,12 +153,14 @@ button:is([type="submit"], [type="reset"]):hover svg {
   width: 15%;
   height: 15%;
   animation: bgMovingHowTo 8s alternate ease-in-out infinite;
-  transition:0s;
+  transition: 0s;
 }
+
 @keyframes bgMovingHowTo {
   0% {
-    left: calc(0% );
+    left: calc(0%);
   }
+
   100% {
     left: calc(100% - 15%);
   }
@@ -146,7 +173,7 @@ button:is([type="submit"], [type="reset"]):hover svg {
   transform-style: preserve-3d;
 }
 
-.spinner > div {
+.spinner>div {
   background-color: rgb(0 0 0 / 33%);
   height: 100%;
   position: absolute;
@@ -155,6 +182,7 @@ button:is([type="submit"], [type="reset"]):hover svg {
   border-radius: 0.75rem;
   box-shadow: 0 0 0.125rem 0px white inset;
   box-shadow: 0 0 0px 0.4px #ffa600 inset;
+  box-shadow: 0 0 0px 0.4px #ffa600 inset, 0 0 0.125rem 0px white inset, 0 0 0px 0.4px #ffa600 inset, 0 0 0.125rem 0px white inset;
 }
 
 .spinner div:nth-of-type(1) {
@@ -227,10 +255,60 @@ div .searchInput:focus {
   flex: 1 1 9.375rem;
 }
 
+.gridCube {
+  transform-style: preserve-3d;
+  /* animation: spinner 8.4s infinite cubic-bezier(0.4, 0, 0.2, 1); */
+}
 
+.gridChilds {
+  /* position: absolute; */
+  /* height: 100%; */
+  /* background-color: #000000 ; */
+  /* box-shadow: 0 0 3px 4px black inset; */
+  /* width: 100%; */
+  /* display: grid; */
+  /* grid-template-columns: repeat(3, 1fr); */
+  /* grid-template-rows: repeat(3, 1fr); */
+  /* overflow: hidden; */
+  /* border-radius: 5px; */
+}
+/* .gridCube .gridChilds:nth-of-type(1) {
+  transform: translateZ(200px) rotateY(180deg);
+}
 
+.gridCube .gridChilds:nth-of-type(2) {
+  transform: rotateY(-270deg) translateX(50%);
+  transform-origin: top right;
+}
+
+.gridCube .gridChilds:nth-of-type(3) {
+  transform: rotateY(270deg) translateX(-50%);
+  transform-origin: center left;
+}
+
+.gridCube .gridChilds:nth-of-type(4) {
+  transform: rotateX(90deg) translateY(-50%);
+  transform-origin: top center;
+}
+
+.gridCube .gridChilds:nth-of-type(5) {
+  transform: rotateX(-90deg) translateY(50%);
+  transform-origin: bottom center;
+}
+
+.gridCube .gridChilds:nth-of-type(6) {
+  transform: translateZ(-200px);
+} */
+
+@media (max-width:650px) {
+  body::before {
+    background: url('/mobilebgrandomteams.svg') no-repeat center center;
+    background-size: cover;
+  }
+}
 
 @media (max-width: 400px) {
+
   html,
   body {
     font-size: 15.5px;
@@ -238,6 +316,7 @@ div .searchInput:focus {
 }
 
 @media (max-width: 350px) {
+
   html,
   body {
     font-size: 14.5px;
@@ -254,6 +333,7 @@ div .searchInput:focus {
 }
 
 @media (max-width: 300px) {
+
   html,
   body {
     font-size: 13.5px;
@@ -265,6 +345,7 @@ div .searchInput:focus {
 }
 
 @media (min-width: 1400px) {
+
   html,
   body {
     font-size: 16.5px;
@@ -272,6 +353,7 @@ div .searchInput:focus {
 }
 
 @media (min-width: 1600px) {
+
   html,
   body {
     font-size: 18.5px;
