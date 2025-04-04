@@ -8,14 +8,13 @@ import React, {
   useEffect,
 } from "react";
 import { mainContext } from "./context";
-import { savedTeamReducerActions, alertMsgs, alertMsgsTime } from "../home";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 function ContextProvider({ children }) {
   const timeout = useRef(null);
   const [savedTeam, setsavedTeam] = useState([]);
-  const [modalOpen, setmodalOpen] = useState(false);
+  const [projectHasChangedModalOpen, setprojectHasChangedModalOpen] = useState(false);
   const [alertMsgsState, setalertMsgsState] = useState(
     "You need at least 2 players to generate a team."
   );
@@ -28,7 +27,6 @@ function ContextProvider({ children }) {
   };
 
   // Notification animation
-  let inter;
   const popupAnim = contextSafe((time) => {
     clearTimeout(timeout.current); // removing old timeout
 
@@ -74,7 +72,7 @@ function ContextProvider({ children }) {
   useLayoutEffect(() => {
     const local = localStorage.getItem("savedTeams");
     if (local) {
-      setsavedTeam(JSON.parse(localStorage.getItem("savedTeams")));
+      setsavedTeam(JSON.parse(local));
     }
   }, []);
 
@@ -89,22 +87,68 @@ function ContextProvider({ children }) {
         setsavedTeam,
         PageHeading,
         compareObjects,
-        Modal,
-        modalOpen,
-        setmodalOpen,
+        ProjectHasChangedModal,
+        projectHasChangedModalOpen,
+        setprojectHasChangedModalOpen,
         alertMsgsState,
         setalertMsgsState,
         Notification,
         popupAnim,
         clearNotification,
+        alertMsgs,
+        alertMsgsWork,
+        alertMsgsTime,
+        savedTeamReducerActions
       }}
     >
       {children}
     </mainContext.Provider>
   );
 }
-
 export default React.memo(ContextProvider);
+
+const alertMsgsWork = {
+  saveTeamMsg: "team saved or not msg",
+  generateTeam: "generate team",
+  savedTeamChangesWork: "saved Team Changes Work",
+};
+
+const alertMsgs = {
+  teamSaved: "Your project was saved successfully!",
+  teamNotSaved: "You need at least 2 players to save a project.",
+  titleNotSaved: "The project requires a title",
+  notGenerated: "You need at least 2 players to generate a team. ",
+  savedTeamNoChanges: "There are no changes to save.",
+  savedTeamChangesSaved: "Your changes were saved successfully!",
+  changesDiscard: "Your changes were removed successfully!",
+  nothingToDiscard: "There’s nothing to discard.",
+  teamDeleted: "Your project was removed successfully!",
+  errorMsg: "Something broke generate again !",
+  teams_length_broken: "Teams length can't be bigger than total players length",
+  removeAll: "removing all",
+};
+
+const alertMsgsTime = new Map([
+  [alertMsgs.teamSaved, 3000],
+  [alertMsgs.teamNotSaved, 4000],
+  [alertMsgs.titleNotSaved, 2500],
+  [alertMsgs.notGenerated, 4000],
+  [alertMsgs.savedTeamNoChanges, 3000],
+  [alertMsgs.savedTeamChangesSaved, 2500],
+  [alertMsgs.changesDiscard, 3500],
+  [alertMsgs.nothingToDiscard, 2500],
+  [alertMsgs.teamDeleted, 3000],
+  [alertMsgs.errorMsg, 3000],
+  [alertMsgs.teams_length_broken, 5500],
+  [alertMsgs.removeAll, 1500],
+]);
+
+const savedTeamReducerActions = {
+  onblur: "onblur",
+  onfocus: "onfocus",
+  saveChanges: "saveChanges",
+  discardChanges: "discardChanges",
+};
 
 let PageHeading = memo(({ heading }) => {
   const headingCompo = useRef(null);
@@ -113,8 +157,8 @@ let PageHeading = memo(({ heading }) => {
   const PageHeadingToggling = contextSafe(() => {
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
     if (currentScroll < lastScrollTop) {
-      gsap.to(headingCompo.current, { top:"0.5rem", duration: 1, ease: "back" });
-    } else if(currentScroll > lastScrollTop && currentScroll !== 0){
+      gsap.to(headingCompo.current, { top: "0.5rem", duration: 1, ease: "back" });
+    } else if (currentScroll > lastScrollTop && currentScroll !== 0) {
       gsap.to(headingCompo.current, {
         top: "-5rem",
         duration: 0.7,
@@ -128,7 +172,7 @@ let PageHeading = memo(({ heading }) => {
     return () => {
       window.removeEventListener('scroll', PageHeadingToggling);
     };
-  },[]);
+  }, []);
   return (
     <div
       ref={headingCompo}
@@ -165,17 +209,18 @@ let PageHeading = memo(({ heading }) => {
   );
 });
 
-const Modal = () => {
+const ProjectHasChangedModal = memo(() => {
   const modalContainer = useRef(null);
   const modal = useRef(null);
   const {
     savedTeam,
     setsavedTeam,
-    modalOpen,
-    setmodalOpen,
+    projectHasChangedModalOpen,
+    setprojectHasChangedModalOpen,
     setalertMsgsState,
     popupAnim,
   } = useContext(mainContext);
+
   const savedTeamOpened = structuredClone(
     savedTeam.find((savedteam) => {
       return savedteam.openedInGenerator;
@@ -195,12 +240,10 @@ const Modal = () => {
     switch (type) {
       case savedTeamReducerActions.saveChanges:
         {
-          if (currentTeam.title.trim().length < 1) {
-            console.log(currentTeam.title)
+          if (currentTeam.title.trim().length < 1) { // while no title
             setalertMsgsState(alertMsgs.titleNotSaved);
             popupAnim(alertMsgsTime.get(alertMsgs.titleNotSaved));
-          } else{
-            console.log(currentTeam.title)
+          } else {
             copiedsavedTeam[openedArrIndex] = currentTeam; // pushing current allTypeplayersAndTeams copy in copy of savedTeam
             localStorage.setItem("savedTeamOpened", JSON.stringify(currentTeam)); //updating with latest changes
             setsavedTeam(copiedsavedTeam); //setting  savedTeam with updated values
@@ -211,10 +254,7 @@ const Modal = () => {
         break;
       case savedTeamReducerActions.discardChanges:
         {
-          localStorage.setItem(
-            "allTeamAndPlayers",
-            JSON.stringify(savedTeamOpened)
-          );
+          localStorage.setItem("allTeamAndPlayers", JSON.stringify(savedTeamOpened));
           setalertMsgsState(alertMsgs.changesDiscard);
           copiedsavedTeam[openedArrIndex] = savedTeamOpened;
           setsavedTeam(copiedsavedTeam);
@@ -227,7 +267,7 @@ const Modal = () => {
   };
 
   useGSAP(() => {
-    if (modalOpen) {
+    if (projectHasChangedModalOpen) {
       //while opening
       gsap.fromTo(
         modal.current,
@@ -235,30 +275,25 @@ const Modal = () => {
         { scale: 1, duration: 0.3, ease: "back" }
       );
     }
-  }, [modalOpen]);
+  }, [projectHasChangedModalOpen]);
 
   const { contextSafe } = useGSAP();
 
   const backClickedHandle = contextSafe(() => {
     gsap.fromTo(
-      modalContainer.current.children,
+      modal.current,
       { scale: 0.9 },
       { scale: 0, duration: 0.8, ease: "back" }
     );
     setTimeout(() => {
-      setmodalOpen(false);
+      setprojectHasChangedModalOpen(false);
     }, 150);
   });
 
   return (
-    <div
-      ref={modalContainer}
-      onClick={backClickedHandle}
-      className={`fixed inset-0 z-30 grid place-items-center backdrop-blur-[2px] ${
-        modalOpen ? "" : "hidden"
-      }`}>
-      <div ref={modal} onClick={(e) => {e.stopPropagation();}}
-        className={`relative sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 border border-1 border-[#303030] rounded`} >
+    <div ref={modalContainer} onClick={backClickedHandle} className={`fixed inset-0 z-30 grid place-items-center backdrop-blur-[2px]`}>
+      <div ref={modal} onClick={(e) => { e.stopPropagation(); }}
+        className={`relative sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 border border-1 border-[#303030] rounded-[0.35rem]`} >
         {/* ======= close btn starts ===== */}
         <button
           onClick={backClickedHandle}
@@ -281,39 +316,35 @@ const Modal = () => {
             would you like to save current changes in
             <span className="whitespace-nowrap text-[0.98em] text-[#a06800]">
               {" "}
-              {savedTeamOpened?.title.trim().length < 1 ? "current project":savedTeamOpened?.title}{" "}
+              {savedTeamOpened?.title.trim().length < 1 ? "current project" : savedTeamOpened?.title}{" "}
             </span>
             ?
           </p>
         </div>
         <div className="flex items-center text-end mt-[1.50rem] text-[0.9em]">
-          {/* hover:bg-[#a06800]  */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               savingFunc({ type: savedTeamReducerActions.saveChanges });
-              setmodalOpen(false);
+              setprojectHasChangedModalOpen(false);
             }}
-            className="capitalize flex-1 rounded-sm py-[0.45rem] px-2 transition duration-75 ease-out hover:bg-[#f49e0073] bg-[#a0680080] active:scale-[0.96] text-white"
-          >
+            className="capitalize flex-1 rounded-sm py-[0.45rem] px-2 transition duration-75 ease-out hover:bg-[#f49e0073] bg-[#a0680080] active:scale-[0.96] text-white">
             save
           </button>
-          {/* bg-[#e8252517] hover:bg-[#e8252538] */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               savingFunc({ type: savedTeamReducerActions.discardChanges });
-              setmodalOpen(false);
+              setprojectHasChangedModalOpen(false);
             }}
-            className="capitalize flex-1 rounded-sm py-[0.45rem] px-2 transition duration-75 ease-out bg-[#1b1b1b70] text-[#a06800] hover:bg-[#1b1b1b] hover:text-[#ffa600] active:scale-[0.96] ml-2"
-          >
+            className="capitalize flex-1 rounded-sm py-[0.45rem] px-2 transition duration-75 ease-out bg-[#1b1b1b70] text-[#a06800] hover:bg-[#1b1b1b] hover:text-[#ffa600] active:scale-[0.96] ml-2">
             discard
           </button>
         </div>
       </div>
     </div>
   );
-};
+})
 
 const Notification = () => {
   const { alertMsgsState, clearNotification } = useContext(mainContext);
@@ -321,16 +352,12 @@ const Notification = () => {
   return (
     <>
       {/* notifcation div starts  */}
-      <div
-        className={`fixedmsg fixed z-40 hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] md:max-w-[23.875rem] sm:max-w-[20.875rem] sm:text-[0.90rem] capitalize text-[0.80rem] text-center left-1/2 -translate-x-1/2 rounded-md p-2 border border-1 bg-black border-[gray] tracking-[0.1px]`}
-      >
-        <button
-          onClick={() => {
-            clearNotification();
-          }} className="absolute p-1 top-[-4px] right-[-4px] bg-black transition-all duration-100 rounded-[50%] border border-1 border-[#ffffffab]">         
+      <div className={`fixedmsg fixed z-40 hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] md:max-w-[23.875rem] sm:max-w-[20.875rem] sm:text-[0.90rem] capitalize text-[0.80rem] text-center left-1/2 -translate-x-1/2 rounded-md p-2 border border-1 bg-black border-[gray] tracking-[0.1px]`}>
+        <button onClick={() => { clearNotification(); }} className="absolute p-1 top-[-4px] right-[-4px] bg-black transition-all duration-100 rounded-[50%] border border-1 border-[#ffffffab]">
           <svg className="w-[0.75rem] h-[0.75rem]"
             viewBox="0 0 24 24"
-            fill="none"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g></svg>
+            fill="none"><g fill="none" fillRule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g>
+          </svg>
         </button>
         {alertMsgsState}
       </div>

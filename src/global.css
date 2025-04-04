@@ -7,39 +7,28 @@ body {
   font-family: "Radio Canada Big", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
-  /* background:
-        linear-gradient(135deg, #0000 20.5%, #1c1c1c 0 29.5%, #0000 0) 0 14.5px,
-        linear-gradient(45deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%) 29px 0,
-        linear-gradient(135deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%, #1c1c1c 0 67%, #0000 0),
-        linear-gradient(45deg, #0000 8%, #1c1c1c 0 17%, #0000 0 58%, #1c1c1c 0 67%, #0000 0 83%, #1c1c1c 0 92%, #0000 0),
-        #000000;
-    background-size: 100vw 100vh; */
-  /* background: conic-gradient(from 116.56deg at calc(100% / 3) 0,
-      #0000 90deg,
-      #000000 0),
-    conic-gradient(from -63.44deg at calc(200% / 3) 100%,
-      #0000 90deg,
-      #000000 0) #0a0a0a;
-  background-size: 3.5rem 3.5rem; */
-  /* background: url('/bgrandomteams.svg') no-repeat fixed;
-  background-size: cover;   */
   user-select: none;
 }
+
 body::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  min-height: 100lvh;
   background: url('/bgrandomteams.svg') no-repeat center center;
   background-size: cover;
   z-index: -1;
 }
 
-
 :root {
   --navbarWidth: 330px;
+  --primary: white;
+  --theme: #ffa600;
+  --lightTheme: #a06800;
+  /* --soft: #c4c4c4; */
+  --soft: #9b9b9b;
 }
 
 .bruno {
@@ -47,15 +36,18 @@ body::before {
   font-weight: 400;
   font-style: normal;
 }
-.saira-stencil{
-  font-family: "Saira Stencil One", serif;
-  font-weight: 400;
-  font-style: normal;
+
+.Bricolage {
+  font-family: "Bricolage Grotesque", sans-serif;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 input {
@@ -64,11 +56,13 @@ input {
 
 input::placeholder {
   font-size: 0.95em;
+  color: var(--soft);
 }
 
 ol {
   list-style-type: decimal;
 }
+
 ::marker {
   font-weight: lighter;
   font-size: 0.95em;
@@ -97,7 +91,7 @@ ol {
   transform: translateZ(1px);
 }
 
-.card-linear:not(.how-to-page .card-linear) {
+.card-linear {
   transform: translateZ(-1px);
   background: #ed9a01;
   width: 25%;
@@ -146,24 +140,6 @@ button:is([type="submit"], [type="reset"]):hover svg {
 :is(button:is([type="submit"], [type="reset"]):active) {
   scale: 0.93;
   transition: 0.1s scale ease;
-}
-
-.how-to-page .card-linear {
-  background: linear-gradient(#ed9a01, #ed9a01);
-  width: 15%;
-  height: 15%;
-  animation: bgMovingHowTo 8s alternate ease-in-out infinite;
-  transition: 0s;
-}
-
-@keyframes bgMovingHowTo {
-  0% {
-    left: calc(0%);
-  }
-
-  100% {
-    left: calc(100% - 15%);
-  }
 }
 
 .spinner {
@@ -272,6 +248,7 @@ div .searchInput:focus {
   /* overflow: hidden; */
   /* border-radius: 5px; */
 }
+
 /* .gridCube .gridChilds:nth-of-type(1) {
   transform: translateZ(200px) rotateY(180deg);
 }

@@ -1,47 +1,57 @@
-import { useContext, useEffect } from 'react'
-import Home from './components/home.jsx'
-import Navbar from './components/navbar.jsx'
-import About from './components/about.jsx'
-import Saved from './components/saved.jsx'
-import HowTo from './components/howTo.jsx'
-import { Route, Routes } from 'react-router-dom'
-import ScrollToTop from './components/scrollToTop.jsx'
+import { lazy, Suspense, useContext, useEffect,useRef } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import { mainContext } from './components/context/context.js'
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-function routes() {
-  const { Modal ,Notification} = useContext(mainContext)
+import FullscreenFallback from './components/fallback.jsx'
+import ScrollToTop from './components/scrollToTop.jsx'
+import Navbar from './components/navbar.jsx'
 
-  useEffect(()=>{        
-    document.documentElement.style.setProperty('--navbarWidth', document.querySelector('nav').getBoundingClientRect().width + 'px')
-    function resizing(){
-      console.log('resing'+document.querySelector('nav').getBoundingClientRect().width)
-        document.documentElement.style.setProperty('--navbarWidth', document.querySelector('nav').getBoundingClientRect().width + 'px')
-    }
-    window.addEventListener('resize',resizing)
-    window.addEventListener('load',resizing)
-    return()=>{
-        window.removeEventListener('resize',resizing)
-    }
-  },[])
 
-  // useGSAP(()=>{
-  //   gsap.fromTo('.spinner',{transform:`rotate(45deg) rotateX(-385deg) rotateY(385deg)`},{transform:`rotate(45deg) rotateX(-25deg) rotateY(25deg)`,repeat:-1,duration:4,ease:'none'})
-  // })
+// Lazy Load Components
+const Home = lazy(() => import('./components/home.jsx'))
+const About = lazy(() => import('./components/about/about.jsx'));
+const Saved = lazy(() => import('./components/saved.jsx'))
+const HowTo = lazy(() => import('./components/howTo.jsx'))
+
+function App() {
+  const soft = useRef(0)
+  const { ProjectHasChangedModal,projectHasChangedModalOpen, Notification } = useContext(mainContext)
+  const location = useLocation()
+
+  useEffect(() => {
+    setTimeout(() => {
+      const navElement = document.querySelector('nav');
+      if (navElement) {
+        document.documentElement.style.setProperty('--navbarWidth', navElement.getBoundingClientRect().width + 'px');
+      }
+    }, 0); // Runs after initial render
+
+    function resizing() {
+      const navElement = document.querySelector('nav');
+      if (navElement) {
+        document.documentElement.style.setProperty('--navbarWidth', navElement.getBoundingClientRect().width + 'px');
+      }
+    }
+
+    window.addEventListener('resize', resizing);
+    return () => {
+      window.removeEventListener('resize', resizing);
+    };
+  }, []);
+
   return (
-    <section className='pb-[6rem] text-white'>
+    <section className='text-white'>
       <ScrollToTop />
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/saved' element={<Saved />} />
-        <Route path='/how-to' element={<HowTo />} />
+        <Route path="/" element={<Suspense  fallback={<FullscreenFallback />}><Home /></Suspense>} />
+        <Route path="/about" element={(<Suspense  fallback={<FullscreenFallback />}><About /></Suspense>)} />
+        <Route path="/saved" element={<Suspense  fallback={<FullscreenFallback />}><Saved /></Suspense>} />
+        <Route path="/how-to" element={<Suspense  fallback={<FullscreenFallback />}><HowTo /></Suspense>} />
       </Routes>
       <Navbar />
-      <Modal />
-      <Notification/>
+    { projectHasChangedModalOpen && <ProjectHasChangedModal />}   
+      <Notification />
     </section>
   )
 }
 
-export default routes
+export default App

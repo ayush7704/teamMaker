@@ -26,46 +26,10 @@ const reducerTypes = {
   handleSaved: "handleSaved",
 };
 
-const alertMsgsWork = {
-  saveTeamMsg: "team saved or not msg",
-  generateTeam: "generate team",
-  savedTeamChangesWork: "saved Team Changes Work",
-};
-
-export const alertMsgs = {
-  teamSaved: "Your project was saved successfully!",
-  teamNotSaved: "You need at least 2 players to save a project.",
-  titleNotSaved: "The project requires a title",
-  notGenerated: "You need at least 2 players to generate a team. ",
-  savedTeamNoChanges: "There are no changes to save.",
-  savedTeamChangesSaved: "Your changes were saved successfully!",
-  changesDiscard: "Your changes were removed successfully!",
-  nothingToDiscard: "There’s nothing to discard.",
-  teamDeleted: "Your project was removed successfully!",
-  errorMsg: "Something broke generate again !",
-  teams_length_broken: "Teams length can't be bigger than total players length",
-  removeAll: "removing all",
-};
-
-export const alertMsgsTime = new Map([
-  [alertMsgs.teamSaved, 3000],
-  [alertMsgs.teamNotSaved, 4000],
-  [alertMsgs.titleNotSaved, 2500],
-  [alertMsgs.notGenerated, 4000],
-  [alertMsgs.savedTeamNoChanges, 3000],
-  [alertMsgs.savedTeamChangesSaved, 2500],
-  [alertMsgs.changesDiscard, 3500],
-  [alertMsgs.nothingToDiscard, 2500],
-  [alertMsgs.teamDeleted, 3000],
-  [alertMsgs.errorMsg, 3000],
-  [alertMsgs.teams_length_broken, 5500],
-  [alertMsgs.removeAll, 1500],
-]);
-
 const reducer = (oldobj, action) => {
   let worker;
   // for adding players
-  if (action.type === reducerTypes.initial) {    
+  if (action.type === reducerTypes.initial) {
     return { ...action.oldobject };
   }
   if (action.type === reducerTypes.addPlayer) {
@@ -98,7 +62,7 @@ const reducer = (oldobj, action) => {
           worker.players = [...flatArr];
           return { ...worker };
         }
-      } catch (error) {        
+      } catch (error) {
       }
     }
     return { ...worker };
@@ -124,7 +88,7 @@ const reducer = (oldobj, action) => {
           flatArr = flatArr.concat(a);
         });
         worker.players = [...flatArr];
-      } catch (error) {        
+      } catch (error) {
       }
     }
     return { ...worker };
@@ -146,7 +110,7 @@ const reducer = (oldobj, action) => {
           flatArr = flatArr.concat(a);
         });
         worker.players = [...flatArr];
-      } catch (error) {        
+      } catch (error) {
       }
     } else {
       worker[team][playerInd] = action.payload.details.playerName;
@@ -166,7 +130,7 @@ const reducer = (oldobj, action) => {
     // when team length is greater than total players
     else if (newTotalTeams > worker.players.length) {
       // if there is 2 players least available
-      
+
       if (worker.players.length >= 2) {
         return {
           ...worker,
@@ -254,14 +218,8 @@ const reducer = (oldobj, action) => {
   }
 };
 
-export const savedTeamReducerActions = {
-  onblur: "onblur",
-  onfocus: "onfocus",
-  saveChanges: "saveChanges",
-  discardChanges: "discardChanges",
-};
 
-function App() {
+function Home() {
   const mainInput = useRef(null);
   const titleInput = useRef(null);
   const totalTeamInput = useRef(null);
@@ -269,9 +227,13 @@ function App() {
     savedTeam,
     setsavedTeam,
     compareObjects,
-    setmodalOpen,
+    setprojectHasChangedModalOpen,
     setalertMsgsState,
     popupAnim,
+    alertMsgs,
+    alertMsgsWork,
+    alertMsgsTime,
+    savedTeamReducerActions
   } = useContext(mainContext);
   const savedTeamOpened = structuredClone(
     savedTeam.find((savedteam) => {
@@ -280,19 +242,19 @@ function App() {
   );
   const formSubmitBtnState = { add: "add", edit: "editing" };
   const [allTypeplayersAndTeams, setAllTypeplayersAndTeams] = useReducer(
-    reducer,{
-      players: [],
-      finalTotalTeams: 2,
-      totalTeams: 2,
-      teams: [
-        { teamName: "team1", teamPlayers: [] },
-        { teamName: "team2", teamPlayers: [] },
-      ],
-      hasShuffled: false,
-      saved: false,
-      title: "Fifa team 2026",
-      description: "",
-    }
+    reducer, {
+    players: [],
+    finalTotalTeams: 2,
+    totalTeams: 2,
+    teams: [
+      { teamName: "team1", teamPlayers: [] },
+      { teamName: "team2", teamPlayers: [] },
+    ],
+    hasShuffled: false,
+    saved: false,
+    title: "Fifa team 2026",
+    description: "",
+  }
   );
   const [differentBtnStates, setdifferentBtnStates] = useState({
     GeneratingTeam: false,
@@ -318,12 +280,12 @@ function App() {
     // temporary solution of
     //  main reducer object was not updating itself even after removing latest changes from saved work while we are on home page
     // it had to navigate on other pages for updating value
-        
+
     if (Boolean(savedsavedTeamOpened)) {
       const areEqual = compareObjects(
         JSON.parse(localStorage.getItem("allTeamAndPlayers")),
         JSON.parse(localStorage.getItem("savedTeamOpened"))
-      );      
+      );
       if (areEqual) {
         setAllTypeplayersAndTeams({
           type: reducerTypes.initial,
@@ -375,7 +337,7 @@ function App() {
 
   const { contextSafe } = useGSAP();
   const generateTeamFunc = contextSafe(async () => {
-    let worker = { ...allTypeplayersAndTeams };    
+    let worker = { ...allTypeplayersAndTeams };
     let uniqueRandomsArr = new Set([]);
 
     // First animation promise
@@ -400,7 +362,7 @@ function App() {
       ).then(async () => {
         // Creating teams
         await Promise.all(
-          Array(worker.finalTotalTeams).fill(null).map(async (_, index) => {            
+          Array(worker.finalTotalTeams).fill(null).map(async (_, index) => {
             while (worker.finalTotalTeams !== worker.teams.length) {
               if (worker.teams.length > worker.finalTotalTeams) {
                 worker.teams.pop();
@@ -445,7 +407,7 @@ function App() {
       ...prevStates,
       savedProcessing: false,
       GeneratingTeam: false,
-    }));    
+    }));
 
     // Second animation
     await new Promise((resolve) => {
@@ -474,6 +436,13 @@ function App() {
       }
     );
   });
+  // useGSAP(()=>{
+  //   gsap.utils.toArray(".card-line").forEach((elm)=>{
+  //     gsap.fromTo(elm,
+  //       {left:"0%",backgroundColor:"white"},
+  //       {left:"100%",backgroundColor:"red",duration:5,repeat:-1,yoyo:true})
+  //   })
+  // })
 
   useLayoutEffect(() => {
     const localStogeObj = JSON.parse(localStorage.getItem("allTeamAndPlayers"));
@@ -550,7 +519,7 @@ function App() {
     }
   }, [savedTeamOpened]);
 
-  useLayoutEffect(() => {    
+  useLayoutEffect(() => {
     localStorage.setItem(
       "allTeamAndPlayers",
       JSON.stringify(allTypeplayersAndTeams)
@@ -559,7 +528,7 @@ function App() {
       allTypeplayersAndTeams.finalTotalTeams ===
       allTypeplayersAndTeams.totalTeams &&
       allTypeplayersAndTeams.hasShuffled
-    ) {      
+    ) {
       setdifferentBtnStates((prevStates) => ({
         ...prevStates,
         needToGenerate: allTypeplayersAndTeams.hasShuffled ? !(allTypeplayersAndTeams.finalTotalTeams === allTypeplayersAndTeams.teams.length && Number(allTypeplayersAndTeams.totalTeams) === allTypeplayersAndTeams.teams.length) : false,
@@ -607,7 +576,7 @@ function App() {
     }
 
     // changes saved successfully
-    else if (msg === alertMsgs.savedTeamChangesSaved) {      
+    else if (msg === alertMsgs.savedTeamChangesSaved) {
       if (playerAndTitleCheck({ mainTypeCheck: null })) {
         setalertMsgsState(alertMsgs.savedTeamChangesSaved);
         popupAnim(alertMsgsTime.get(alertMsgs.savedTeamChangesSaved));
@@ -697,7 +666,7 @@ function App() {
 
       // checking if the current and opened obj is not equal the modal will open with if() else a new team will open with else{}
       if (!areEqual) {
-        setmodalOpen(true);
+        setprojectHasChangedModalOpen(true);
       } else {
         localStorage.setItem("savedTeamOpened", JSON.stringify(false));
         localStorage.setItem("allTeamAndPlayers", JSON.stringify(false));
@@ -771,11 +740,11 @@ function App() {
 
   return (
     <main>
-      <div className="wrapper relative sm:w-[75%] mx-auto p-3">
+      <div className="wrapper pb-[7rem] relative sm:w-[75%] mx-auto p-3">
         {/* topdiv starts  */}
         <div className="topdiv fixed sm:text-base text-sm left-1/2 -translate-x-1/2 z-10 top-[-100%] w-auto flex justify-between sm:gap-[5rem] gap-[3rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] ">
           <div className="whitespace-nowrap flex-1">
-            <span className="font-medium text-[#ffa600] mr-[2px]">
+            <span className="font-medium text-[--theme] mr-[2px]">
               {allTypeplayersAndTeams.players.length}{" "}
             </span>
             <span className="capitalize font-light text-[0.95em]">
@@ -787,7 +756,7 @@ function App() {
               totalTeamInput.current.focus();
             }}
             className="whitespace-nowrap flex-1 cursor-pointer">
-            <span className={`font-medium fo text-[#ffa600] mr-[2px] ${differentBtnStates.needToGenerate || !allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}>
+            <span className={`font-medium fo text-[--theme] mr-[2px] ${differentBtnStates.needToGenerate || !allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}>
               {allTypeplayersAndTeams.totalTeams}{" "}
             </span>
             <span className={`capitalize font-light text-[0.95em] ${differentBtnStates.needToGenerate || !allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}>
@@ -812,7 +781,7 @@ function App() {
             {/* total teams label starts  */}
             <label
               htmlFor="totalTeamsInput"
-              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[#a06800] focus-within:hover:border-[#a06800]  focus-within:border border border-1 border-[#696969d1] rounded-md">
+              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[--lightTheme] focus-within:hover:border-[--lightTheme]  focus-within:border border border-1 border-[#696969d1] rounded-md">
               <span className="capitalize">total teams</span>
               <input
                 type="number"
@@ -821,7 +790,7 @@ function App() {
                 value={allTypeplayersAndTeams.totalTeams}
                 maxLength={allTypeplayersAndTeams.players.length}
                 ref={totalTeamInput}
-                className={`w-[2.5rem] peer leading-[normal] text-end bg-transparent focus:border-none focus:text-[#ffa600] text-lg font-medium ${!allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}
+                className={`w-[2.5rem] peer leading-[normal] text-end bg-transparent focus:border-none focus:text-[--theme] text-lg font-medium ${!allTypeplayersAndTeams.hasShuffled ? "line-through" : ""}`}
                 onChange={(e) => {
                   setAllTypeplayersAndTeams({
                     type: reducerTypes.addTeam,
@@ -862,7 +831,7 @@ function App() {
               maxLength={25}
               max={25}
               placeholder="Title"
-              className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] focus:border-[#a06800] hover:border-[#ffffff9e] transition-all duration-100 ease-in bg-[#000000]"
+              className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] focus:border-[--lightTheme] hover:border-[#ffffff9e] transition-all duration-100 ease-in bg-[#000000]"
             />
           </div>
           {/* add title div ends  */}
@@ -884,7 +853,7 @@ function App() {
               name="description"
               id="description"
               placeholder="Description"
-              className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] focus:border-[#a06800] hover:border-[#ffffff9e] transition-all duration-100 ease-in bg-[#000000]"
+              className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] focus:border-[--lightTheme] hover:border-[#ffffff9e] transition-all duration-100 ease-in bg-[#000000]"
             />
           </div>
           {/* description label ends  */}
@@ -907,7 +876,7 @@ function App() {
                 name="playerName"
                 id="formInput"
                 placeholder="Add player"
-                className="w-full bg-transparent px-3 py-2 rounded-md border border-1 border-[#696969d1] focus:border-[#a06800] hover:border-[#ffffff9e] transition-all duration-100 ease-in pr-[2.5rem]"
+                className="w-full bg-transparent px-3 py-2 rounded-md border border-1 border-[#696969d1] focus:border-[--lightTheme] hover:border-[#ffffff9e] transition-all duration-100 ease-in pr-[2.5rem]"
                 value={PlayerInfoAndMore.playerName}
                 onChange={(e) => {
                   setPlayerInfoAndMore({
@@ -920,14 +889,14 @@ function App() {
               {/* border-lime-400 */}
               <button
                 type="submit"
-                className="absolute p-2 right-0 h-full border-l border-[#ffa600]"
+                className="absolute p-2 right-0 h-full border-l border-[--theme]"
               >
                 {PlayerInfoAndMore.currentInputBtn ===
                   formSubmitBtnState.add ? ( //#ffa600
-                  <svg
+                  <svg xmlns="http://www.w3.org/2000/svg"
                     className="w-[1.375rem] h-[1.375rem]"
                     viewBox="0 0 24 24"
-                    color="#ffa600"
+                    color="var(--theme)"
                     fill="none"
                   >
                     <path
@@ -944,10 +913,10 @@ function App() {
                     />
                   </svg>
                 ) : (
-                  <svg
+                  <svg xmlns="http://www.w3.org/2000/svg"
                     className="w-[1.3125rem] h-[1.3125rem]"
                     viewBox="0 0 24 24"
-                    color="#ffa600"
+                    color="var(--theme)"
                     fill="none"
                   >
                     <path
@@ -981,7 +950,7 @@ function App() {
                   className="relative rounded-[50%] before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[radial-gradient(red_18%,black_65%,red_90%)] overflow-hidden"
                 >
                   <div className="relative backdrop-blur-[1px] flex items-center justify-center p-2">
-                    <svg className="w-[1.3rem] h-[1.3rem]"
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.3rem] h-[1.3rem]"
                       viewBox="0 0 24 24"
                       color="white"
                       fill="none"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g></svg>
@@ -1021,19 +990,18 @@ function App() {
               <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)] pointer-events-none"></div>
               <div className={`backdrop-blur-[10px] flex gap-2 items-center px-4 py-2 ${differentBtnStates.needToGenerate ? "bg-white" : ""}`}>
                 <span>
-                  { differentBtnStates.GeneratingTeam ? "Generating":
-                  differentBtnStates.needToGenerate
-                    ? "Recalculate Teams" : "Generate"}
+                  {differentBtnStates.GeneratingTeam ? "Generating" :
+                    differentBtnStates.needToGenerate
+                      ? "Recalculate Teams" : "Generate"}
                 </span>
                 <span>
                   {differentBtnStates.GeneratingTeam ? (
-                    <svg
+                    <svg xmlns="http://www.w3.org/2000/svg"
                       className="w-[1.125rem] h-[1.125rem]"
                       viewBox="0 0 24 24"
-                      color={`${differentBtnStates.needToGenerate ? 'red' : "#ffa600"}`}
+                      color={`${differentBtnStates.needToGenerate ? 'red' : "var(--theme)"}`}
                       fill="none"
-                    >
-                      <path
+                    ><path
                         className={`${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                         d="M12 3V6"
                         stroke="currentColor"
@@ -1091,10 +1059,10 @@ function App() {
                       />
                     </svg>
                   ) : (
-                    <svg
+                    <svg xmlns="http://www.w3.org/2000/svg"
                       className={`w-[1.125rem] h-[1.125rem] ${differentBtnStates.needToGenerate ? "drop-shadow-[1px_3px_0_#bdbdbd]" : "drop-shadow-[1px_3px_0_black]"}`}
                       viewBox="0 0 24 24"
-                      color={`${differentBtnStates.needToGenerate ? 'red' : "#ffa600"}`}
+                      color={`${differentBtnStates.needToGenerate ? 'red' : "var(--theme)"}`}
                       fill="none"
                     >
                       <path
@@ -1160,7 +1128,7 @@ function App() {
                   <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
                     <span>Clear all</span>
                     <span>
-                      <svg
+                      <svg xmlns="http://www.w3.org/2000/svg"
                         className="w-[1rem] h-[1rem] drop-shadow-[1px_3px_0_black]"
                         viewBox="0 0 24 24"
                         color="#e00000"
@@ -1203,7 +1171,7 @@ function App() {
           {/* change title starts  */}
           <div
             className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 mt-9 mb-4 ${savedTeamOpened
-              ? "border border-[0.3px] border-[#a06800]"
+              ? "border border-[0.3px] border-[--lightTheme]"
               : "border border-[0.3px] border-[#ffffff41]"
               }`}>
             {/* make new team starts  */}
@@ -1215,7 +1183,7 @@ function App() {
             >
               <span>New</span>
               <span className="inline-block">
-                <svg
+                <svg xmlns="http://www.w3.org/2000/svg"
                   viewBox={`0 0 24 24`}
                   className="text-[#ffffff] h-[0.7rem] w-[0.7rem]"
                   fill="none"
@@ -1244,7 +1212,7 @@ function App() {
                 : "untitled"}
               <sup
                 onClick={() => titleInput.current.focus()}
-                className="ml-4 text-[0.82em] text-[#c4c4c4] cursor-pointer whitespace-nowrap"
+                className="ml-4 text-[0.82em] text-[--soft] cursor-pointer whitespace-nowrap"
               >
                 (edit Title)
               </sup>
@@ -1262,10 +1230,10 @@ function App() {
                 disabled={differentBtnStates.savedProcessing}
               >
                 {differentBtnStates.savedProcessing ? (
-                  <svg
+                  <svg xmlns="http://www.w3.org/2000/svg"
                     className="sm:w-[1.275rem] w-[1rem]  h-[1rem] sm:h-[1.275rem]"
                     viewBox="0 0 24 24"
-                    color="#ffa600"
+                    color="var(--theme)"
                     fill="none"
                   >
                     <path
@@ -1318,7 +1286,7 @@ function App() {
                     />
                   </svg>
                 ) : (
-                  <svg
+                  <svg xmlns="http://www.w3.org/2000/svg"
                     className="sm:w-[1.275rem] w-[1rem] hover:drop-shadow-[0px_0px_9px_currentColor] drop-shadow-[0px_0px_3px_currentColor]  h-[1rem] sm:h-[1.275rem] text-white transition-all duration-100"
                     viewBox="0 0 24 24"
                     fill="none"
@@ -1353,7 +1321,7 @@ function App() {
                   className={`relative p-[5px] rounded-[50%] hover:bg-[#141414] ${savedTeamChanges.popup ? "bg-[#141414]" : ""
                     }`}
                 >
-                  <svg className="w-[1.35rem] h-[1.35rem] text-white drop-shadow-[1px_1px_2px_black]"
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.35rem] h-[1.35rem] text-white drop-shadow-[1px_1px_2px_black]"
                     viewBox="0 0 24 24" fill="none"><path fill="currentColor" d="M12 20q-.825 0-1.412-.587T10 18t.588-1.412T12 16t1.413.588T14 18t-.587 1.413T12 20m0-6q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m0-6q-.825 0-1.412-.587T10 6t.588-1.412T12 4t1.413.588T14 6t-.587 1.413T12 8" /></svg>
                   {/*====  three dots starts  =====*/}
                   <label
@@ -1376,13 +1344,14 @@ function App() {
                   {/*====  three dots ends  =====*/}
 
                   {/*==== actions starts  =====*/}
-                  {savedTeamChanges.popup && (
+                  {
+                  savedTeamChanges.popup && (
                     <ul
-                      className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.78rem] absolute z-[1] top-[-1.875rem] right-full cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[#a06800]`}
+                      className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.78rem] absolute z-[1] top-[-1.875rem] right-[125%] cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[--lightTheme] p-[0.2rem]`}
                     >
                       {/*==== save changes li starts  ====*/}
                       <li
-                        className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`}
+                        className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
                         onMouseDown={() =>
                           savedTeamFunc({
                             type: savedTeamReducerActions.saveChanges,
@@ -1395,7 +1364,7 @@ function App() {
 
                       {/*==== discard li starts  ====*/}
                       <li
-                        className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`}
+                        className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
                         onMouseDown={() =>
                           savedTeamFunc({
                             type: savedTeamReducerActions.discardChanges,
@@ -1407,13 +1376,14 @@ function App() {
                       {/*==== discard li ends  ====*/}
 
                       <li
-                        className={`flex gap-2 items-center justify-between capitalize p-[0.6rem_1rem] transition-all duration-150 hover:bg-[#141414]`}
+                        className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
                         onMouseDown={() => newTeam()}
                       >
                         <span>remove from generator</span>
                       </li>
                     </ul>
-                  )}
+                  )
+                  }
                   {/*====  actions ends   =====*/}
                 </button>
               )}
@@ -1435,10 +1405,11 @@ function App() {
                     {team.teamPlayers.map((val, valIndex) => (
                       <li
                         key={`${team.teamName}-${valIndex}`}
+                        // relative before:absolute before:top-0 before:left-0 before:rounded-[inherit] before:w-full before:h-full before:bg-[linear-gradient(to_left_bottom,#ed9a01,#11131b9e,transparent,transparent)]
                         className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border border-1  ${PlayerInfoAndMore.arrItemForEdit ===
                           "teams." + teamValIndex &&
                           PlayerInfoAndMore.editBtnClickBy === valIndex
-                          ? " border-[#a06800]"
+                          ? " border-[--lightTheme]"
                           : "border-[#696969c2]"
                           }`}>
                         <span>{val}</span>
@@ -1446,7 +1417,7 @@ function App() {
                         {/*== backface of card starts  ==*/}
                         <div className="back backdrop-blur-[50px] absolute inset-0 rounded-[inherit]"></div>
                         <div
-                          className={`card-linear transform-[translateZ(0px)] absolute rounded-[inherit]`}
+                          className={`card-linear transform-[translateZ(0px)] absolute left-0 rounded-[inherit]`}
                         ></div>
                         <div className="card-blur pointer-events-none backdrop-blur-[25px] absolute inset-0 rounded-[inherit]"></div>
                         {/*== backface of card ends  ==*/}
@@ -1455,7 +1426,7 @@ function App() {
                         <span className="seeMore absolute rounded-[50%] top-[0px] right-[0.35rem]">
                           <label
                             className="inset-0 w-[100%] h-[100%] opacity-0 absolute"
-                            htmlFor={`${team.teamName}-${valIndex}`}
+                            htmlFor={`${team.teamName}-${teamValIndex}-${valIndex}`}
                           >
                             <input
                               onFocus={() => {
@@ -1472,13 +1443,13 @@ function App() {
                                 });
                               }}
                               className="inset-0 w-[100%] h-[100%] cursor-pointer absolute"
-                              id={`${team.teamName}-${valIndex}`}
+                              id={`${team.teamName}-${teamValIndex}-${valIndex}`}
                               type="text"
                               readOnly
                             />
                           </label>
                           <span>
-                            <svg className="w-[1.45rem] h-[auto]"
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.45rem] h-[auto]"
                               viewBox="0 0 24 24"
                               color="#ffffff"
                               fill="none"><path fill="currentColor" d="M6 14q-.825 0-1.412-.587T4 12t.588-1.412T6 10t1.413.588T8 12t-.587 1.413T6 14m6 0q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m6 0q-.825 0-1.412-.587T16 12t.588-1.412T18 10t1.413.588T20 12t-.587 1.413T18 14" />
@@ -1488,14 +1459,15 @@ function App() {
                         {/*====  three dots ends  =====*/}
 
                         {/*==== actions starts  =====*/}
-                    {PlayerInfoAndMore.whichArray ===
-                          `teams.${teamValIndex}` && 
-                           PlayerInfoAndMore.playerIndex === valIndex && (
+                        {
+                          PlayerInfoAndMore.whichArray ===
+                          `teams.${teamValIndex}` &&
+                          PlayerInfoAndMore.playerIndex === valIndex && (
                             <ul
-                              className={`popupContainer bg-[#000000] shadow-[0_0_0.9375rem_-1px_#000000b8] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-[inherit] border-[0.4px] text-[0.93em] ${PlayerInfoAndMore.arrItemForEdit ===
+                              className={`popupContainer bg-[#000000] shadow-[0_0_0.9375rem_-1px_#000000b8] absolute z-[1] top-[0.375rem] right-[2.25rem] p-1 cursor-pointer rounded-[inherit] border-[0.4px] text-[0.93em] ${PlayerInfoAndMore.arrItemForEdit ===
                                 "teams." + teamValIndex &&
                                 PlayerInfoAndMore.editBtnClickBy === valIndex
-                                ? " border-[#a06800]"
+                                ? " border-[--lightTheme]"
                                 : ""
                                 } `}>
                               {/*==== editing li starts  ====*/}
@@ -1514,7 +1486,7 @@ function App() {
                                     100
                                   );
                                 }}
-                                className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.arrItemForEdit ===
+                                className={`flex gap-2 items-center justify-between capitalize px-2 py-[0.4rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.arrItemForEdit ===
                                   "teams." + teamValIndex &&
                                   PlayerInfoAndMore.editBtnClickBy === valIndex
                                   ? "hover:bg-[#f49e0073] bg-[#a0680080]"
@@ -1523,7 +1495,7 @@ function App() {
                               >
                                 <span>edit...</span>
                                 <span>
-                                  <svg
+                                  <svg xmlns="http://www.w3.org/2000/svg"
                                     className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                                     viewBox="0 0 24 24"
                                     color="#ffffff"
@@ -1570,11 +1542,11 @@ function App() {
                                     editBtnClickBy: null,
                                   });
                                 }}
-                                className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
+                                className={`flex gap-2 items-center justify-between capitalize px-2 py-[0.4rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
                               >
                                 <span>delete</span>
                                 <span>
-                                  <svg
+                                  <svg xmlns="http://www.w3.org/2000/svg"
                                     className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                                     color="#ffffff"
                                     fill="none"
@@ -1589,7 +1561,8 @@ function App() {
                               </li>
                               {/*==== deleting li ends  ====*/}
                             </ul>
-                           )}
+                          )
+                        }
                         {/*====  actions ends   =====*/}
                       </li>
                     ))}
@@ -1605,7 +1578,7 @@ function App() {
                   key={val + valIndex + "players"}
                   className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border-1 border text-[0.97em] ${PlayerInfoAndMore.whichArray === "players" &&
                     PlayerInfoAndMore.editBtnClickBy === valIndex
-                    ? " border-[#a06800]"
+                    ? " border-[--lightTheme]"
                     : "border-[#696969c2]"
                     }`}>
                   <span>{val}</span>
@@ -1645,7 +1618,7 @@ function App() {
                       />
                     </label>
                     <span>
-                      <svg className="w-[1.45rem] h-[auto]"
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.45rem] h-[auto]"
                         viewBox="0 0 24 24"
                         color="#ffffff"
                         fill="none"><path fill="currentColor" d="M6 14q-.825 0-1.412-.587T4 12t.588-1.412T6 10t1.413.588T8 12t-.587 1.413T6 14m6 0q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m6 0q-.825 0-1.412-.587T16 12t.588-1.412T18 10t1.413.588T20 12t-.587 1.413T18 14" />
@@ -1655,12 +1628,12 @@ function App() {
                   {/*====  three dots ends  =====*/}
 
                   {/*==== actions starts  =====*/}
-                 {PlayerInfoAndMore.whichArray === `players` &&
+                  {PlayerInfoAndMore.whichArray === `players` &&
                     PlayerInfoAndMore.playerIndex === valIndex && (
                       <ul
-                        className={`popupContainer bg-[#000000] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.93em] absolute z-[1] top-[1.875rem] right-0 p-1 cursor-pointer rounded-[inherit] border-[0.4px] ${PlayerInfoAndMore.whichArray === "players" &&
+                        className={`popupContainer bg-[#000000] shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.93em] absolute z-[1] top-[0.375rem] right-[2.25rem] p-1 cursor-pointer rounded-[inherit] border-[0.4px] ${PlayerInfoAndMore.whichArray === "players" &&
                           PlayerInfoAndMore.editBtnClickBy === valIndex
-                          ? " border-[#a06800]"
+                          ? " border-[--lightTheme]"
                           : ""
                           }`}>
                         {/*==== editing li starts  ====*/}
@@ -1676,7 +1649,7 @@ function App() {
                             });
                             setTimeout(() => mainInput.current.focus(), 100);
                           }}
-                          className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.whichArray === "players" &&
+                          className={`flex gap-2 items-center justify-between capitalize px-2 py-[0.4rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem] ${PlayerInfoAndMore.whichArray === "players" &&
                             PlayerInfoAndMore.editBtnClickBy === valIndex
                             ? "hover:bg-[#f49e0073] bg-[#a0680080]"
                             : ""
@@ -1684,7 +1657,7 @@ function App() {
                         >
                           <span>edit...</span>
                           <span>
-                            <svg
+                            <svg xmlns="http://www.w3.org/2000/svg"
                               className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                               viewBox="0 0 24 24"
                               color="#ffffff"
@@ -1729,11 +1702,11 @@ function App() {
                               editBtnClickBy: null,
                             });
                           }}
-                          className={`flex gap-2 items-center justify-between capitalize p-2 transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
+                          className={`flex gap-2 items-center justify-between capitalize px-2 py-[0.4rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
                         >
                           <span>delete</span>
                           <span>
-                            <svg
+                            <svg xmlns="http://www.w3.org/2000/svg"
                               className="w-[1rem] h-[1rem] drop-shadow-[0px_0px_2px_black]"
                               color="#ffffff"
                               fill="none"
@@ -1760,4 +1733,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;

@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
-function howTo() {
+function HowTo() {
   const { PageHeading } = useContext(mainContext);
 
   useGSAP(() => {
@@ -30,7 +30,7 @@ function howTo() {
   return (
     <>
       <PageHeading heading={"how to"} />
-      <div className="how-to-page sm:w-[80%] mx-auto p-3 mt-[1.375rem] max-sm:text-[0.95rem]">
+      <div className="how-to-page pb-[6rem] sm:w-[80%] mx-auto p-3 mt-[1.375rem] max-sm:text-[0.95rem]">
         {/* what is random team maker starts */}
         <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
@@ -63,11 +63,11 @@ function howTo() {
                     />
 
                     {/* submit button starts  */}
-                    <button className="absolute p-2 right-0 h-full border-l border-[#ffa600] cursor-context-menu">
-                      <svg
+                    <button className="absolute p-2 right-0 h-full border-l border-[--theme] cursor-context-menu">
+                      <svg xmlns="http://www.w3.org/2000/svg"
                         className="w-[1.375rem] h-[1.375rem]"
                         viewBox="0 0 24 24"
-                        color="#ffa600"
+                        color="var(--theme)"
                         fill="none"
                       >
                         <path
@@ -142,14 +142,14 @@ function howTo() {
                     className={`relative outline outline-1 text-[0.95rem] font-medium  rounded-[0.425rem] overflow-hidden [textShadow:1px_3px_0_black] cursor-context-menu`}
                     readOnly
                   >
-                    <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)]"></div>
+                    <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_var(--theme))]"></div>
                     <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
                       <span>Generate</span>
                       <span>
-                        <svg
+                        <svg xmlns="http://www.w3.org/2000/svg"
                           className="w-[1.125rem] h-[1.125rem] drop-shadow-[1px_3px_0_black]"
                           viewBox="0 0 24 24"
-                          color="#ffa600"
+                          color="var(--theme)"
                           fill="none"
                         >
                           <path
@@ -204,7 +204,7 @@ function howTo() {
                   <div className="max-w-[300px] w-full">
                     <div className="flex items-center gap-2 mb-[10px]">
                       <span className="inline-block leading-[100%] capitalize">example :</span>
-                      <span className="inine-bloack"><svg className="w-6 h-6" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m12 19.5l5-5m-5 5l-5-5m5 5V13m0-3.5c0-1.667-1-5-5-5" /></svg></span>
+                      <span className="inine-bloack"><svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m12 19.5l5-5m-5 5l-5-5m5 5V13m0-3.5c0-1.667-1-5-5-5" /></svg></span>
                     </div>
                     <div className="flex justify-between w-full cursor-context-menu">
                       <span className="capitalize">total teams</span>
@@ -235,12 +235,12 @@ function howTo() {
                   <div>
                     <div className="flex items-center gap-2 mb-[10px]">
                       <span className="inline-block leading-[100%] capitalize">examples :</span>
-                      <span className="inine-bloack"><svg className="w-6 h-6" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m12 19.5l5-5m-5 5l-5-5m5 5V13m0-3.5c0-1.667-1-5-5-5" /></svg></span>
+                      <span className="inine-bloack"><svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m12 19.5l5-5m-5 5l-5-5m5 5V13m0-3.5c0-1.667-1-5-5-5" /></svg></span>
                     </div>
                     <div className="max-w-[300px] flex flex-col justify-center items-center gap-5">
                       <div className="topdiv sm:text-base text-sm w-full flex justify-between sm:gap-[1.5rem] gap-[1rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] cursor-context-menu">
                         <div className="whitespace-nowrap">
-                          <span className="font-medium text-[#ffa600] mr-[2px]">
+                          <span className="font-medium text-[--theme] mr-[2px]">
                             {2}{" "}
                           </span>
                           <span className="capitalize font-light text-[0.95em]">
@@ -250,7 +250,7 @@ function howTo() {
                         <div
                           className="whitespace-nowrap"
                         >
-                          <span className={`font-medium fo text-[#ffa600] mr-[2px] line-through`}>
+                          <span className={`font-medium fo text-[--theme] mr-[2px] line-through`}>
                             {2}{" "}
                           </span>
                           <span className={`capitalize font-light text-[0.95em] line-through`}>
@@ -264,7 +264,7 @@ function howTo() {
                           Recalculate Teams
                         </span>
                         <span>
-                          <svg
+                          <svg xmlns="http://www.w3.org/2000/svg"
                             className={`w-[1.125rem] h-[1.125rem] drop-shadow-[1px_3px_0_#bdbdbd]`}
                             viewBox="0 0 24 24"
                             color={'red'}
@@ -320,7 +320,7 @@ function howTo() {
                   <button
                     className={` bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}
                   >
-                    <svg
+                    <svg xmlns="http://www.w3.org/2000/svg"
                       className="sm:w-[1.275rem] w-[1rem] drop-shadow-[0px_0px_3px_currentColor] h-[1rem] sm:h-[1.275rem] text-white"
                       viewBox="0 0 24 24"
                       fill="none"
@@ -354,9 +354,9 @@ function howTo() {
                 element={
                   <div className="inline-block bg-[#141414] rounded-[0.75rem] text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal capitalize text-nowrap py-2 px-2 ">
                     <p className="flex justify-center">
-                      <svg
+                      <svg xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        className="w-[1.19rem] drop-shadow-[0px_0px_9px_currentColor] h-[1.19rem]"
+                        className="w-[1.19rem] drop-shadow-[0px_0px_12px_currentColor] h-[1.19rem]"
                         color="inherit"
                         fill="none"
                       >
@@ -393,11 +393,11 @@ function howTo() {
               4. Why is this random team maker useful?.
             </h2>
             <p className="sm:text-[0.95em] text-[0.93em] py-2">
-              Our efficient <span className="saira-stencil">random team maker</span> simplifies group formation, saving
+              Our efficient <span className="Bricolage font-normal">random team maker</span> simplifies group formation, saving
               you time and effort with just a few clicks.
             </p>
             <p className="sm:text-[0.92em] text-[0.90em] py-2">
-              Use Cases for Our <span className="saira-stencil">Random Team maker</span> :
+              Use Cases for Our <span className="Bricolage font-normal">Random Team maker</span> :
             </p>
             <div className="p-1 sm:text-[0.9em] text-[0.88em]">
               {[
@@ -424,7 +424,7 @@ function howTo() {
   );
 }
 
-export default howTo;
+export default HowTo;
 
 function HowToExamples({ element, title }) {
   useGSAP(() => {
@@ -451,7 +451,7 @@ function HowToExamples({ element, title }) {
   return (
     <div className="grid sm:grid-cols-[repeat(auto-fit,minmax(18.75rem,1fr))] items-center gap-5">
       <div className="flex justify-start">
-        <p className="text-[0.9em]">{title}</p>
+        <div className="text-[0.9em]">{title}</div>
       </div>
       <div className="example-elm flex justify-start">{element}</div>
     </div>
