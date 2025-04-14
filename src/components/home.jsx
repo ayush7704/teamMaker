@@ -963,9 +963,9 @@ function Home() {
         </form>
         {/* form ends  */}
 
-        <section className="py-[1.5625rem]">
+        <section className="pb-[1.5625rem]">
           {/* generate & clear starts  */}
-          <div className="flex justify-center my-4 text-center gap-2">
+          <div className="flex justify-center text-center gap-2 mt-[1.75rem] mb-[3.5625rem]">
             {/* generate button starts */}
             <button
               onClick={() => {
@@ -1169,8 +1169,7 @@ function Home() {
           {/* generate & clear ends  */}
 
           {/* change title starts  */}
-          <div
-            className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 mt-9 mb-4 ${savedTeamOpened
+          <div className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 mb-4 ${savedTeamOpened
               ? "border border-[0.3px] border-[--lightTheme]"
               : "border border-[0.3px] border-[#ffffff41]"
               }`}>
@@ -1404,14 +1403,8 @@ function Home() {
                   <ol className="cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.97em]">
                     {team.teamPlayers.map((val, valIndex) => (
                       <li
-                        key={`${team.teamName}-${valIndex}`}
-                        // relative before:absolute before:top-0 before:left-0 before:rounded-[inherit] before:w-full before:h-full before:bg-[linear-gradient(to_left_bottom,#ed9a01,#11131b9e,transparent,transparent)]
-                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border border-1  ${PlayerInfoAndMore.arrItemForEdit ===
-                          "teams." + teamValIndex &&
-                          PlayerInfoAndMore.editBtnClickBy === valIndex
-                          ? " border-[--lightTheme]"
-                          : "border-[#696969c2]"
-                          }`}>
+                        key={`${team.teamName}-${valIndex}`}                        
+                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border border-1 ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}`&& PlayerInfoAndMore.playerIndex === valIndex  ?"border-[unset]":""} ${PlayerInfoAndMore.arrItemForEdit === "teams." + teamValIndex && PlayerInfoAndMore.editBtnClickBy === valIndex ? " !border-[--lightTheme]" : "border-[#696969c2]"} `}>
                         <span>{val}</span>
 
                         {/*== backface of card starts  ==*/}
@@ -1426,8 +1419,7 @@ function Home() {
                         <span className="seeMore absolute rounded-[50%] top-[0px] right-[0.35rem]">
                           <label
                             className="inset-0 w-[100%] h-[100%] opacity-0 absolute"
-                            htmlFor={`${team.teamName}-${teamValIndex}-${valIndex}`}
-                          >
+                            htmlFor={`${team.teamName}-${teamValIndex}-${valIndex}`}>
                             <input
                               onFocus={() => {
                                 setPlayerInfoAndMore({
@@ -1449,7 +1441,7 @@ function Home() {
                             />
                           </label>
                           <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.45rem] h-[auto]"
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.45rem] h-[auto] drop-shadow-[2px_3px_1px_black] pointer-events-none"
                               viewBox="0 0 24 24"
                               color="#ffffff"
                               fill="none"><path fill="currentColor" d="M6 14q-.825 0-1.412-.587T4 12t.588-1.412T6 10t1.413.588T8 12t-.587 1.413T6 14m6 0q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m6 0q-.825 0-1.412-.587T16 12t.588-1.412T18 10t1.413.588T20 12t-.587 1.413T18 14" />
@@ -1576,11 +1568,7 @@ function Home() {
               {allTypeplayersAndTeams.players.map((val, valIndex) => (
                 <li
                   key={val + valIndex + "players"}
-                  className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border-1 border text-[0.97em] ${PlayerInfoAndMore.whichArray === "players" &&
-                    PlayerInfoAndMore.editBtnClickBy === valIndex
-                    ? " border-[--lightTheme]"
-                    : "border-[#696969c2]"
-                    }`}>
+                  className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border-1 border text-[0.97em] ${PlayerInfoAndMore.whichArray === "players" && PlayerInfoAndMore.editBtnClickBy === valIndex ? "!border-[--lightTheme]" : "border-[#696969c2]"} ${PlayerInfoAndMore.whichArray === `players` && PlayerInfoAndMore.playerIndex === valIndex ?"border-[unset]":""}`}>
                   <span>{val}</span>
 
                   {/*== backface of card starts  ==*/}
@@ -1618,7 +1606,7 @@ function Home() {
                       />
                     </label>
                     <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.45rem] h-[auto]"
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.45rem] h-[auto] drop-shadow-[2px_3px_1px_black] pointer-events-none"
                         viewBox="0 0 24 24"
                         color="#ffffff"
                         fill="none"><path fill="currentColor" d="M6 14q-.825 0-1.412-.587T4 12t.588-1.412T6 10t1.413.588T8 12t-.587 1.413T6 14m6 0q-.825 0-1.412-.587T10 12t.588-1.412T12 10t1.413.588T14 12t-.587 1.413T12 14m6 0q-.825 0-1.412-.587T16 12t.588-1.412T18 10t1.413.588T20 12t-.587 1.413T18 14" />

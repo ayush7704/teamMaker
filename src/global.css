@@ -96,7 +96,7 @@ ol {
   background: #ed9a01;
   width: 25%;
   height: 25%;
-  animation: bgMoving 5s alternate ease-in-out infinite;
+  /* animation: bgMoving 5s alternate ease-in-out infinite; */
   top: 2px;
 }
 
@@ -145,7 +145,7 @@ button:is([type="submit"], [type="reset"]):hover svg {
 .spinner {
   width: 1.75rem;
   height: 1.75rem;
-  animation: spinner 8.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  animation: spinner 14.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
 }
 
@@ -159,6 +159,7 @@ button:is([type="submit"], [type="reset"]):hover svg {
   box-shadow: 0 0 0.125rem 0px white inset;
   box-shadow: 0 0 0px 0.4px #ffa600 inset;
   box-shadow: 0 0 0px 0.4px #ffa600 inset, 0 0 0.125rem 0px white inset, 0 0 0px 0.4px #ffa600 inset, 0 0 0.125rem 0px white inset;
+  /* filter: drop-shadow(0px 0px 28px white); only applying this property makes scrolltrigger lags */
 }
 
 .spinner div:nth-of-type(1) {
@@ -236,46 +237,9 @@ div .searchInput:focus {
   /* animation: spinner 8.4s infinite cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
-.gridChilds {
-  /* position: absolute; */
-  /* height: 100%; */
-  /* background-color: #000000 ; */
-  /* box-shadow: 0 0 3px 4px black inset; */
-  /* width: 100%; */
-  /* display: grid; */
-  /* grid-template-columns: repeat(3, 1fr); */
-  /* grid-template-rows: repeat(3, 1fr); */
-  /* overflow: hidden; */
-  /* border-radius: 5px; */
+.activeLink svg {
+  filter: drop-shadow(0px 0px 10px currentColor) drop-shadow(1px 1px 0px black);
 }
-
-/* .gridCube .gridChilds:nth-of-type(1) {
-  transform: translateZ(200px) rotateY(180deg);
-}
-
-.gridCube .gridChilds:nth-of-type(2) {
-  transform: rotateY(-270deg) translateX(50%);
-  transform-origin: top right;
-}
-
-.gridCube .gridChilds:nth-of-type(3) {
-  transform: rotateY(270deg) translateX(-50%);
-  transform-origin: center left;
-}
-
-.gridCube .gridChilds:nth-of-type(4) {
-  transform: rotateX(90deg) translateY(-50%);
-  transform-origin: top center;
-}
-
-.gridCube .gridChilds:nth-of-type(5) {
-  transform: rotateX(-90deg) translateY(50%);
-  transform-origin: bottom center;
-}
-
-.gridCube .gridChilds:nth-of-type(6) {
-  transform: translateZ(-200px);
-} */
 
 @media (max-width:650px) {
   body::before {

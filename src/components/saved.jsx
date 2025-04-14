@@ -157,7 +157,9 @@ function Saved() {
       if (changesSavedOrnot) {
         open()
       } else {
-        if (time === localSavedsaveTeam.savingTime) { // if the requesting and opened project is same
+        console.log(JSON.parse(JSON.stringify(time)))
+        console.log(localSavedsaveTeam.savingTime)
+        if (JSON.parse(JSON.stringify(time)) === localSavedsaveTeam.savingTime) { // if the requesting and opened project is same
           navigate('/')
         } else {
           setprojectHasChangedModalOpen(true)

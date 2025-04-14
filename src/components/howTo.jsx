@@ -20,7 +20,7 @@ function HowTo() {
             trigger: element,
             start: "top 105%",
             // markers:true,
-            toggleActions: "play none none reverse",
+            // toggleActions: "play none none reverse",
           },
         }
       );
@@ -58,7 +58,7 @@ function HowTo() {
                     <input
                       type="text"
                       placeholder="Add player"
-                      className="w-full text-[0.96em] bg-transparent px-3 py-2 rounded-md outline outline-1 outline-[#ffffff41] pr-[2.5rem] cursor-context-menu"
+                      className="w-full text-[0.96em] bg-transparent px-3 py-2 rounded-md border border-1 border-[#696969d1] pr-[2.5rem] cursor-context-menu"
                       readOnly
                     />
 
@@ -92,14 +92,14 @@ function HowTo() {
               <HowToExamples
                 title={`2. Type total teams you want. by default (2).`}
                 element={
-                  <div className="flex bg-black justify-between max-w-[300px] outline outline-1 rounded-md outline-[#ffffff41] backdrop-blur-[100px] px-3 py-2 w-full cursor-context-menu text-[0.97em]">
+                  <div className="flex bg-black justify-between max-w-[300px] border border-1 rounded-md border-[#696969d1] backdrop-blur-[100px] px-3 py-2 w-full cursor-context-menu text-[0.97em]">
                     <span className="capitalize">total teams</span>
                     <input
                       type="number"
                       name="totalTeamsInput"
                       id="totalTeamsInput"
                       value={"2"}
-                      className="w-[2.5rem] bg-transparent leading-[normal] text-end focus:outline-none text-lg font-medium cursor-context-menu"
+                      className="w-[2.5rem] bg-transparent leading-[normal] text-end focus:border-none text-lg font-medium cursor-context-menu"
                       readOnly
                     />
                   </div>
@@ -114,7 +114,7 @@ function HowTo() {
                     <input
                       type="text"
                       placeholder="Fifa team 2026"
-                      className="w-full px-3 py-2 mt-[0.125rem] rounded-md outline outline-1 outline-[#ffffff41] bg-black backdrop-blur-[100px] cursor-context-menu"
+                      className="w-full px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1] bg-black backdrop-blur-[100px] cursor-context-menu"
                       readOnly
                     />
                   </div>
@@ -128,7 +128,7 @@ function HowTo() {
                     <p className="text-[0.97em]">Project Description</p>
                     <input
                       placeholder="Description"
-                      className="w-full bg-black px-3 py-2 mt-[0.125rem] rounded-md outline outline-1 outline-[#ffffff41]  backdrop-blur-[100px] cursor-context-menu"
+                      className="w-full bg-black px-3 py-2 mt-[0.125rem] rounded-md border border-1 border-[#696969d1]  backdrop-blur-[100px] cursor-context-menu"
                       readOnly
                     />
                   </div>
@@ -139,7 +139,7 @@ function HowTo() {
                 title={`5. Click generate button to generate random teams.`}
                 element={
                   <button
-                    className={`relative outline outline-1 text-[0.95rem] font-medium  rounded-[0.425rem] overflow-hidden [textShadow:1px_3px_0_black] cursor-context-menu`}
+                    className={`relative border border-1 text-[0.95rem] font-medium  rounded-[0.425rem] overflow-hidden [textShadow:1px_3px_0_black] cursor-context-menu`}
                     readOnly
                   >
                     <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_var(--theme))]"></div>
@@ -213,7 +213,7 @@ function HowTo() {
                         name="totalTeamsInput"
                         id="totalTeamsInput"
                         value={"2"}
-                        className="w-[2.5rem] text-end bg-transparent focus:outline-none text-lg font-medium line-through cursor-context-menu"
+                        className="w-[2.5rem] text-end bg-transparent focus:border-none text-lg font-medium line-through cursor-context-menu"
                         readOnly
                       />
                     </div>
@@ -259,7 +259,7 @@ function HowTo() {
                         </div>
                       </div>
                       {/* generate button starts */}
-                      <button className={`relative flex gap-2 items-center px-4 py-2 bg-white outline outline-1 text-[0.95rem] rounded-[0.425rem] overflow-hidden text-[red] [textShadow:1px_2px_0_#bdbdbd] outline-[red] font-semibold cursor-context-menu`}>
+                      <button className={`relative flex gap-2 items-center px-4 py-2 bg-white border border-1 text-[0.95rem] rounded-[0.425rem] overflow-hidden text-[red] [textShadow:1px_2px_0_#bdbdbd] border-[red] font-semibold cursor-context-menu`}>
                         <span>
                           Recalculate Teams
                         </span>
@@ -318,7 +318,7 @@ function HowTo() {
                 title={`1. Click this save icon to save your Projects in your browser's storage. So, you can still access the same data the next time when you visit again at the same browser .`}
                 element={
                   <button
-                    className={` bg-[#0a0a0a] outline outline-1 outline-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}
+                    className={` bg-[#0a0a0a] border border-1 border-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg"
                       className="sm:w-[1.275rem] w-[1rem] drop-shadow-[0px_0px_3px_currentColor] h-[1rem] sm:h-[1.275rem] text-white"
@@ -352,11 +352,11 @@ function HowTo() {
               <HowToExamples
                 title={`2. Click here in the navbar to see saved Projects.`}
                 element={
-                  <div className="inline-block bg-[#141414] rounded-[0.75rem] text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal capitalize text-nowrap py-2 px-2 ">
-                    <p className="flex justify-center">
+                  <div className="inline-block bg-[#141414] rounded-[0.75rem] text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal capitalize text-nowrap py-2 px-2">
+                    <p className="flex justify-center drop-shadow-[2px_2px_0px_black]">
                       <svg xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        className="w-[1.19rem] drop-shadow-[0px_0px_12px_currentColor] h-[1.19rem]"
+                        className="w-[1.19rem] h-[1.19rem]"
                         color="inherit"
                         fill="none"
                       >
@@ -376,7 +376,7 @@ function HowTo() {
                         />
                       </svg>
                     </p>
-                    <p className="capitalize text-nowrap">saved</p>
+                    <p className="capitalize text-nowrap drop-shadow-[2px_2px_0px_black]">saved</p>
                   </div>
                 }
               />
@@ -440,6 +440,8 @@ function HowToExamples({ element, title }) {
           scrollTrigger: {
             trigger: element,
             start: "top 83%",
+            end: "top 83%",
+            // scrub:true,
             toggleActions: "play none none reverse",
             // markers: true
           },

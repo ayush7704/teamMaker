@@ -16,19 +16,19 @@ const emogies = [
 ]
 const story = [
   {
-    title: "Inspiration",
-    lines: [
-      "I wanted a fair and hassle-free way to form teams.",
-      "As a student developer, I saw this as a chance to improve my React skills.",
-      "With just one React project before, I was eager for a bigger challenge."
-    ]
-  },
-  {
     title: "Background",
     lines: [
       "Growing up, picking fair teams was always a challenge.",
       "Nobody wanted to be the captain, leading to constant debates.",
       "Our daily football games often started with arguments over team selection."
+    ]
+  },
+  {
+    title: "Inspiration",
+    lines: [
+      "I wanted a fair and hassle-free way to form teams.",
+      "As a student developer, I saw this as a chance to improve my React skills.",
+      "With just one React project before, I was eager for a bigger challenge."
     ]
   },
   {
@@ -57,7 +57,6 @@ const story = [
     ]
   }
 ];
-
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -94,9 +93,9 @@ function AboutUs() {
     const screenSize = gsap.matchMedia();
     gsap.utils.toArray('.storyLines').forEach((el) => {
       gsap.fromTo(el, {
-        opacity: 0, y: 15,
+        opacity: 0, y: 10,
       }, {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power1',
+        opacity: 1, y: 0, duration: 0.4, ease: 'none',
         scrollTrigger: {
           trigger: el,
           start: 'center 90%',
@@ -109,7 +108,7 @@ function AboutUs() {
       gsap.fromTo(el, {
         color: 'white',
       }, {
-        color: 'var(--theme)', duration: 0.8, ease: 'power1',
+        color: '#ffa600', duration: 0.8, ease: 'power3',
         scrollTrigger: {
           trigger: el.parentElement,
           start: 'bottom 90%',
@@ -226,10 +225,10 @@ function AboutUs() {
           <div className='max-lg:text-center'>
             <a className='text-[--theme] inline-flex flex-wrap gap-4 max-lg:justify-center align-middle overflow-hidden pb-2' href="https://ayushnagar-portfolio.netlify.app" target='_blank'>
               <span className='self-center'>
-                <img src={Spider} ref={spider} className='relative  lg:w-20 lg:h-20 md:w-16 md:h-16 h-12 w-12' alt="web" />
+                <img src={Spider} ref={spider} className='relative drop-shadow-[2px_4px_2px_black] lg:w-20 lg:h-20 md:w-16 md:h-16 h-12 w-12' alt="web" />
                 {/* <SpiderIcon/> */}
               </span>
-              <span> Ayush Nagar</span>
+              <span className='[text-shadow:2px_4px_2px_black]'> Ayush Nagar</span>
             </a>
           </div>
         </div>
@@ -239,7 +238,7 @@ function AboutUs() {
       {/* photo & story starts  */}
       <div className='flex flex-wrap gap-8 p-[3vw] max-sm:text-[1rem] sm:text-[1.1rem] md:text-[1.2rem]'>
         <div className='max-lg:flex-[1_1_100%] lg:sticky lg:top-[3vh] lg:self-baseline grid place-items-center'>
-          <img onLoad={() => setimgloaded(true)} src={ayushimage} alt="lazy photo of developer" className='ayush 2xl:max-w-96 lg:max-w-80 sm:max-w-72 max-w-56 aspect-square drop-shadow-lg' />
+          <img onLoad={() => setimgloaded(true)} src={ayushimage} alt="lazy photo of developer" className='ayush 2xl:max-w-96 lg:max-w-80 sm:max-w-72 max-w-56 aspect-square drop-shadow-[5px_7px_7px_black]' />
         </div>
         <div className='flex-1 max-lg:flex-[1_1_100%] px-2'>
           <h2 className="text-[1.05em] font-extralight mb-4">The Story Behind Random Team Maker</h2>

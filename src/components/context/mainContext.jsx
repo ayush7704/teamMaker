@@ -271,7 +271,7 @@ const ProjectHasChangedModal = memo(() => {
       //while opening
       gsap.fromTo(
         modal.current,
-        { scale: 0 },
+        { scale: 0.8 },
         { scale: 1, duration: 0.3, ease: "back" }
       );
     }
@@ -280,14 +280,13 @@ const ProjectHasChangedModal = memo(() => {
   const { contextSafe } = useGSAP();
 
   const backClickedHandle = contextSafe(() => {
-    gsap.fromTo(
-      modal.current,
-      { scale: 0.9 },
-      { scale: 0, duration: 0.8, ease: "back" }
+    gsap.fromTo( modal.current,
+      { scale: 1 ,opacity:1},
+      { scale: 0.8, opacity:0,duration: 0.5, ease: "back" }
     );
     setTimeout(() => {
       setprojectHasChangedModalOpen(false);
-    }, 150);
+    }, 50);
   });
 
   return (

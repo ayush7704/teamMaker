@@ -1,6 +1,6 @@
+import { useEffect, useState, useRef, memo, useLayoutEffect } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { useEffect, useState, useRef, memo, useLayoutEffect } from 'react'
 
 
 const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
@@ -10,11 +10,22 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
     const description = modalDetails?.Details?.description || "";
     let no_players = !modalDetails?.Details?.players?.length > 0
     const { contextSafe } = useGSAP();
-  
+
     const [clarify, setClarify] = useState({
         need_to_recalculate: false,
         players_devided: false
-    });    
+    });
+
+    useGSAP(() => {
+        document.body.style.overflow = "hidden";
+        // gsap.set(detailsModalMain.current, { scrollTop: 0 });
+        // gsap.fromTo(detailsModal.current,
+        //     { scale: 0.9 },
+        //     { scale: 1, duration: 0.7, ease: 'back' })
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [modalDetails.opened]);
 
     useLayoutEffect(() => {
         const newClarify = {
@@ -31,19 +42,10 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
         );
     }, [modalDetails]);
 
-    useGSAP(() => {               
-        document.body.style.overflow = "hidden";
-        // gsap.set(detailsModalMain.current, { scrollTop: 0 });
-    
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [modalDetails.opened]);
-    
 
     const closingDetailsModal = contextSafe(() => {
         setmodalDetails({ Details: null, opened: false });
-        document.body.style.overflow = "";        
+        document.body.style.overflow = "";
     });
 
     return (
@@ -140,7 +142,7 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
                                     </div>
                                 }
                                 <div className='flex-1 flex justify-end'>
-                                    <button onClick={() => {openedInGenerator({ time: modalDetails.Details?.savingTime }) }} className={`flex bg-black items-center gap-1 p-[0.2rem_1.3rem] font-medium border-b border-t rounded-[2rem] ${modalDetails?.Details?.openedInGenerator ? "border-[--lightTheme] hover:border-[#8d5b00] shadow-[0_0_9px_-2px_var(--lightTheme)] hover:shadow-[0_0_9px_-4px_var(--lightTheme)]" : "border-[#ffffff41] hover:border-[#202020] shadow-[0_0_9px_-2px_#ffffff41] hover:shadow-[0_0_9px_-4px_#ffffff41]"}`}>open <svg xmlns="http://www.w3.org/2000/svg" className='w-5 h-5' viewBox="0 0 24 24"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2zM14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3z" /></svg></button>
+                                    <button onClick={() => { openedInGenerator({ time: modalDetails.Details?.savingTime }) }} className={`flex bg-black items-center gap-1 p-[0.2rem_1.3rem] font-medium border-b border-t rounded-[2rem] ${modalDetails?.Details?.openedInGenerator ? "border-[--lightTheme] hover:border-[#8d5b00] shadow-[0_0_9px_-2px_var(--lightTheme)] hover:shadow-[0_0_9px_-4px_var(--lightTheme)]" : "border-[#ffffff41] hover:border-[#202020] shadow-[0_0_9px_-2px_#ffffff41] hover:shadow-[0_0_9px_-4px_#ffffff41]"}`}>open <svg xmlns="http://www.w3.org/2000/svg" className='w-5 h-5' viewBox="0 0 24 24"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2zM14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3z" /></svg></button>
                                 </div>
                             </div>
                             {/* clarify section ends  */}
