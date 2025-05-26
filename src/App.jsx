@@ -4,7 +4,9 @@ import { mainContext } from './components/context/context.js'
 import FullscreenFallback from './components/fallback.jsx'
 import ScrollToTop from './components/scrollToTop.jsx'
 import Navbar from './components/navbar.jsx'
-
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
 
 // Lazy Load Components
 const Home = lazy(() => import('./components/home.jsx'))
@@ -29,6 +31,7 @@ function App() {
       const navElement = document.querySelector('nav');
       if (navElement) {
         document.documentElement.style.setProperty('--navbarWidth', navElement.getBoundingClientRect().width + 'px');
+        ScrollTrigger.refresh();
       }
     }
 
@@ -38,6 +41,8 @@ function App() {
     };
   }, []);
 
+  /*  added wrappers on howTo page's scrolling animation elements for better scrolling scrollTrigger animation
+  elements having   filter, backdrop-filter, box-shadow, */
   return (
     <section className='text-white'>
       <ScrollToTop />

@@ -345,7 +345,7 @@ const ProjectHasChangedModal = memo(() => {
   );
 })
 
-const Notification = () => {
+const Notification = memo(() => {
   const { alertMsgsState, clearNotification } = useContext(mainContext);
 
   return (
@@ -363,4 +363,4 @@ const Notification = () => {
       {/* notifcation div ends  */}
     </>
   );
-};
+});

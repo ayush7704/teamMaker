@@ -21,12 +21,20 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
         // gsap.set(detailsModalMain.current, { scrollTop: 0 });
         // gsap.fromTo(detailsModal.current,
         //     { scale: 0.9 },
-        //     { scale: 1, duration: 0.7, ease: 'back' })
+        //     { scale: 1, duration: 0.2, ease: 'back' })
         return () => {
             document.body.style.overflow = "";
         };
     }, [modalDetails.opened]);
 
+    // useGSAP(() => {
+    //     gsap.fromTo(detailsModal.current, { opacity: 0, scale: 0.9 }, {
+    //       opacity: 1,
+    //       scale: 1,
+    //       duration: 0.2,
+    //       ease: "power3",
+    //     });
+    //   }, [])
     useLayoutEffect(() => {
         const newClarify = {
             need_to_recalculate: modalDetails.Details?.hasShuffled
@@ -49,7 +57,7 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
     });
 
     return (
-        <section onClick={() => { closingDetailsModal() }} ref={detailsModalContainer} className={`fixed detailmodaContainer z-[26] p-4 backdrop-blur-[2px] inset-0 mx-auto`}>
+        <section onClick={() => { closingDetailsModal() }} ref={detailsModalContainer} className={`fixed detailmodaContainer z-[26] p-8 backdrop-blur-[2px] inset-0 mx-auto`}>
 
             <div ref={detailsModal} onClick={(e) => { e.stopPropagation(); }} className={`relative h-full overflow-hidden text-[0.99em] py-10 sm:pt-[3em] pt-[2.8em] sm:px-4 px-[0.4rem] bg-[#000000] sm:w-5/6 lg:w-[75%] rounded-2xl mx-auto border border-1 ${modalDetails?.Details?.openedInGenerator === true ? 'border-[--lightTheme]' : 'border-[#303030]'}`}>
                 {/* ======= close btn starts ===== */}
@@ -69,7 +77,7 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
                 {/* ======= close btn ends ===== */}
                 <main ref={detailsModalMain} className='h-full overflow-auto'>
                     {/* topdiv starts  */}
-                    <div className="topdiv relative sm:text-base text-sm w-fit flex justify-between sm:gap-[5rem] gap-[3rem] px-5 py-2 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] mb-3">
+                    <div className="topdiv relative sm:text-base text-sm w-fit flex justify-between sm:gap-[5rem] gap-[3rem] max-[320px]:gap-4 px-5 py-2 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] mb-3">
                         <div className="whitespace-nowrap">
                             <span className="font-medium text-[--theme] mr-[2px]">
                                 {modalDetails?.Details?.players.length}{" "}

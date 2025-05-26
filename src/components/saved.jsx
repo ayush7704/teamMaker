@@ -6,8 +6,6 @@ import { useGSAP } from "@gsap/react";
 import { useNavigate } from 'react-router-dom'
 const Details = lazy(() => import("./details.jsx"))
 
-// have to make Dropdown understandable 
-
 const seeMoreActions = {
   focusSeeMore: 'focusSeeMore',
   blurSeeMore: 'blurSeeMore',
@@ -347,7 +345,7 @@ const AccordionDropdown = memo(({ options, newOptions }) => {
       <div ref={Dropdown} className="absolute divide-y divide-solid divide-[#303030] z-10 w-full *:border-b-[#303030] bg-[#000000] backdrop-blur-[12px] border border-[#303030] mt-2 rounded-md shadow-lg overflow-hidden hidden">
         {options.map((optionsObj, index) => (
           <button key={index} onClick={(e) => { handleOptionClick(optionsObj.option); selectInput.current.blur() }}
-            className={`w-full  text-left px-3 py-2 text-[#e5e5e5] hover:bg-[#131313cc] focus:bg-[#3a3a3a] transition-all ${optionsObj.selected ? 'flex justify-between' : ''}`}>
+            className={`w-full text-left px-3 py-2 text-[#e5e5e5] hover:bg-[#131313cc] focus:bg-[#222222cc] transition-all ${optionsObj.selected ? 'flex justify-between' : ''}`}>
             <span>{optionsObj.option}</span>
             {optionsObj.selected &&
               <span>

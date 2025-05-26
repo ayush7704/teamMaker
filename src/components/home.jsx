@@ -1,11 +1,5 @@
 import gsap from "gsap";
-import {
-  useReducer,
-  useState,
-  useRef,
-  useLayoutEffect,
-  useContext,
-} from "react";
+import { useReducer, useState, useRef, useLayoutEffect, useContext, useEffect } from "react";
 import { mainContext } from "./context/context.js";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -240,6 +234,7 @@ function Home() {
       return savedteam.openedInGenerator;
     })
   );
+
   const formSubmitBtnState = { add: "add", edit: "editing" };
   const [allTypeplayersAndTeams, setAllTypeplayersAndTeams] = useReducer(
     reducer, {
@@ -256,11 +251,13 @@ function Home() {
     description: "",
   }
   );
+
   const [differentBtnStates, setdifferentBtnStates] = useState({
     GeneratingTeam: false,
     needToGenerate: allTypeplayersAndTeams.hasShuffled ? !(allTypeplayersAndTeams.finalTotalTeams === allTypeplayersAndTeams.teams.length && Number(allTypeplayersAndTeams.totalTeams) === allTypeplayersAndTeams.teams.length) : false,
     savedProcessing: false,
   });
+
   const [savedTeamChanges, setSavedTeamChanges] = useState({ popup: false });
 
   const [PlayerInfoAndMore, setPlayerInfoAndMore] = useState({
@@ -268,10 +265,17 @@ function Home() {
     description: "",
     arrItemForEdit: "players",
     whichArray: "players",
+    beingEditPlayer: null,
     playerIndex: null,
     editBtnClickBy: null,
+    beingEditPlayer: null,
     currentInputBtn: formSubmitBtnState.add,
   });
+
+  useEffect(() => {
+    console.log(PlayerInfoAndMore)
+  })
+
 
   useLayoutEffect(() => {
     const savedsavedTeamOpened = JSON.parse(
@@ -315,6 +319,7 @@ function Home() {
       ...PlayerInfoAndMore,
       playerName: "",
       description: "",
+      beingEditPlayer: null,
       arrItemForEdit: null,
       editBtnClickBy: null,
       whichArray: null,
@@ -329,6 +334,8 @@ function Home() {
       currentInputBtn: formSubmitBtnState.add,
       playerName: "",
       description: "",
+      beingEditPlayer: null,
+      arrItemForEdit: null,
       playerIndex: null,
       editBtnClickBy: null,
       whichArray: null,
@@ -640,6 +647,7 @@ function Home() {
         ...PlayerInfoAndMore,
         playerName: "",
         description: "",
+        beingEditPlayer: null,
         arrItemForEdit: null,
         editBtnClickBy: null,
         whichArray: null,
@@ -781,7 +789,7 @@ function Home() {
             {/* total teams label starts  */}
             <label
               htmlFor="totalTeamsInput"
-              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[--lightTheme] focus-within:hover:border-[--lightTheme]  focus-within:border border border-1 border-[#696969d1] rounded-md">
+              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer  hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[--lightTheme] focus-within:hover:border-[--lightTheme]  focus-within:border border border-1 border-[#696969d1] rounded-md">
               <span className="capitalize">total teams</span>
               <input
                 type="number"
@@ -947,13 +955,12 @@ function Home() {
                 <button
                   type="reset"
                   value={"cancle"}
-                  className="relative rounded-[50%] before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[radial-gradient(red_18%,black_65%,red_90%)] overflow-hidden"
-                >
+                  className="relative border border-1 border-[#696969d1] rounded-[50%] before:z-0 before:inset-0 before:rounded-[inherit] before:absolute before:bg-[radial-gradient(red_18%,black_65%,red_90%)] overflow-hidden">
                   <div className="relative backdrop-blur-[1px] flex items-center justify-center p-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.3rem] h-[1.3rem]"
                       viewBox="0 0 24 24"
                       color="white"
-                      fill="none"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g></svg>
+                      fill="none"><g fill="none" fillRule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="m12 14.122l5.303 5.303a1.5 1.5 0 0 0 2.122-2.122L14.12 12l5.304-5.303a1.5 1.5 0 1 0-2.122-2.121L12 9.879L6.697 4.576a1.5 1.5 0 1 0-2.122 2.12L9.88 12l-5.304 5.304a1.5 1.5 0 1 0 2.122 2.12z" /></g></svg>
                   </div>
                 </button>
               )
@@ -978,13 +985,15 @@ function Home() {
                   currentInputBtn: formSubmitBtnState.add,
                   playerName: "",
                   description: "",
+                  beingEditPlayer: null,
+                  arrItemForEdit: null,
                   playerIndex: null,
                   editBtnClickBy: null,
                   whichArray: null,
                 });
                 checkingFunction(alertMsgsWork.generateTeam);
               }}
-              className={`relative border border-1 text-[0.92rem] rounded-[0.425rem]  transition-all duration-100 hover:shadow-[0_0_10px_-4px_white] overflow-hidden ${differentBtnStates.GeneratingTeam ? "btnLoadTime" : ""} ${differentBtnStates.needToGenerate ? "text-[red] [textShadow:1px_2px_0_#bdbdbd] border-[red] font-semibold" : "[textShadow:1px_2px_0_black] font-medium text-white"} `}
+              className={`relative border border-1 text-[0.92rem] rounded-[0.425rem]  transition-all duration-100 hover:shadow-[0_2px_25px_-10px_var(--theme)] overflow-hidden ${differentBtnStates.GeneratingTeam ? "btnLoadTime" : ""} ${differentBtnStates.needToGenerate ? "text-[red] [textShadow:1px_2px_0_#bdbdbd] border-[red] font-semibold" : "[textShadow:1px_2px_0_black] font-medium text-white"} `}
               disabled={differentBtnStates.GeneratingTeam}
             >
               <div className="gereratorBG absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_77%,_#ffa600)] pointer-events-none"></div>
@@ -1106,6 +1115,7 @@ function Home() {
                       ...PlayerInfoAndMore,
                       playerName: "",
                       description: "",
+                      beingEditPlayer: null,
                       arrItemForEdit: null,
                       editBtnClickBy: null,
                       whichArray: null,
@@ -1122,7 +1132,7 @@ function Home() {
                       savedProcessing: false
                     })
                   }}
-                  className="relative overflow-hidden border border-1 text-[0.92rem] font-medium rounded-[0.425rem] [textShadow:1px_2px_0_black] transition duration-100 hover:shadow-[0_0_10px_-4px_white]"
+                  className="relative overflow-hidden border border-1 text-[0.92rem] font-medium rounded-[0.425rem] [textShadow:1px_2px_0_black] transition duration-100 hover:shadow-[0_2px_25px_-13px_#ffffff]"
                 >
                   <div className="absolute inset-0 z-0 bg-[linear-gradient(to_bottom,_black_88%,red)] pointer-events-none"></div>
                   <div className="backdrop-blur-[10px] flex gap-2 items-center px-4 py-2">
@@ -1170,9 +1180,9 @@ function Home() {
 
           {/* change title starts  */}
           <div className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 mb-4 ${savedTeamOpened
-              ? "border border-[0.3px] border-[--lightTheme]"
-              : "border border-[0.3px] border-[#ffffff41]"
-              }`}>
+            ? "border border-[0.3px] border-[--lightTheme]"
+            : "border border-[0.3px] border-[#ffffff41]"
+            }`}>
             {/* make new team starts  */}
             <button
               onClick={() => {
@@ -1181,24 +1191,8 @@ function Home() {
               className="flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] border border-1 border-[#ffffff3d]"
             >
               <span>New</span>
-              <span className="inline-block">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                  viewBox={`0 0 24 24`}
-                  className="text-[#ffffff] h-[0.7rem] w-[0.7rem]"
-                  fill="none"
-                >
-                  <path
-                    d="M12 8V16M16 12L8 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
+              <span className="inline-block">               
+                <svg xmlns="http://www.w3.org/2000/svg" className="text-[#ffffff] h-[0.7rem] w-[0.7rem]" viewBox="0 0 24 24" color="#ffffff" fill="none"> <path d="M12 4V20M20 12H4" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
                 </svg>
               </span>
             </button>
@@ -1344,44 +1338,44 @@ function Home() {
 
                   {/*==== actions starts  =====*/}
                   {
-                  savedTeamChanges.popup && (
-                    <ul
-                      className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.78rem] absolute z-[1] top-[-1.875rem] right-[125%] cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[--lightTheme] p-[0.2rem]`}
-                    >
-                      {/*==== save changes li starts  ====*/}
-                      <li
-                        className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
-                        onMouseDown={() =>
-                          savedTeamFunc({
-                            type: savedTeamReducerActions.saveChanges,
-                          })
-                        }
+                    savedTeamChanges.popup && (
+                      <ul
+                        className={`bg-black w-max shadow-[0_0_0.9375rem_-1px_#000000b8] text-[0.78rem] absolute z-[1] top-[-1.875rem] right-[125%] cursor-pointer rounded-[4px] border-[0.4px] overflow-hidden 'border-[0.4px] border-[--lightTheme] p-[0.2rem]`}
                       >
-                        <span>save changes</span>
-                      </li>
-                      {/*==== save changes li ends  ====*/}
+                        {/*==== save changes li starts  ====*/}
+                        <li
+                          className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
+                          onMouseDown={() =>
+                            savedTeamFunc({
+                              type: savedTeamReducerActions.saveChanges,
+                            })
+                          }
+                        >
+                          <span>save changes</span>
+                        </li>
+                        {/*==== save changes li ends  ====*/}
 
-                      {/*==== discard li starts  ====*/}
-                      <li
-                        className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
-                        onMouseDown={() =>
-                          savedTeamFunc({
-                            type: savedTeamReducerActions.discardChanges,
-                          })
-                        }
-                      >
-                        <span>discard changes</span>
-                      </li>
-                      {/*==== discard li ends  ====*/}
+                        {/*==== discard li starts  ====*/}
+                        <li
+                          className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
+                          onMouseDown={() =>
+                            savedTeamFunc({
+                              type: savedTeamReducerActions.discardChanges,
+                            })
+                          }
+                        >
+                          <span>discard changes</span>
+                        </li>
+                        {/*==== discard li ends  ====*/}
 
-                      <li
-                        className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
-                        onMouseDown={() => newTeam()}
-                      >
-                        <span>remove from generator</span>
-                      </li>
-                    </ul>
-                  )
+                        <li
+                          className={`flex gap-2 items-center justify-between capitalize p-[0.5rem_0.8rem] transition-all duration-150 hover:bg-[#141414] rounded-[0.1875rem]`}
+                          onMouseDown={() => newTeam()}
+                        >
+                          <span>remove from generator</span>
+                        </li>
+                      </ul>
+                    )
                   }
                   {/*====  actions ends   =====*/}
                 </button>
@@ -1403,8 +1397,8 @@ function Home() {
                   <ol className="cardsContainer flex flex-wrap justify-center gap-3 list-inside relative text-[0.97em]">
                     {team.teamPlayers.map((val, valIndex) => (
                       <li
-                        key={`${team.teamName}-${valIndex}`}                        
-                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border border-1 ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}`&& PlayerInfoAndMore.playerIndex === valIndex  ?"border-[unset]":""} ${PlayerInfoAndMore.arrItemForEdit === "teams." + teamValIndex && PlayerInfoAndMore.editBtnClickBy === valIndex ? " !border-[--lightTheme]" : "border-[#696969c2]"} `}>
+                        key={`${team.teamName}-${valIndex}`}
+                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap transition border border-1 hover:border-[#ffffff9e] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex && PlayerInfoAndMore.beingEditPlayer !== `teams.${teamValIndex}.${valIndex}` ? "!border-[unset]" : ""} ${PlayerInfoAndMore.beingEditPlayer === `teams.${teamValIndex}.${valIndex}` ? " !border-[--lightTheme]" : "border-[#696969c2]"}`}>
                         <span>{val}</span>
 
                         {/*== backface of card starts  ==*/}
@@ -1470,6 +1464,7 @@ function Home() {
                                     currentInputBtn: formSubmitBtnState.edit,
                                     whichArray: `teams.${teamValIndex}`,
                                     arrItemForEdit: `teams.${teamValIndex}`,
+                                    beingEditPlayer: `teams.${teamValIndex}.${valIndex}`,
                                     playerName: val,
                                     editBtnClickBy: valIndex,
                                   });
@@ -1529,6 +1524,7 @@ function Home() {
                                     ...PlayerInfoAndMore,
                                     playerName: "",
                                     whichArray: `teams.${teamValIndex}`,
+                                    beingEditPlayer: null,
                                     playerIndex: null,
                                     currentInputBtn: formSubmitBtnState.add,
                                     editBtnClickBy: null,
@@ -1568,7 +1564,9 @@ function Home() {
               {allTypeplayersAndTeams.players.map((val, valIndex) => (
                 <li
                   key={val + valIndex + "players"}
-                  className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap border-1 border text-[0.97em] ${PlayerInfoAndMore.whichArray === "players" && PlayerInfoAndMore.editBtnClickBy === valIndex ? "!border-[--lightTheme]" : "border-[#696969c2]"} ${PlayerInfoAndMore.whichArray === `players` && PlayerInfoAndMore.playerIndex === valIndex ?"border-[unset]":""}`}>
+                  className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap transition border-1 border text-[0.97em]  hover:border-[#ffffff9e]                                                      
+                  ${PlayerInfoAndMore.whichArray === 'players' && PlayerInfoAndMore.playerIndex === valIndex && PlayerInfoAndMore.beingEditPlayer !== `players.${valIndex}` ? "!border-[unset]" : ""} ${PlayerInfoAndMore.beingEditPlayer === `players.${valIndex}` ? " !border-[--lightTheme]" : "border-[#696969c2]"}
+                  `}>
                   <span>{val}</span>
 
                   {/*== backface of card starts  ==*/}
@@ -1631,6 +1629,7 @@ function Home() {
                               ...PlayerInfoAndMore,
                               currentInputBtn: formSubmitBtnState.edit,
                               whichArray: `players`,
+                              beingEditPlayer: `players.${valIndex}`,
                               playerName: val,
                               editBtnClickBy: valIndex,
                               arrItemForEdit: `players`,
@@ -1685,6 +1684,7 @@ function Home() {
                               ...PlayerInfoAndMore,
                               playerName: "",
                               whichArray: `players`,
+                              beingEditPlayer: null,
                               playerIndex: null,
                               currentInputBtn: formSubmitBtnState.add,
                               editBtnClickBy: null,
