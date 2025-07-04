@@ -57,7 +57,7 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
     });
 
     return (
-        <section onClick={() => { closingDetailsModal() }} ref={detailsModalContainer} className={`fixed detailmodaContainer z-[26] p-8 backdrop-blur-[2px] inset-0 mx-auto`}>
+        <section onClick={() => { closingDetailsModal() }} ref={detailsModalContainer} className={`fixed detailmodaContainer z-[26] max-sm:py-8 max-sm:px-5 md:p-8 backdrop-blur-[8px] bg-[#00000080] inset-0 mx-auto`}>
 
             <div ref={detailsModal} onClick={(e) => { e.stopPropagation(); }} className={`relative h-full overflow-hidden text-[0.99em] py-10 sm:pt-[3em] pt-[2.8em] sm:px-4 px-[0.4rem] bg-[#000000] sm:w-5/6 lg:w-[75%] rounded-2xl mx-auto border border-1 ${modalDetails?.Details?.openedInGenerator === true ? 'border-[--lightTheme]' : 'border-[#303030]'}`}>
                 {/* ======= close btn starts ===== */}

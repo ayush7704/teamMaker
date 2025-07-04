@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 function HowTo() {
-  const { PageHeading } = useContext(mainContext);
+  const { PageHeading ,Check_svg} = useContext(mainContext);
 
   useGSAP(() => {
     gsap.utils.toArray(".fade-up").forEach((element) => {
@@ -34,7 +34,7 @@ function HowTo() {
       <PageHeading heading={"how to"} />
       <div className="how-to-page pb-[6rem] sm:w-[80%] mx-auto p-3 mt-[1.375rem] max-sm:text-[0.95rem]">
         {/* what is random team maker starts */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               1. what is random team maker ?
@@ -47,7 +47,7 @@ function HowTo() {
         {/* what is random team maker ends */}
 
         {/*  How to Generate Random Team? starts */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               2. How to Generate Random Team ?
@@ -330,7 +330,7 @@ function HowTo() {
         {/*  How to Generate Random Team? ends */}
 
         {/* save your Projects locally in the browser starts */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               3. save your Projects locally in the browser.
@@ -413,7 +413,7 @@ function HowTo() {
         {/* save your Projects locally in the browser ends */}
 
         {/* Why is this random team maker useful? starts  */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
             <h2 className="text-[1.05em] leading-[100%] capitalize">
               4. Why is this random team maker useful?.
@@ -436,7 +436,7 @@ function HowTo() {
               ].map((para, ind) => (
                 <div key={ind} className="p-1 flex gap-2">
                   <span className="flex-grow-0">
-                    👉
+                    <Check_svg classes='w-[1.1em] h-auto inline-block' />
                   </span>
                   <p>{para}</p>
                 </div>

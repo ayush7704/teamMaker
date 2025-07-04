@@ -41,8 +41,6 @@ function App() {
     };
   }, []);
 
-  /*  added wrappers on howTo page's scrolling animation elements for better scrolling scrollTrigger animation
-  elements having   filter, backdrop-filter, box-shadow, */
   return (
     <section className='text-white'>
       <ScrollToTop />

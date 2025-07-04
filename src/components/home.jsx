@@ -164,6 +164,8 @@ const reducer = (oldobj, action) => {
   } else if (action.type === reducerTypes.teamShuffle) {
     return {
       ...oldobj,
+      finalTotalTeams: action.payload.finalTotalTeamsLength,
+      totalTeams: action.payload.finalTotalTeamsLength,
       teams: [...action.payload.newTeams],
       hasShuffled: true,
     };
@@ -273,7 +275,8 @@ function Home() {
   });
 
   useEffect(() => {
-    console.log(PlayerInfoAndMore)
+    // console.log(PlayerInfoAndMore)
+    // console.log(allTypeplayersAndTeams)
   })
 
 
@@ -346,6 +349,7 @@ function Home() {
   const generateTeamFunc = contextSafe(async () => {
     let worker = { ...allTypeplayersAndTeams };
     let uniqueRandomsArr = new Set([]);
+    let teamsRemoved = false
 
     // First animation promise
     await new Promise((resolve) => {
@@ -370,6 +374,10 @@ function Home() {
         // Creating teams
         await Promise.all(
           Array(worker.finalTotalTeams).fill(null).map(async (_, index) => {
+            if (worker.finalTotalTeams > worker.players.length) {
+              teamsRemoved = true
+              worker.finalTotalTeams = 2
+            }
             while (worker.finalTotalTeams !== worker.teams.length) {
               if (worker.teams.length > worker.finalTotalTeams) {
                 worker.teams.pop();
@@ -403,7 +411,7 @@ function Home() {
         // Updating state after shuffling
         setAllTypeplayersAndTeams({
           type: reducerTypes.teamShuffle,
-          payload: { newTeams: [...worker.teams] },
+          payload: { newTeams: [...worker.teams], finalTotalTeamsLength: worker.finalTotalTeams },
         });
 
         resolve();
@@ -425,6 +433,11 @@ function Home() {
       );
       setTimeout(resolve, 1000);
     });
+    
+    if (teamsRemoved) {
+      setalertMsgsState(alertMsgs.teamsRemoved);
+      popupAnim(alertMsgsTime.get(alertMsgs.teamsRemoved));
+    }
   });
 
   useGSAP(() => {
@@ -437,7 +450,7 @@ function Home() {
         ease: "back",
         scrollTrigger: {
           trigger: ".top-div-triggerer",
-          start: "top top",
+          start: "bottom top",
           toggleActions: "play none none reverse",
         },
       }
@@ -601,7 +614,11 @@ function Home() {
       popupAnim(alertMsgsTime.get(alertMsgs.nothingToDiscard));
     }
 
-    if (msg === alertMsgsWork.generateTeam) { if (playerAndTitleCheck({ mainTypeCheck: alertMsgs.generateTeam })) { generateTeamFunc(); } }
+    if (msg === alertMsgsWork.generateTeam) {
+      if (playerAndTitleCheck({ mainTypeCheck: alertMsgs.generateTeam })) {
+        generateTeamFunc();
+      }
+    }
     if (msg === alertMsgsWork.saveTeamMsg) {
       if (playerAndTitleCheck({ mainTypeCheck: alertMsgs.teamSaved })) {
         setalertMsgsState(alertMsgs.teamSaved);
@@ -748,7 +765,7 @@ function Home() {
 
   return (
     <main>
-      <div className="wrapper pb-[7rem] relative sm:w-[75%] mx-auto p-3">
+      <div className="wrapper pb-[7rem] relative sm:w-[75%] mx-auto p-4">
         {/* topdiv starts  */}
         <div className="topdiv fixed sm:text-base text-sm left-1/2 -translate-x-1/2 z-10 top-[-100%] w-auto flex justify-between sm:gap-[5rem] gap-[3rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] ">
           <div className="whitespace-nowrap flex-1">
@@ -789,7 +806,7 @@ function Home() {
             {/* total teams label starts  */}
             <label
               htmlFor="totalTeamsInput"
-              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer  hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[--lightTheme] focus-within:hover:border-[--lightTheme]  focus-within:border border border-1 border-[#696969d1] rounded-md">
+              className="flex justify-between items-center px-3 py-2 mt-2 bg-[#000000] cursor-pointer  hover:border-[#ffffff9e] transition-all duration-100 ease-in focus-within:border focus-within:border-1 focus-within:border-[--lightTheme] focus-within:hover:border-[--lightTheme]  focus-within:border border border-1 border-[#696969d1] rounded-md top-div-triggerer">
               <span className="capitalize">total teams</span>
               <input
                 type="number"
@@ -817,7 +834,7 @@ function Home() {
           </div>
 
           {/* add title div starts  */}
-          <div className="px-2 py-[0.35rem] top-div-triggerer">
+          <div className="px-2 py-[0.35rem]">
             <label
               htmlFor="titleForGenerationTeam"
               className="cursor-pointer block text-[0.97em]"
@@ -900,25 +917,8 @@ function Home() {
                 className="absolute p-2 right-0 h-full border-l border-[--theme]"
               >
                 {PlayerInfoAndMore.currentInputBtn ===
-                  formSubmitBtnState.add ? ( //#ffa600
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                    className="w-[1.375rem] h-[1.375rem]"
-                    viewBox="0 0 24 24"
-                    color="var(--theme)"
-                    fill="none"
-                  >
-                    <path
-                      d="M12 8V16M16 12L8 12"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
+                  formSubmitBtnState.add ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.375rem] h-[1.375rem]" color="var(--theme)" viewBox="0 0 24 24" fill="none"> <path d="M12 4V20M20 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
                   </svg>
                 ) : (
                   <svg xmlns="http://www.w3.org/2000/svg"
@@ -972,7 +972,7 @@ function Home() {
 
         <section className="pb-[1.5625rem]">
           {/* generate & clear starts  */}
-          <div className="flex justify-center text-center gap-2 mt-[1.75rem] mb-[3.5625rem]">
+          <div className="flex flex-wrap justify-center text-center gap-2 mt-[1.75rem] mb-[3.5625rem]">
             {/* generate button starts */}
             <button
               onClick={() => {
@@ -1191,8 +1191,8 @@ function Home() {
               className="flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] border border-1 border-[#ffffff3d]"
             >
               <span>New</span>
-              <span className="inline-block">               
-                <svg xmlns="http://www.w3.org/2000/svg" className="text-[#ffffff] h-[0.7rem] w-[0.7rem]" viewBox="0 0 24 24" color="#ffffff" fill="none"> <path d="M12 4V20M20 12H4" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+              <span className="inline-block">
+                <svg xmlns="http://www.w3.org/2000/svg" className="text-[var(--theme)] h-[auto] w-[0.85rem]" viewBox="0 0 24 24" color="#ffffff" fill="none"> <path d="M12 4V20M20 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
                 </svg>
               </span>
             </button>

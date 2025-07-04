@@ -29,7 +29,7 @@ const FullscreenFallback = () => {
     }, []);
     console.log("Fallback UI is rendering!");
     return (
-        <div className="grid place-items-center w-full h-screen fixed z-[9999] backdrop-blur-[2px] inset-0">
+        <div className="grid place-items-center w-full h-screen fixed z-[9999] backdrop-blur-[8px] bg-[#00000080] inset-0">
             {/* cube start  */}
             <div className='w-full grid place-items-center lg:min-h-[250px] min-h-[150px] pt-20 pb-16'>
                 <div ref={cubeRef} className="gridCube relative lg:w-[100px] lg:h-[100px] md:w-[80px] md:h-[80px] w-[70px] h-[70px]">

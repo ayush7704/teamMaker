@@ -97,7 +97,8 @@ ol {
   width: 25%;
   height: 25%;
   /* animation: bgMoving 5s alternate ease-in-out infinite; */
-  top: 2px;
+  top: 2%;
+  left:2%;
 }
 
 .card-blur {

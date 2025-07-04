@@ -98,7 +98,8 @@ function ContextProvider({ children }) {
         alertMsgs,
         alertMsgsWork,
         alertMsgsTime,
-        savedTeamReducerActions
+        savedTeamReducerActions,
+        Check_svg
       }}
     >
       {children}
@@ -116,15 +117,16 @@ const alertMsgsWork = {
 const alertMsgs = {
   teamSaved: "Your project was saved successfully!",
   teamNotSaved: "You need at least 2 players to save a project.",
-  titleNotSaved: "The project requires a title",
-  notGenerated: "You need at least 2 players to generate a team. ",
+  titleNotSaved: "The project requires a title.",
+  teamsRemoved:"Too many teams, not enough players! Extra teams have been removed.",
+  notGenerated: "You need at least 2 players to Generate a team. ",
   savedTeamNoChanges: "There are no changes to save.",
   savedTeamChangesSaved: "Your changes were saved successfully!",
-  changesDiscard: "Your changes were removed successfully!",
+  changesDiscard: "Your changes were discarded successfully!",
   nothingToDiscard: "There’s nothing to discard.",
   teamDeleted: "Your project was removed successfully!",
-  errorMsg: "Something broke generate again !",
-  teams_length_broken: "Teams length can't be bigger than total players length",
+  errorMsg: "Something broke Generate again !",
+  teams_length_broken: "Teams count can't be greater than total players.",
   removeAll: "removing all",
 };
 
@@ -132,6 +134,7 @@ const alertMsgsTime = new Map([
   [alertMsgs.teamSaved, 3000],
   [alertMsgs.teamNotSaved, 4000],
   [alertMsgs.titleNotSaved, 2500],
+  [alertMsgs.teamsRemoved, 4800],
   [alertMsgs.notGenerated, 4000],
   [alertMsgs.savedTeamNoChanges, 3000],
   [alertMsgs.savedTeamChangesSaved, 2500],
@@ -290,9 +293,9 @@ const ProjectHasChangedModal = memo(() => {
   });
 
   return (
-    <div ref={modalContainer} onClick={backClickedHandle} className={`fixed inset-0 z-30 grid place-items-center backdrop-blur-[2px]`}>
+    <div ref={modalContainer} onClick={backClickedHandle} className={`fixed inset-0 z-30 grid place-items-center backdrop-blur-[8px] bg-[#00000080]`}>
       <div ref={modal} onClick={(e) => { e.stopPropagation(); }}
-        className={`relative sm:max-w-[25rem] max-w-[16.875rem] text-[0.9rem] bg-black px-3 py-4 border border-1 border-[#303030] rounded-[0.35rem]`} >
+        className={`relative sm:max-w-[25rem] w-10/12 text-[0.9rem] bg-black px-3 py-4 border border-1 border-[#303030] rounded-[0.35rem]`} >
         {/* ======= close btn starts ===== */}
         <button
           onClick={backClickedHandle}
@@ -351,7 +354,7 @@ const Notification = memo(() => {
   return (
     <>
       {/* notifcation div starts  */}
-      <div className={`fixedmsg fixed z-40 hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] md:max-w-[23.875rem] sm:max-w-[20.875rem] sm:text-[0.90rem] capitalize text-[0.80rem] text-center left-1/2 -translate-x-1/2 rounded-md p-2 border border-1 bg-black border-[gray] tracking-[0.1px]`}>
+      <div className={`fixedmsg fixed z-40 hidden w-[85%] max-[21.875rem]:w-[80%] px-[0.9rem] md:max-w-[23.875rem] sm:max-w-[20.875rem] sm:text-[0.90rem] text-[0.80rem] text-center left-1/2 -translate-x-1/2 rounded-md p-2 border border-1 bg-black border-[gray] tracking-[0.1px]`}>
         <button onClick={() => { clearNotification(); }} className="absolute p-1 top-[-4px] right-[-4px] bg-black transition-all duration-100 rounded-[50%] border border-1 border-[#ffffffab]">
           <svg className="w-[0.75rem] h-[0.75rem]"
             viewBox="0 0 24 24"
@@ -364,3 +367,5 @@ const Notification = memo(() => {
     </>
   );
 });
+
+let Check_svg = ({classes})=> (<svg xmlns="http://www.w3.org/2000/svg" className={`${classes}`} viewBox="0 0 64 64"><path fill="#344549" d="M48.34 8.824H5.843a5.84 5.84 0 0 0-5.838 5.84v42.498A5.84 5.84 0 0 0 5.843 63H48.34a5.84 5.84 0 0 0 5.838-5.839V14.664a5.84 5.84 0 0 0-5.838-5.84m2.72 45.46a5.166 5.166 0 0 1-5.165 5.168H8.293a5.166 5.166 0 0 1-5.168-5.168V16.683a5.167 5.167 0 0 1 5.168-5.167h37.602a5.17 5.17 0 0 1 5.165 5.167z"/><path fill="var(--theme)" d="M56.06 3.645c-7.701 6.668-14.766 13.742-20.733 22.02c-2.632 3.652-4.701 7.709-6.613 11.767c-.899 1.91-1.436 3.897-1.941 5.884c-3.673-3.414-7.248-6.925-11.28-9.96c-2.875-2.163-12.525 4.62-9.155 7.158c6.04 4.544 11.07 10.201 16.94 14.947c2.458 1.983 7.905-2.321 9.181-4.13c4.201-5.95 4.775-13.229 7.838-19.722c4.676-9.929 12.967-18.08 21.15-25.17c6.11-5.288-1.272-6.357-5.385-2.798"/></svg>)
