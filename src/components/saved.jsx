@@ -65,7 +65,6 @@ function Saved() {
   }
 
   // i putted them get and set function seprate because when we need to set them we can do this independently
-
   // this func will get all filter values 
   function getFiltersFunc({ a2z, }) {
     a2z.forEach((elm, ind) => {
@@ -260,7 +259,7 @@ function Saved() {
   )
 }
 
-export default Saved
+export default memo(Saved)
 
 const FilterCompo = memo(({ getFilters }) => {
   const { saveTeams } = useContext(mainContext)

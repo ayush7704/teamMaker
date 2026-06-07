@@ -98,7 +98,7 @@ ol {
   height: 25%;
   /* animation: bgMoving 5s alternate ease-in-out infinite; */
   top: 2%;
-  left:2%;
+  left: 2%;
 }
 
 .card-blur {
@@ -300,5 +300,26 @@ div .searchInput:focus {
   body {
     font-size: 18.5px;
   }
+
+  #mainWrappper {
+    max-width: clamp(1450px, 90vw, 1600px);
+  }
 }
 
+@media (min-width:1750px) {
+  #mainWrappper {
+    max-width: clamp(1550px, 90vw, 1700px);
+  }
+}
+
+@media (min-width:1900px) {
+  #mainWrapper {
+    max-width: clamp(1700px, 90vw, 1850px);
+  }
+}
+
+@media (min-width:2156px) {
+  #mainWrapper {
+    max-width: clamp(1850px, 90vw, 2000px);
+  }
+}

@@ -57,7 +57,7 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
     });
 
     return (
-        <section onClick={() => { closingDetailsModal() }} ref={detailsModalContainer} className={`fixed detailmodaContainer z-[26] max-sm:py-8 max-sm:px-5 md:p-8 backdrop-blur-[8px] bg-[#00000080] inset-0 mx-auto`}>
+        <section onClick={() => { closingDetailsModal() }} ref={detailsModalContainer} className={`fixed detailmodaContainer z-[26] max-sm:py-6 max-sm:px-4 md:p-8 backdrop-blur-[8px] bg-[#00000080] inset-0 mx-auto`}>
 
             <div ref={detailsModal} onClick={(e) => { e.stopPropagation(); }} className={`relative h-full overflow-hidden text-[0.99em] py-10 sm:pt-[3em] pt-[2.8em] sm:px-4 px-[0.4rem] bg-[#000000] sm:w-5/6 lg:w-[75%] rounded-2xl mx-auto border border-1 ${modalDetails?.Details?.openedInGenerator === true ? 'border-[--lightTheme]' : 'border-[#303030]'}`}>
                 {/* ======= close btn starts ===== */}
@@ -119,12 +119,10 @@ const Details = memo(({ modalDetails, setmodalDetails, openedInGenerator }) => {
                                 />
                             </div>
                             <div className="flex-[1_1_12rem] relative cursor-context-menu">
-                                <p className='absolute z-[3] translate-y-[-33%] left-3 text-[0.95em] text-[#8f95a0] bg-[#000000]'>Project Description</p>
-                                <input
-                                    value={description.trim().length > 0 ? description : "Empty"}
-                                    className={`w-full text-[0.98em] bg-transparent px-3 py-2 mt-1 rounded-md border border-1 border-[#ffffff41]  backdrop-blur-[100px] cursor-context-menu text-ellipsis ${modalDetails?.Details?.description.trim().length < 1 ? "placeholder:text-red-500 text-red-500" : ""}`}
-                                    readOnly
-                                />
+                                <p className='absolute z-[3] translate-y-[-33%] left-3 text-[0.95em] text-[#8f95a0] bg-[#000000]'>Project Description</p> 
+                                <textarea value={description.trim().length > 0 ? description : "Empty"}
+                                    className={`w-full text-[0.98em] bg-transparent px-3 py-2 mt-1 rounded-md border border-1 border-[#ffffff41]  backdrop-blur-[100px] cursor-context-menu resize-none focus:outline-none ${modalDetails?.Details?.description.trim().length < 1 ? "placeholder:text-red-500 text-red-500" : ""}`}
+                                    readOnly></textarea>
                             </div>
                         </section>
                         {/* left section ends  */}

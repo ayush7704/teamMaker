@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, memo } from "react";
 import { mainContext } from "./context/context";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 function HowTo() {
-  const { PageHeading ,Check_svg} = useContext(mainContext);
+  const { PageHeading, Check_svg } = useContext(mainContext);
 
   useGSAP(() => {
     gsap.utils.toArray(".fade-up").forEach((element) => {
@@ -34,10 +34,10 @@ function HowTo() {
       <PageHeading heading={"how to"} />
       <div className="how-to-page pb-[6rem] sm:w-[80%] mx-auto p-3 mt-[1.375rem] max-sm:text-[0.95rem]">
         {/* what is random team maker starts */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px] will-change-transform">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
-            <h2 className="text-[1.05em] leading-[100%] capitalize">
-              1. what is random team maker ?
+            <h2 className="text-[1.05em] leading-[100%] capitalize flex gap-[0.3em]">
+              <span>1.</span><span>what is random team maker ?</span>
             </h2>
             <p className="p-3 text-[0.90em]">
               Random Team Maker is a quick, free and easy tool that creates random teams from a list of participants. Simply enter the names and choose the number of teams. It's ideal for games, tournaments, or group activities, ensuring fair team assignments in just a few clicks. This removes the need for manual team selection, which can take a lot of time and may seem unfair.
@@ -47,14 +47,19 @@ function HowTo() {
         {/* what is random team maker ends */}
 
         {/*  How to Generate Random Team? starts */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px] will-change-transform">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
-            <h2 className="text-[1.05em] leading-[100%] capitalize">
-              2. How to Generate Random Team ?
+            <h2 className="text-[1.05em] leading-[100%] capitalize flex gap-[0.3em]">
+              <span>2.</span><span>How to Generate Random Team ?</span>
             </h2>
             <div className="grid gap-8 p-3">
               <HowToExamples
-                title={`1. Insert participants' names. (min-2)`}
+                title={
+                  <>
+                    <span>1.</span>
+                    <p>Insert participants' names. (min-2)</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper max-w-[300px] w-full">
                     <div className="relative bg-black w-full rounded-md inline-block  cursor-context-menu">
@@ -64,38 +69,25 @@ function HowTo() {
                         className="w-full text-[0.96em] bg-transparent px-3 py-2 rounded-md border border-1 border-[#696969d1] pr-[2.5rem] cursor-context-menu"
                         readOnly
                       />
-                
+
                       {/* submit button starts  */}
                       <button className="absolute p-2 right-0 h-full border-l border-[--theme] cursor-context-menu">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-[1.375rem] h-[1.375rem]"
-                          viewBox="0 0 24 24"
-                          color="var(--theme)"
-                          fill="none"
-                        >
-                          <path
-                            d="M12 8V16M16 12L8 12"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-[1.375rem] h-[1.375rem]" color="var(--theme)" viewBox="0 0 24 24" fill="none"> <path d="M12 4V20M20 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
                         </svg>
                       </button>
                       {/* submit button ends  */}
                     </div>
                   </div>
-                }                
+                }
               />
               <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`2. Type total teams you want. by default (2).`}
+                title={
+                  <>
+                    <span>2.</span>
+                    <p>Type total teams you want. by default (2).</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper max-w-[300px] w-full">
                     <div className="flex bg-black justify-between border border-1 rounded-md border-[#696969d1]  px-3 py-2 w-full cursor-context-menu text-[0.97em]">
@@ -110,11 +102,16 @@ function HowTo() {
                       />
                     </div>
                   </div>
-                }                
+                }
               />
               <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`3. Set Project Title (Required).`}
+                title={
+                  <>
+                    <span>3.</span>
+                    <p>Set Project Title (Required).</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper max-w-[300px] w-full">
                     <div className=" w-full cursor-context-menu text-[0.96em]">
@@ -128,11 +125,16 @@ function HowTo() {
                     </div>
                   </div>
                 }
-                
+
               />
               <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`4. Set Project Description (optional).`}
+                title={
+                  <>
+                    <span>4.</span>
+                    <p>Set Project Description (optional).</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper max-w-[300px] w-full">
                     <div className="w-full cursor-context-menu text-[0.96em]">
@@ -145,11 +147,16 @@ function HowTo() {
                     </div>
                   </div>
                 }
-                
+
               />
               <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`5. Click generate button to generate random teams.`}
+                title={
+                  <>
+                    <span>5.</span>
+                    <p>Click generate button to generate random teams.</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper">
                     <button
@@ -196,7 +203,7 @@ function HowTo() {
                       </div>
                     </button>
                   </div>
-                }                
+                }
               />
               <hr className="border-[#5050507d]" />
             </div>
@@ -239,8 +246,8 @@ function HowTo() {
                       </div>
                     </div>
                   </div>
-                }                
-                 />
+                }
+              />
               <hr className="border-[#5050507d]" />
               <HowToExamples
                 title={<div className="sm:w-5/6">
@@ -330,79 +337,89 @@ function HowTo() {
         {/*  How to Generate Random Team? ends */}
 
         {/* save your Projects locally in the browser starts */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px] will-change-transform">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
-            <h2 className="text-[1.05em] leading-[100%] capitalize">
-              3. save your Projects locally in the browser.
+            <h2 className="text-[1.05em] leading-[100%] capitalize flex gap-[0.3em]">
+              <span>3.</span><span>save your Projects locally in the browser.</span>
             </h2>
             <div className="grid gap-8 p-3">
               <HowToExamples
-                title={`1. Click this save icon to save your Projects in your browser's storage. So, you can still access the same data the next time when you visit again at the same browser .`}
+                title={
+                  <>
+                    <span>1.</span>
+                    <p>Click this save icon to save your Projects in your browser's storage. So, you can still access the same data the next time when you visit again at the same browser.</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper">
-                  <button
-                    className={` bg-[#0a0a0a] border border-1 border-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                      className="sm:w-[1.275rem] w-[1rem] drop-shadow-[0px_0px_3px_currentColor] h-[1rem] sm:h-[1.275rem] text-white"
-                      viewBox="0 0 24 24"
-                      fill="none"
+                    <button
+                      className={` bg-[#0a0a0a] border border-1 border-[#303030] p-3 rounded-[50%] grid justify-center items-center cursor-default `}
                     >
-                      <path
-                        d="M11 2C7.22876 2 5.34315 2 4.17157 3.12874C3 4.25748 3 6.07416 3 9.70753V17.9808C3 20.2867 3 21.4396 3.77285 21.8523C5.26947 22.6514 8.0768 19.9852 9.41 19.1824C10.1832 18.7168 10.5698 18.484 11 18.484C11.4302 18.484 11.8168 18.7168 12.59 19.1824C13.9232 19.9852 16.7305 22.6514 18.2272 21.8523C19 21.4396 19 20.2867 19 17.9808V12.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M3.5 7.00005H10"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M17 10L17 2M13 6H21"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                        className="sm:w-[1.275rem] w-[1rem] drop-shadow-[0px_0px_3px_currentColor] h-[1rem] sm:h-[1.275rem] text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M11 2C7.22876 2 5.34315 2 4.17157 3.12874C3 4.25748 3 6.07416 3 9.70753V17.9808C3 20.2867 3 21.4396 3.77285 21.8523C5.26947 22.6514 8.0768 19.9852 9.41 19.1824C10.1832 18.7168 10.5698 18.484 11 18.484C11.4302 18.484 11.8168 18.7168 12.59 19.1824C13.9232 19.9852 16.7305 22.6514 18.2272 21.8523C19 21.4396 19 20.2867 19 17.9808V12.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.5 7.00005H10"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M17 10L17 2M13 6H21"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 }
               />
               <hr className="border-[#5050507d]" />
               <HowToExamples
-                title={`2. Click here in the navbar to see saved Projects.`}
+                title={
+                  <>
+                    <span>2.</span>
+                    <p>Click here in the navbar to see saved Projects.</p>
+                  </>
+                }
                 element={
                   <div className="anim-wrapper">
-                  <div className="inline-block bg-[#141414] rounded-[0.75rem] text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal capitalize text-nowrap py-2 px-2">
-                    <p className="flex justify-center drop-shadow-[2px_2px_0px_black]">
-                      <svg xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        className="w-[1.19rem] h-[1.19rem]"
-                        color="inherit"
-                        fill="none"
-                      >
-                        <path
-                          d="M3 17.9808V12.7075C3 9.07416 3 7.25748 4.09835 6.12874C5.1967 5 6.96447 5 10.5 5C14.0355 5 15.8033 5 16.9017 6.12874C18 7.25748 18 9.07416 18 12.7075V17.9808C18 20.2867 18 21.4396 17.2755 21.8523C15.8724 22.6514 13.2405 19.9852 11.9906 19.1824C11.2657 18.7168 10.9033 18.484 10.5 18.484C10.0967 18.484 9.73425 18.7168 9.00938 19.1824C7.7595 19.9852 5.12763 22.6514 3.72454 21.8523C3 21.4396 3 20.2867 3 17.9808Z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M9 2H11C15.714 2 18.0711 2 19.5355 3.46447C21 4.92893 21 7.28595 21 12V18"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </p>
-                    <p className="capitalize text-nowrap drop-shadow-[2px_2px_0px_black]">saved</p>
-                  </div>
+                    <div className="inline-block bg-[#141414] rounded-[0.75rem] text-[0.70rem] sm:text-[0.75rem] lg:text-[0.85rem] font-normal capitalize text-nowrap py-2 px-2">
+                      <p className="flex justify-center drop-shadow-[2px_2px_0px_black]">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          className="w-[1.19rem] h-[1.19rem]"
+                          color="inherit"
+                          fill="none"
+                        >
+                          <path
+                            d="M3 17.9808V12.7075C3 9.07416 3 7.25748 4.09835 6.12874C5.1967 5 6.96447 5 10.5 5C14.0355 5 15.8033 5 16.9017 6.12874C18 7.25748 18 9.07416 18 12.7075V17.9808C18 20.2867 18 21.4396 17.2755 21.8523C15.8724 22.6514 13.2405 19.9852 11.9906 19.1824C11.2657 18.7168 10.9033 18.484 10.5 18.484C10.0967 18.484 9.73425 18.7168 9.00938 19.1824C7.7595 19.9852 5.12763 22.6514 3.72454 21.8523C3 21.4396 3 20.2867 3 17.9808Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M9 2H11C15.714 2 18.0711 2 19.5355 3.46447C21 4.92893 21 7.28595 21 12V18"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </p>
+                      <p className="capitalize text-nowrap drop-shadow-[2px_2px_0px_black]">saved</p>
+                    </div>
                   </div>
                 }
               />
@@ -413,10 +430,10 @@ function HowTo() {
         {/* save your Projects locally in the browser ends */}
 
         {/* Why is this random team maker useful? starts  */}
-        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px]">
+        <div className="relative rounded-2xl mb-4 bg-[#00000033] md:bg-[#00000045] border border-1 border-[#696969c2] overflow-hidden fade-up backdrop-blur-[100px] will-change-transform">
           <div className="backdrop-blur-[100px] relative sm:p-8 p-5">
-            <h2 className="text-[1.05em] leading-[100%] capitalize">
-              4. Why is this random team maker useful?.
+            <h2 className="text-[1.05em] leading-[100%] capitalize flex gap-[0.3em]">
+              <span>4.</span><span>Why is this random team maker useful?.</span>
             </h2>
             <p className="sm:text-[0.95em] text-[0.93em] py-2">
               Our efficient <span className="Bricolage font-normal">random team maker</span> simplifies group formation, saving
@@ -434,9 +451,9 @@ function HowTo() {
                 "Distribute participants randomly for contests, quizzes, or office challenges.",
                 "Divide students into teams for school projects, debates, or study sessions.",
               ].map((para, ind) => (
-                <div key={ind} className="p-1 flex gap-2">
+                <div key={ind} className="p-1 flex items-baseline gap-2">
                   <span className="flex-grow-0">
-                    <Check_svg classes='w-[1.1em] h-auto inline-block' />
+                    <Check_svg classes='w-[1em] h-auto inline-block' />
                   </span>
                   <p>{para}</p>
                 </div>
@@ -450,37 +467,38 @@ function HowTo() {
   );
 }
 
-export default HowTo;
+export default memo(HowTo);
 
 function HowToExamples({ element, title }) {
   useGSAP(() => {
 
 
-      gsap.utils.toArray(".example-elm > *").forEach((element) => {
-        gsap.fromTo(
-          element,
-          { rotateX: "90deg" },
-          {
-            rotateX: "0deg",
-            duration: 1.4,
-            ease: "back",
-            transformOrigin: "50% 100%",
-            scrollTrigger: {
-              trigger: element,
-              start: "top 83%",
-              // end: "top 83%",
-              // scrub: 2,
-              toggleActions: "play none none reverse",
-              // markers: true
-            },
-          });
-      })
+    gsap.utils.toArray(".example-elm > *").forEach((element) => {
+      gsap.set(element, { willChange: "transform" })
+      gsap.fromTo(
+        element,
+        { rotateX: "90deg" },
+        {
+          rotateX: "0deg",
+          duration: 1.4,
+          ease: "back",
+          transformOrigin: "50% 100%",
+          scrollTrigger: {
+            trigger: element,
+            start: "top 83%",
+            // end: "top 83%",
+            // scrub: 2,
+            toggleActions: "play none none reverse",
+            // markers: true
+          },
+        });
+    })
   }, []);
 
   return (
     <div className="grid sm:grid-cols-[repeat(auto-fit,minmax(18.75rem,1fr))] items-center gap-5">
       <div className="flex justify-start">
-        <div className="text-[0.9em]">{title}</div>
+        <div className="text-[0.9em] flex gap-[0.3em]">{title}</div>
       </div>
       <div className="example-elm flex justify-start">{element}</div>
     </div>

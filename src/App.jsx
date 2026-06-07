@@ -42,7 +42,7 @@ function App() {
   }, []);
 
   return (
-    <section className='text-white'>
+    <section id='mainWrappper' className='text-white mx-auto'>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Suspense  fallback={<FullscreenFallback />}><Home /></Suspense>} />

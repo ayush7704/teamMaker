@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { useReducer, useState, useRef, useLayoutEffect, useContext, useEffect } from "react";
+import { useReducer, useState, useRef, useLayoutEffect, useContext, useEffect ,memo } from "react";
 import { mainContext } from "./context/context.js";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -767,7 +767,7 @@ function Home() {
     <main>
       <div className="wrapper pb-[7rem] relative sm:w-[75%] mx-auto p-4">
         {/* topdiv starts  */}
-        <div className="topdiv fixed sm:text-base text-sm left-1/2 -translate-x-1/2 z-10 top-[-100%] w-auto flex justify-between sm:gap-[5rem] gap-[3rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] ">
+        <div className="topdiv fixed sm:text-base text-sm left-1/2 -translate-x-1/2 z-10 top-[-100%] w-auto flex justify-between sm:gap-[5rem] gap-[3rem] px-4 py-3 overflow-hidden border-b border-t border-[#ffffff41] bg-[#141414] rounded-[4rem] will-change-[top]">
           <div className="whitespace-nowrap flex-1">
             <span className="font-medium text-[--theme] mr-[2px]">
               {allTypeplayersAndTeams.players.length}{" "}
@@ -1179,7 +1179,7 @@ function Home() {
           {/* generate & clear ends  */}
 
           {/* change title starts  */}
-          <div className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 mb-4 ${savedTeamOpened
+          <div className={`relative flex justify-between items-center bg-[#000000] rounded-[4px] p-3 pt-4 mb-4 ${savedTeamOpened
             ? "border border-[0.3px] border-[--lightTheme]"
             : "border border-[0.3px] border-[#ffffff41]"
             }`}>
@@ -1188,7 +1188,7 @@ function Home() {
               onClick={() => {
                 newTeam();
               }}
-              className="flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-1 top-0 rounded-full text-[0.7rem] bg-[#000000] border border-1 border-[#ffffff3d]"
+              className="Bricolage font-light flex items-center gap-1 absolute z-[1] -translate-y-1/2 left-0 px-3 py-[0.25rem] leading-[normal] top-0 rounded-full text-[0.7rem] bg-[#000000] border border-1 border-[#ffffff3d]"
             >
               <span>New</span>
               <span className="inline-block">
@@ -1398,7 +1398,7 @@ function Home() {
                     {team.teamPlayers.map((val, valIndex) => (
                       <li
                         key={`${team.teamName}-${valIndex}`}
-                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap transition border border-1 hover:border-[#ffffff9e] ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex && PlayerInfoAndMore.beingEditPlayer !== `teams.${teamValIndex}.${valIndex}` ? "!border-[unset]" : ""} ${PlayerInfoAndMore.beingEditPlayer === `teams.${teamValIndex}.${valIndex}` ? " !border-[--lightTheme]" : "border-[#696969c2]"}`}>
+                        className={`cards md:flex-[0_0_12.5rem] sm:flex-[0_0_9.375rem] flex-[1_0_8.125rem] relative rounded-[0.325rem] p-2 pt-3 text-wrap transition border border-1 hover:border-[#ffffff9e] will-change-transform ${PlayerInfoAndMore.whichArray === `teams.${teamValIndex}` && PlayerInfoAndMore.playerIndex === valIndex && PlayerInfoAndMore.beingEditPlayer !== `teams.${teamValIndex}.${valIndex}` ? "!border-[unset]" : ""} ${PlayerInfoAndMore.beingEditPlayer === `teams.${teamValIndex}.${valIndex}` ? " !border-[--lightTheme]" : "border-[#696969c2]"}`}>
                         <span>{val}</span>
 
                         {/*== backface of card starts  ==*/}
@@ -1721,4 +1721,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default memo(Home);
